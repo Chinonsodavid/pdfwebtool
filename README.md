@@ -33,7 +33,6 @@ Self-hosted PDF tools built with React, Vite, Tailwind CSS, and Express.
 ```text
 .
 ├── App.jsx
-├── Dashboard.jsx
 ├── components/
 ├── hooks/
 ├── index.css
@@ -138,6 +137,7 @@ Optional backend environment variables:
 | POST | `/api/pdf/page-manager` | Insert or remove pages |
 | POST | `/api/pdf/batch` | Apply one action to many PDFs |
 | POST | `/api/pdf/info` | Return page count and page sizes |
+| GET | `/preview/:filename` | Preview a generated PDF, image, or TXT file inline |
 | GET | `/downloads/:filename` | Download a generated file |
 | GET | `/health` | Health check |
 
@@ -145,5 +145,5 @@ Optional backend environment variables:
 
 - Uploaded files are stored in `uploads/` and cleaned up after 30 minutes.
 - PDF-only routes reject non-PDF uploads with a `400` response.
-- The PDF-to-image route uses `pdfjs-dist` with `@napi-rs/canvas`, so no separate system `canvas` install is required in this setup.
-- OCR uses `tesseract.js`; the first OCR run may take longer while language data is prepared.
+- PDF rendering and text extraction prefer Poppler when available, then fall back to PDF.js.
+- Compression prefers Ghostscript, unlock/protect uses QPDF, and OCR prefers native Tesseract with a `tesseract.js` fallback.

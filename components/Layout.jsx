@@ -23,7 +23,7 @@ export default function Layout({ children }) {
                 PDFForge
               </p>
               <p className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>
-                Self-hosted PDF tools
+                PDF tools
               </p>
             </div>
           </Link>
@@ -62,10 +62,10 @@ export default function Layout({ children }) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
           <div className="flex items-center gap-2 text-sm" style={{ color: 'var(--text-muted)' }}>
             <ShieldCheck size={16} />
-            Files stay on your machine and are cleaned up automatically.
+            Files are processed on your server and cleaned up automatically.
           </div>
           <p className="text-sm" style={{ color: 'var(--text-muted)' }}>
-            Built with React, Vite, Express, and pdf-lib.
+            PDFForge
           </p>
         </div>
       </footer>

@@ -13,9 +13,9 @@ const categoryHighlights = toolCategories.map(category => ({
 }))
 
 const proofPoints = [
-  'Inspired by the simple discovery and strong tool categorization used on sites like iLovePDF, Smallpdf, and Sejda, but adapted into a self-hosted product experience.',
   'Built for private document work, with processing on your own server and cleanup after 30 minutes.',
-  'Ready for individual tasks and heavier workflows like OCR, signatures, metadata updates, and batch jobs.',
+  'Covers everyday PDF workflows like merge, split, rotate, compress, convert, sign, OCR, and batch processing.',
+  'Preview files before downloading when the result format supports it.',
 ]
 
 export default function LandingPage() {
@@ -54,7 +54,7 @@ export default function LandingPage() {
           <div className="grid sm:grid-cols-3 gap-3">
             {[
               { label: `${tools.length} tools`, sub: 'from merge to OCR' },
-              { label: 'Local processing', sub: 'documents stay on your machine' },
+              { label: 'Server processing', sub: 'documents run through your backend' },
               { label: 'Preview-first UI', sub: 'see uploads before processing' },
             ].map(item => (
               <div key={item.label} className="card p-4">
@@ -178,7 +178,7 @@ export default function LandingPage() {
               Private by design
             </div>
             <h2 className="font-display font-bold text-3xl" style={{ color: 'var(--text)' }}>
-              A landing page promise that the product can actually keep
+              Built for private document workflows
             </h2>
             <p className="text-base leading-relaxed max-w-3xl" style={{ color: 'var(--text-muted)' }}>
               Documents are processed on your server, not routed through a third-party PDF service. That makes PDFForge a better fit for internal teams, agencies, and anyone handling sensitive files.
