@@ -17,7 +17,7 @@ export default function Dashboard() {
         <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4">
           <div className="space-y-3">
             <h1 className="page-title text-4xl md:text-5xl leading-tight">
-              Browse all 19 PDF tools
+              Browse all {tools.length} PDF tools
             </h1>
             <p className="text-base max-w-2xl leading-relaxed" style={{ color: 'var(--text-muted)' }}>
               Organize, convert, secure, and refine documents with local processing, live file previews, OCR, and batch workflows.
@@ -74,7 +74,7 @@ export default function Dashboard() {
       <div className="border-t pt-8" style={{ borderColor: 'var(--border)' }}>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
           {[
-            { label: '19 Tools', sub: 'Expanded PDF operations' },
+            { label: `${tools.length} Tools`, sub: 'Expanded PDF operations' },
             { label: '100% Private', sub: 'Runs on your server' },
             { label: 'Preview ready', sub: 'See uploads before processing' },
             { label: 'Auto cleanup', sub: 'Files deleted in 30 min' },

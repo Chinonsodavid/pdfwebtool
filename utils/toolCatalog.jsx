@@ -10,12 +10,14 @@ import {
   Lock,
   Unlock,
   FileText,
+  FileType2,
   Hash,
   Crop,
   FileOutput,
   ScanSearch,
   Signature,
   BadgeInfo,
+  FilePenLine,
   FilePlus2,
   Boxes,
 } from 'lucide-react'
@@ -80,6 +82,11 @@ export const tools = [
     color: '#f59e0b', bg: '#fffbeb', category: 'convert',
   },
   {
+    id: 'pdf-to-word', path: '/pdf-to-word', icon: FileType2, label: 'PDF to Word',
+    desc: 'Convert extractable PDF text into DOCX',
+    color: '#2563eb', bg: '#eff6ff', category: 'convert',
+  },
+  {
     id: 'extract-text', path: '/extract-text', icon: FileText, label: 'PDF to Text',
     desc: 'Extract searchable text into a TXT file',
     color: '#0f766e', bg: '#ecfeff', category: 'convert',
@@ -103,6 +110,11 @@ export const tools = [
     id: 'watermark', path: '/watermark', icon: Stamp, label: 'Watermark',
     desc: 'Add custom text watermark to PDF',
     color: '#14b8a6', bg: '#f0fdfa', category: 'edit',
+  },
+  {
+    id: 'edit', path: '/edit', icon: FilePenLine, label: 'Edit PDF',
+    desc: 'Replace detected text and add overlays',
+    color: '#0891b2', bg: '#ecfeff', category: 'edit',
   },
   {
     id: 'page-labels', path: '/page-labels', icon: Hash, label: 'Headers & Footers',

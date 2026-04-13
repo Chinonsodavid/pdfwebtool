@@ -3,6 +3,8 @@ const router = express.Router();
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const { execFile } = require('child_process');
+const { promisify } = require('util');
 const {
   PDFDocument,
   degrees,
@@ -12,7 +14,10 @@ const {
 const archiver = require('archiver');
 const { v4: uuidv4 } = require('uuid');
 
+const execFileAsync = promisify(execFile);
 const uploadsDir = path.join(__dirname, 'uploads');
+const pdfjsCMapDir = path.join(__dirname, 'node_modules', 'pdfjs-dist', 'cmaps') + path.sep;
+const pdfjsStandardFontDir = path.join(__dirname, 'node_modules', 'pdfjs-dist', 'standard_fonts') + path.sep;
 const MAX_FILE_SIZE = 100 * 1024 * 1024;
 const PDF_MIME_TYPES = ['application/pdf'];
 const IMAGE_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
@@ -48,12 +53,21 @@ function cleanup(...filePaths) {
   filePaths.flat().forEach(filePath => {
     try {
       if (filePath && fs.existsSync(filePath)) {
-        fs.unlinkSync(filePath);
+        fs.rmSync(filePath, { recursive: true, force: true });
       }
     } catch (error) {
       // ignore cleanup failures
     }
   });
+}
+
+async function commandExists(command) {
+  try {
+    await execFileAsync('/bin/sh', ['-lc', `command -v ${command}`]);
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 function parseBoolean(value, defaultValue = false) {
@@ -146,6 +160,15 @@ function parseJsonArray(value) {
   }
 }
 
+function parseJsonValue(value, fallback = null) {
+  if (!value) return fallback;
+  try {
+    return JSON.parse(value);
+  } catch {
+    return fallback;
+  }
+}
+
 function toPdfRgb(hex, fallback = '#FF0000') {
   const color = typeof hex === 'string' && /^#[0-9a-fA-F]{6}$/.test(hex) ? hex : fallback;
   return rgb(
@@ -160,6 +183,37 @@ function renderTemplate(template, pageNumber, totalPages) {
     .replaceAll('{page}', String(pageNumber))
     .replaceAll('{index}', String(pageNumber))
     .replaceAll('{total}', String(totalPages));
+}
+
+function escapeXml(value) {
+  return String(value || '')
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&apos;');
+}
+
+function buildWordDocumentXml(text) {
+  const paragraphs = String(text || '')
+    .split(/\r?\n/)
+    .map(line => line.trim())
+    .filter(Boolean);
+  const safeParagraphs = paragraphs.length ? paragraphs : ['No extractable text found in this PDF.'];
+  const body = safeParagraphs.map(line => (
+    `<w:p><w:r><w:t xml:space="preserve">${escapeXml(line)}</w:t></w:r></w:p>`
+  )).join('');
+
+  return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+  <w:body>
+    ${body}
+    <w:sectPr>
+      <w:pgSz w:w="12240" w:h="15840"/>
+      <w:pgMar w:top="1440" w:right="1440" w:bottom="1440" w:left="1440" w:header="720" w:footer="720" w:gutter="0"/>
+    </w:sectPr>
+  </w:body>
+</w:document>`;
 }
 
 function getAnchoredPosition(page, boxWidth, boxHeight, position = 'bottom-right', padding = 24) {
@@ -211,17 +265,128 @@ async function writeZip(prefix, entries) {
   return { filename, outputPath: zipPath, url: `/downloads/${filename}` };
 }
 
+async function writeDocx(prefix, text) {
+  const filename = `${prefix}-${uuidv4()}.docx`;
+  const outputPath = path.join(uploadsDir, filename);
+  const output = fs.createWriteStream(outputPath);
+  const archive = archiver('zip', { zlib: { level: 6 } });
+  archive.pipe(output);
+
+  archive.append(`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
+  <Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>
+  <Default Extension="xml" ContentType="application/xml"/>
+  <Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>
+  <Override PartName="/docProps/core.xml" ContentType="application/vnd.openxmlformats-package.core-properties+xml"/>
+  <Override PartName="/docProps/app.xml" ContentType="application/vnd.openxmlformats-officedocument.extended-properties+xml"/>
+</Types>`, { name: '[Content_Types].xml' });
+  archive.append(`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+  <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/>
+  <Relationship Id="rId2" Type="http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties" Target="docProps/core.xml"/>
+  <Relationship Id="rId3" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/extended-properties" Target="docProps/app.xml"/>
+</Relationships>`, { name: '_rels/.rels' });
+  archive.append(buildWordDocumentXml(text), { name: 'word/document.xml' });
+  archive.append(`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<cp:coreProperties xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <dc:title>Converted PDF text</dc:title>
+  <dc:creator>PDFForge</dc:creator>
+  <cp:lastModifiedBy>PDFForge</cp:lastModifiedBy>
+  <dcterms:created xsi:type="dcterms:W3CDTF">${new Date().toISOString()}</dcterms:created>
+  <dcterms:modified xsi:type="dcterms:W3CDTF">${new Date().toISOString()}</dcterms:modified>
+</cp:coreProperties>`, { name: 'docProps/core.xml' });
+  archive.append(`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Properties xmlns="http://schemas.openxmlformats.org/officeDocument/2006/extended-properties" xmlns:vt="http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes">
+  <Application>PDFForge</Application>
+</Properties>`, { name: 'docProps/app.xml' });
+
+  await new Promise((resolve, reject) => {
+    output.on('close', resolve);
+    archive.on('error', reject);
+    archive.finalize();
+  });
+
+  return { filename, outputPath, url: `/downloads/${filename}` };
+}
+
 async function loadPdfFromPath(filePath, options) {
   const bytes = fs.readFileSync(filePath);
   const doc = await PDFDocument.load(bytes, options);
   return { bytes, doc };
 }
 
-async function renderPdfPages(pdfBytes, pageNumbers, format = 'png') {
+async function renderPdfPagesWithPoppler(filePath, pageNumbers, format = 'png') {
+  if (!filePath || !(await commandExists('pdftoppm'))) {
+    return null;
+  }
+
+  const sharp = require('sharp');
+  const renderDir = fs.mkdtempSync(path.join(uploadsDir, 'poppler-render-'));
+  const pages = [];
+  const normalizedFormat = format === 'jpeg' ? 'jpg' : format;
+
+  try {
+    for (const pageNumber of pageNumbers) {
+      const outputPrefix = path.join(renderDir, `page-${pageNumber}`);
+      const args = [
+        '-f', String(pageNumber),
+        '-l', String(pageNumber),
+        '-r', '144',
+        normalizedFormat === 'jpg' ? '-jpeg' : '-png',
+        filePath,
+        outputPrefix,
+      ];
+      await execFileAsync('pdftoppm', args, { timeout: 120000, maxBuffer: 20 * 1024 * 1024 });
+
+      const suffix = normalizedFormat === 'jpg' ? 'jpg' : 'png';
+      const candidates = fs.readdirSync(renderDir)
+        .filter(file => file.startsWith(`page-${pageNumber}-`) && file.endsWith(`.${suffix}`))
+        .sort();
+      const outputPath = candidates.length
+        ? path.join(renderDir, candidates[candidates.length - 1])
+        : `${outputPrefix}-${pageNumber}.${suffix}`;
+      let buffer = fs.readFileSync(outputPath);
+
+      if (normalizedFormat === 'png') {
+        buffer = await sharp(buffer).flatten({ background: '#ffffff' }).png().toBuffer();
+      } else {
+        buffer = await sharp(buffer).flatten({ background: '#ffffff' }).jpeg({ quality: 90 }).toBuffer();
+      }
+
+      const metadata = await sharp(buffer).metadata();
+      pages.push({
+        pageNumber,
+        buffer,
+        width: metadata.width || 0,
+        height: metadata.height || 0,
+        format: normalizedFormat,
+        renderer: 'poppler',
+      });
+    }
+
+    return pages;
+  } finally {
+    cleanup(renderDir);
+  }
+}
+
+async function renderPdfPages(pdfBytes, pageNumbers, format = 'png', filePath = null) {
+  const popplerPages = await renderPdfPagesWithPoppler(filePath, pageNumbers, format).catch(() => null);
+  if (popplerPages?.length) {
+    return popplerPages;
+  }
+
   const pdfjsLib = await import('pdfjs-dist/legacy/build/pdf.mjs');
   const { createCanvas } = require('@napi-rs/canvas');
   const sharp = require('sharp');
-  const pdfDocument = await pdfjsLib.getDocument({ data: new Uint8Array(pdfBytes) }).promise;
+  const pdfDocument = await pdfjsLib.getDocument({
+    data: new Uint8Array(pdfBytes),
+    cMapUrl: pdfjsCMapDir,
+    cMapPacked: true,
+    standardFontDataUrl: pdfjsStandardFontDir,
+    useSystemFonts: true,
+    disableFontFace: false,
+  }).promise;
   const pages = [];
 
   for (const pageNumber of pageNumbers) {
@@ -229,11 +394,18 @@ async function renderPdfPages(pdfBytes, pageNumbers, format = 'png') {
     const viewport = page.getViewport({ scale: 2.0 });
     const canvas = createCanvas(viewport.width, viewport.height);
     const context = canvas.getContext('2d');
+    context.save();
+    context.fillStyle = '#ffffff';
+    context.fillRect(0, 0, viewport.width, viewport.height);
+    context.restore();
     await page.render({ canvasContext: context, viewport }).promise;
 
     let buffer = canvas.toBuffer('image/png');
+    if (format === 'png') {
+      buffer = await sharp(buffer).flatten({ background: '#ffffff' }).png().toBuffer();
+    }
     if (format === 'jpg' || format === 'jpeg') {
-      buffer = await sharp(buffer).jpeg({ quality: 90 }).toBuffer();
+      buffer = await sharp(buffer).flatten({ background: '#ffffff' }).jpeg({ quality: 90 }).toBuffer();
     }
 
     pages.push({
@@ -242,13 +414,40 @@ async function renderPdfPages(pdfBytes, pageNumbers, format = 'png') {
       width: viewport.width,
       height: viewport.height,
       format: format === 'jpeg' ? 'jpg' : format,
+      renderer: 'pdfjs',
     });
   }
 
   return pages;
 }
 
-async function extractTextFromPdf(pdfBytes, pageNumbers) {
+async function extractTextWithPoppler(filePath, pageNumbers) {
+  if (!filePath || !(await commandExists('pdftotext'))) {
+    return null;
+  }
+
+  const sections = [];
+  for (const pageNumber of pageNumbers) {
+    const { stdout } = await execFileAsync('pdftotext', [
+      '-f', String(pageNumber),
+      '-l', String(pageNumber),
+      '-layout',
+      '-enc', 'UTF-8',
+      filePath,
+      '-',
+    ], { timeout: 120000, maxBuffer: 20 * 1024 * 1024 });
+    sections.push(`Page ${pageNumber}\n${stdout.trim()}`);
+  }
+
+  return sections.join('\n\n');
+}
+
+async function extractTextFromPdf(pdfBytes, pageNumbers, filePath = null) {
+  const popplerText = await extractTextWithPoppler(filePath, pageNumbers).catch(() => null);
+  if (popplerText !== null) {
+    return popplerText;
+  }
+
   const pdfjsLib = await import('pdfjs-dist/legacy/build/pdf.mjs');
   const pdfDocument = await pdfjsLib.getDocument({ data: new Uint8Array(pdfBytes) }).promise;
   const sections = [];
@@ -268,17 +467,44 @@ async function extractTextFromPdf(pdfBytes, pageNumbers) {
   return sections.join('\n\n');
 }
 
-async function recognizePdfText(pdfBytes, pageNumbers, language = 'eng') {
-  const Tesseract = require('tesseract.js');
-  const renderedPages = await renderPdfPages(pdfBytes, pageNumbers, 'png');
+async function recognizePdfText(pdfBytes, pageNumbers, language = 'eng', filePath = null) {
+  const renderedPages = await renderPdfPages(pdfBytes, pageNumbers, 'png', filePath);
   const sections = [];
+  const hasNativeTesseract = await commandExists('tesseract');
+  let Tesseract = null;
 
   for (const page of renderedPages) {
-    const result = await Tesseract.recognize(page.buffer, language);
-    sections.push(`Page ${page.pageNumber}\n${result.data.text.trim()}`);
+    let text = null;
+    if (hasNativeTesseract) {
+      text = await recognizeImageWithNativeTesseract(page.buffer, language).catch(() => null);
+    }
+
+    if (text === null) {
+      Tesseract ||= require('tesseract.js');
+      const result = await Tesseract.recognize(page.buffer, language);
+      text = result.data.text;
+    }
+
+    sections.push(`Page ${page.pageNumber}\n${String(text || '').trim()}`);
   }
 
   return sections.join('\n\n');
+}
+
+async function recognizeImageWithNativeTesseract(imageBuffer, language = 'eng') {
+  const imagePath = path.join(uploadsDir, `ocr-page-${uuidv4()}.png`);
+  try {
+    fs.writeFileSync(imagePath, imageBuffer);
+    const { stdout } = await execFileAsync('tesseract', [
+      imagePath,
+      'stdout',
+      '-l',
+      language,
+    ], { timeout: 180000, maxBuffer: 20 * 1024 * 1024 });
+    return stdout;
+  } finally {
+    cleanup(imagePath);
+  }
 }
 
 function applyCompressionMetadataCleanup(doc) {
@@ -288,6 +514,111 @@ function applyCompressionMetadataCleanup(doc) {
   doc.setKeywords([]);
   doc.setProducer('');
   doc.setCreator('');
+}
+
+async function compressPdfWithGhostscript(inputPath, level = 'medium') {
+  if (!(await commandExists('gs'))) {
+    return null;
+  }
+
+  const outputPath = path.join(uploadsDir, `ghostscript-compressed-${uuidv4()}.pdf`);
+  const settings = {
+    low: '/printer',
+    medium: '/ebook',
+    high: '/screen',
+  };
+
+  try {
+    await execFileAsync('gs', [
+      '-sDEVICE=pdfwrite',
+      '-dCompatibilityLevel=1.4',
+      `-dPDFSETTINGS=${settings[level] || settings.medium}`,
+      '-dNOPAUSE',
+      '-dQUIET',
+      '-dBATCH',
+      `-sOutputFile=${outputPath}`,
+      inputPath,
+    ], { timeout: 180000, maxBuffer: 20 * 1024 * 1024 });
+
+    return fs.readFileSync(outputPath);
+  } finally {
+    cleanup(outputPath);
+  }
+}
+
+async function unlockPdfWithQpdf(inputPath, password = '') {
+  if (!(await commandExists('qpdf'))) {
+    return null;
+  }
+
+  const outputPath = path.join(uploadsDir, `qpdf-unlocked-${uuidv4()}.pdf`);
+  try {
+    await execFileAsync('qpdf', [
+      `--password=${password || ''}`,
+      '--decrypt',
+      inputPath,
+      outputPath,
+    ], { timeout: 120000, maxBuffer: 20 * 1024 * 1024 });
+
+    return fs.readFileSync(outputPath);
+  } finally {
+    cleanup(outputPath);
+  }
+}
+
+async function getPdfEncryptionStatus(inputPath) {
+  if (!(await commandExists('qpdf'))) {
+    return { available: false, encrypted: null, details: '' };
+  }
+
+  try {
+    const { stdout, stderr } = await execFileAsync('qpdf', [
+      '--show-encryption',
+      inputPath,
+    ], { timeout: 120000, maxBuffer: 20 * 1024 * 1024 });
+    const details = `${stdout || ''}${stderr || ''}`;
+    return {
+      available: true,
+      encrypted: !details.includes('File is not encrypted'),
+      details,
+    };
+  } catch (error) {
+    const details = `${error.stdout || ''}${error.stderr || ''}`;
+    return {
+      available: true,
+      encrypted: /encrypted|password|R =/i.test(details),
+      details,
+    };
+  }
+}
+
+async function protectPdfWithQpdf(inputPath, userPassword, ownerPassword) {
+  if (!(await commandExists('qpdf'))) {
+    throw new Error('PDF protection requires QPDF to be installed on the server.');
+  }
+
+  const outputPath = path.join(uploadsDir, `qpdf-protected-${uuidv4()}.pdf`);
+  try {
+    await execFileAsync('qpdf', [
+      '--encrypt',
+      `--user-password=${userPassword}`,
+      `--owner-password=${ownerPassword}`,
+      '--bits=256',
+      '--print=full',
+      '--modify=none',
+      '--extract=n',
+      '--annotate=n',
+      '--form=n',
+      '--assemble=n',
+      '--',
+      inputPath,
+      outputPath,
+    ], { timeout: 120000, maxBuffer: 20 * 1024 * 1024 });
+
+    return fs.readFileSync(outputPath);
+  } finally {
+    cleanup(outputPath);
+  }
 }
 
 async function createSinglePageZip(doc, pageGroups, prefix, baseName = 'page') {
@@ -426,6 +757,130 @@ async function applySignature(doc, options = {}) {
         font,
         size: Math.max(size - 6, 10),
         color,
+        opacity,
+      });
+    }
+  }
+}
+
+async function applyPdfEdit(doc, options = {}) {
+  const pageCount = doc.getPageCount();
+  const editLayers = parseJsonValue(options.edits, []);
+  if (Array.isArray(editLayers) && editLayers.length) {
+    const font = await doc.embedFont(StandardFonts.Helvetica);
+    const boldFont = await doc.embedFont(StandardFonts.HelveticaBold);
+
+    for (const layer of editLayers) {
+      const pageIndex = clamp(parseInt(layer.page || '1', 10) - 1, 0, pageCount - 1);
+      const page = doc.getPage(pageIndex);
+      const opacity = parseNumber(layer.opacity, 1);
+
+      if (layer.type === 'text') {
+        const text = String(layer.text || '').trim();
+        if (!text) continue;
+        const fontSize = parseNumber(layer.fontSize, 18);
+        const activeFont = parseBoolean(layer.bold, false) ? boldFont : font;
+        const color = toPdfRgb(layer.color, '#111827');
+        const x = parseNumber(layer.x, 72);
+        const y = parseNumber(layer.y, 720);
+        text.split(/\r?\n/).forEach((line, lineIndex) => {
+          page.drawText(line, {
+            x,
+            y: y - (lineIndex * fontSize * 1.25),
+            size: fontSize,
+            font: activeFont,
+            color,
+            opacity,
+          });
+        });
+      } else if (layer.type === 'image') {
+        const imageIndex = clamp(parseInt(layer.imageIndex || '0', 10), 0, (options.editImages || []).length - 1);
+        const imagePath = options.editImages?.[imageIndex]?.path;
+        if (!imagePath) continue;
+        const sharp = require('sharp');
+        const imageBuffer = await sharp(imagePath).png().toBuffer();
+        const image = await doc.embedPng(imageBuffer);
+        const width = parseNumber(layer.width, 160);
+        const height = parseNumber(layer.height, (image.height / image.width) * width);
+        page.drawImage(image, {
+          x: parseNumber(layer.x, 72),
+          y: parseNumber(layer.y, 520),
+          width,
+          height,
+          opacity,
+        });
+      } else if (layer.type === 'rect' || layer.type === 'whiteout') {
+        const fillColor = toPdfRgb(layer.fillColor, layer.type === 'whiteout' ? '#FFFFFF' : '#FFF4ED');
+        const borderColor = toPdfRgb(layer.borderColor, '#F9530E');
+        page.drawRectangle({
+          x: parseNumber(layer.x, 72),
+          y: parseNumber(layer.y, 520),
+          width: parseNumber(layer.width, 160),
+          height: parseNumber(layer.height, 48),
+          color: fillColor,
+          borderColor: parseBoolean(layer.showBorder, layer.type !== 'whiteout') ? borderColor : undefined,
+          borderWidth: parseBoolean(layer.showBorder, layer.type !== 'whiteout') ? parseNumber(layer.borderWidth, 1) : 0,
+          opacity,
+        });
+      }
+    }
+
+    return;
+  }
+
+  const pageIndices = parsePageSelection(options.pages || options.page || '1', pageCount, { defaultAll: false });
+  if (!pageIndices.length) {
+    throw new Error('Choose at least one valid page to edit.');
+  }
+
+  const hasText = Boolean(String(options.text || '').trim());
+  const hasImage = Boolean(options.editImagePath);
+  if (!hasText && !hasImage) {
+    throw new Error('Add text or choose an image before editing the PDF.');
+  }
+
+  const font = await doc.embedFont(StandardFonts.Helvetica);
+  const text = String(options.text || '').trim();
+  const fontSize = parseNumber(options.fontSize, 18);
+  const color = toPdfRgb(options.color, '#111827');
+  const opacity = parseNumber(options.opacity, 1);
+  const textX = parseNumber(options.x, 72);
+  const textY = parseNumber(options.y, 720);
+
+  let image = null;
+  let imageWidth = 0;
+  let imageHeight = 0;
+  if (options.editImagePath) {
+    const sharp = require('sharp');
+    const imageBuffer = await sharp(options.editImagePath).png().toBuffer();
+    image = await doc.embedPng(imageBuffer);
+    imageWidth = parseNumber(options.imageWidth, 160);
+    imageHeight = (image.height / image.width) * imageWidth;
+  }
+
+  for (const pageIndex of pageIndices) {
+    const page = doc.getPage(pageIndex);
+
+    if (hasText) {
+      const lines = text.split(/\r?\n/);
+      lines.forEach((line, lineIndex) => {
+        page.drawText(line, {
+          x: textX,
+          y: textY - (lineIndex * fontSize * 1.25),
+          size: fontSize,
+          font,
+          color,
+          opacity,
+        });
+      });
+    }
+
+    if (image) {
+      page.drawImage(image, {
+        x: parseNumber(options.imageX, textX),
+        y: parseNumber(options.imageY, Math.max(24, textY - imageHeight - 24)),
+        width: imageWidth,
+        height: imageHeight,
         opacity,
       });
     }
@@ -582,15 +1037,18 @@ router.post('/compress', pdfUpload.single('file'), async (req, res) => {
   if (!req.file) return res.status(400).json({ error: 'No file uploaded.' });
 
   try {
-    const { bytes, doc } = await loadPdfFromPath(req.file.path);
+    const bytes = fs.readFileSync(req.file.path);
     const level = req.body.level || 'medium';
-    applyCompressionMetadataCleanup(doc);
-
-    const compressed = await doc.save({
-      useObjectStreams: level !== 'low',
-      addDefaultPage: false,
-      objectsPerTick: level === 'high' ? 20 : level === 'medium' ? 50 : 100,
-    });
+    let compressed = await compressPdfWithGhostscript(req.file.path, level).catch(() => null);
+    if (!compressed) {
+      const { doc } = await loadPdfFromPath(req.file.path);
+      applyCompressionMetadataCleanup(doc);
+      compressed = await doc.save({
+        useObjectStreams: level !== 'low',
+        addDefaultPage: false,
+        objectsPerTick: level === 'high' ? 20 : level === 'medium' ? 50 : 100,
+      });
+    }
     const output = saveOutput('compressed', 'pdf', compressed);
 
     cleanup(req.file.path);
@@ -650,7 +1108,7 @@ router.post('/pdf-to-image', pdfUpload.single('file'), async (req, res) => {
     const { doc } = await loadPdfFromPath(req.file.path, { ignoreEncryption: true });
     const format = req.body.format || 'png';
     const pageNumbers = parsePageSelection(req.body.pages || 'all', doc.getPageCount()).map(index => index + 1);
-    const renderedPages = await renderPdfPages(bytes, pageNumbers, format);
+    const renderedPages = await renderPdfPages(bytes, pageNumbers, format, req.file.path);
 
     const output = await writeZip('pdf-images', renderedPages.map(page => ({
       name: `page-${page.pageNumber}.${page.format}`,
@@ -734,23 +1192,17 @@ router.post('/protect', pdfUpload.single('file'), async (req, res) => {
   if (!req.file) return res.status(400).json({ error: 'No file uploaded.' });
 
   try {
-    const { doc } = await loadPdfFromPath(req.file.path);
-    const userPassword = req.body.userPassword || '';
-    const ownerPassword = req.body.ownerPassword || `${userPassword}_owner`;
+    const userPassword = String(req.body.userPassword || '').trim();
+    if (!userPassword) {
+      cleanup(req.file.path);
+      return res.status(400).json({ error: 'Enter an open password before protecting the PDF.' });
+    }
 
-    const encrypted = await doc.save({
-      userPassword,
-      ownerPassword,
-      permissions: {
-        printing: 'highResolution',
-        modifying: false,
-        copying: false,
-        annotating: false,
-        fillingForms: false,
-        contentAccessibility: true,
-        documentAssembly: false,
-      },
-    });
+    const requestedOwnerPassword = String(req.body.ownerPassword || '').trim();
+    const ownerPassword = requestedOwnerPassword && requestedOwnerPassword !== userPassword
+      ? requestedOwnerPassword
+      : `${userPassword}-${uuidv4()}`;
+    const encrypted = await protectPdfWithQpdf(req.file.path, userPassword, ownerPassword);
 
     const output = saveOutput('protected', 'pdf', encrypted);
     cleanup(req.file.path);
@@ -765,8 +1217,26 @@ router.post('/unlock', pdfUpload.single('file'), async (req, res) => {
   if (!req.file) return res.status(400).json({ error: 'No file uploaded.' });
 
   try {
-    const { doc } = await loadPdfFromPath(req.file.path, { password: req.body.password || '' });
-    const output = saveOutput('unlocked', 'pdf', await doc.save());
+    const password = String(req.body.password || '').trim();
+    if (!password) {
+      cleanup(req.file.path);
+      return res.status(400).json({ error: 'Enter the current PDF password before unlocking.' });
+    }
+
+    const encryptionStatus = await getPdfEncryptionStatus(req.file.path);
+    if (encryptionStatus.available && encryptionStatus.encrypted === false) {
+      cleanup(req.file.path);
+      return res.status(400).json({ error: 'This PDF is not encrypted, so there is nothing to unlock.' });
+    }
+
+    let unlockedBytes;
+    if (encryptionStatus.available) {
+      unlockedBytes = await unlockPdfWithQpdf(req.file.path, password);
+    } else {
+      const { doc } = await loadPdfFromPath(req.file.path, { password: req.body.password || '' });
+      unlockedBytes = await doc.save();
+    }
+    const output = saveOutput('unlocked', 'pdf', unlockedBytes);
     cleanup(req.file.path);
     res.json({ success: true, filename: output.filename, url: output.url });
   } catch (error) {
@@ -785,13 +1255,30 @@ router.post('/extract-text', pdfUpload.single('file'), async (req, res) => {
     const bytes = fs.readFileSync(req.file.path);
     const { doc } = await loadPdfFromPath(req.file.path, { ignoreEncryption: true });
     const pageNumbers = parsePageSelection(req.body.pages || 'all', doc.getPageCount()).map(index => index + 1);
-    const extractedText = await extractTextFromPdf(bytes, pageNumbers);
+    const extractedText = await extractTextFromPdf(bytes, pageNumbers, req.file.path);
     const output = saveOutput('extracted-text', 'txt', Buffer.from(extractedText || '', 'utf8'));
     cleanup(req.file.path);
     res.json({ success: true, filename: output.filename, url: output.url, pages: pageNumbers.length });
   } catch (error) {
     cleanup(req.file?.path);
     res.status(500).json({ error: error.message });
+  }
+});
+
+router.post('/pdf-to-word', pdfUpload.single('file'), async (req, res) => {
+  if (!req.file) return res.status(400).json({ error: 'No file uploaded.' });
+
+  try {
+    const bytes = fs.readFileSync(req.file.path);
+    const { doc } = await loadPdfFromPath(req.file.path, { ignoreEncryption: true });
+    const pageNumbers = parsePageSelection(req.body.pages || 'all', doc.getPageCount()).map(index => index + 1);
+    const extractedText = await extractTextFromPdf(bytes, pageNumbers, req.file.path);
+    const output = await writeDocx('pdf-to-word', extractedText);
+    cleanup(req.file.path);
+    res.json({ success: true, filename: output.filename, url: output.url, pages: pageNumbers.length });
+  } catch (error) {
+    cleanup(req.file?.path);
+    res.status(500).json({ error: `PDF to Word conversion failed. ${error.message}` });
   }
 });
 
@@ -876,7 +1363,7 @@ router.post('/ocr', pdfUpload.single('file'), async (req, res) => {
     const bytes = fs.readFileSync(req.file.path);
     const { doc } = await loadPdfFromPath(req.file.path, { ignoreEncryption: true });
     const pageNumbers = parsePageSelection(req.body.pages || '1', doc.getPageCount()).map(index => index + 1);
-    const text = await recognizePdfText(bytes, pageNumbers, req.body.language || 'eng');
+    const text = await recognizePdfText(bytes, pageNumbers, req.body.language || 'eng', req.file.path);
     const output = saveOutput('ocr-text', 'txt', Buffer.from(text || '', 'utf8'));
     cleanup(req.file.path);
     res.json({ success: true, filename: output.filename, url: output.url, pages: pageNumbers.length });
@@ -905,6 +1392,32 @@ router.post('/sign', mixedUpload.fields([
     res.json({ success: true, filename: output.filename, url: output.url });
   } catch (error) {
     cleanup(pdfFile?.path, signatureImage?.path);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+router.post('/edit', mixedUpload.fields([
+  { name: 'file', maxCount: 1 },
+  { name: 'editImage', maxCount: 1 },
+  { name: 'editImages', maxCount: 20 },
+]), async (req, res) => {
+  const pdfFile = req.files?.file?.[0];
+  const editImage = req.files?.editImage?.[0];
+  const editImages = req.files?.editImages || [];
+  if (!pdfFile) return res.status(400).json({ error: 'No PDF uploaded.' });
+
+  try {
+    const { doc } = await loadPdfFromPath(pdfFile.path);
+    await applyPdfEdit(doc, {
+      ...req.body,
+      editImagePath: editImage?.path,
+      editImages,
+    });
+    const output = saveOutput('edited', 'pdf', await doc.save());
+    cleanup(pdfFile.path, editImage?.path, editImages.map(file => file.path));
+    res.json({ success: true, filename: output.filename, url: output.url });
+  } catch (error) {
+    cleanup(pdfFile?.path, editImage?.path, editImages.map(file => file.path));
     res.status(500).json({ error: error.message });
   }
 });

@@ -1,6 +1,9 @@
-import { Download, FileCheck2 } from 'lucide-react'
+import { Download, Eye, FileCheck2 } from 'lucide-react'
 
 export default function ResultCard({ title, description, downloadUrl }) {
+  const previewable = /\.(pdf|png|jpe?g|webp|gif|txt)$/i.test(downloadUrl || '')
+  const previewUrl = previewable ? downloadUrl.replace('/downloads/', '/preview/') : ''
+
   return (
     <div className="card p-5 space-y-4 animate-slide-up">
       <div className="flex items-start gap-3">
@@ -15,10 +18,19 @@ export default function ResultCard({ title, description, downloadUrl }) {
         </div>
       </div>
 
-      <a href={downloadUrl} className="btn-primary" download>
-        <Download size={16} />
-        Download result
-      </a>
+      <div className="flex flex-wrap gap-3">
+        {previewable ? (
+          <a href={previewUrl} className="btn-secondary" target="_blank" rel="noreferrer">
+            <Eye size={16} />
+            Preview
+          </a>
+        ) : null}
+
+        <a href={downloadUrl} className="btn-primary" download>
+          <Download size={16} />
+          Download result
+        </a>
+      </div>
     </div>
   )
 }

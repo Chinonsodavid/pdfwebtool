@@ -1,7 +1,7 @@
 import ToolPage from '../components/ToolPage'
 
 const fields = [
-  { name: 'password', label: 'Current password', type: 'password' },
+  { name: 'password', label: 'Current password', type: 'password', required: true },
 ]
 
 export default function UnlockPDF() {

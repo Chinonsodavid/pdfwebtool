@@ -2,10 +2,12 @@ import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 import { once } from 'node:events'
-import { spawn } from 'node:child_process'
+import { execFile, spawn } from 'node:child_process'
+import { promisify } from 'node:util'
 import sharp from 'sharp'
 import { PDFDocument, degrees } from 'pdf-lib'
 
+const execFileAsync = promisify(execFile)
 const workspace = process.cwd()
 const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'pdfforge-smoke-'))
 const baseUrl = 'http://127.0.0.1:3101'
@@ -92,6 +94,29 @@ async function postForm(endpoint, buildFormData) {
   }
 
   if (payload.url) {
+    const headResponse = await fetch(`${baseUrl}${payload.url}`, { method: 'HEAD' })
+    if (!headResponse.ok) {
+      throw new Error(`${endpoint} returned an unreadable download header URL`)
+    }
+
+    const disposition = headResponse.headers.get('content-disposition') || ''
+    if (!disposition.includes('attachment')) {
+      throw new Error(`${endpoint} download is missing an attachment Content-Disposition header`)
+    }
+
+    const previewUrl = payload.url.replace('/downloads/', '/preview/')
+    if (/\.(pdf|png|jpe?g|webp|gif|txt)$/i.test(payload.url)) {
+      const previewResponse = await fetch(`${baseUrl}${previewUrl}`, { method: 'HEAD' })
+      if (!previewResponse.ok) {
+        throw new Error(`${endpoint} returned an unreadable preview URL`)
+      }
+
+      const previewDisposition = previewResponse.headers.get('content-disposition') || ''
+      if (!previewDisposition.includes('inline')) {
+        throw new Error(`${endpoint} preview is missing an inline Content-Disposition header`)
+      }
+    }
+
     const downloadResponse = await fetch(`${baseUrl}${payload.url}`)
     if (!downloadResponse.ok) {
       throw new Error(`${endpoint} returned an unreadable download URL`)
@@ -128,6 +153,43 @@ async function loadPdf(bytes, options = undefined) {
 
 function decodeText(bytes) {
   return new TextDecoder().decode(bytes)
+}
+
+async function readZipEntry(zipBytes, entryName) {
+  const zipPath = path.join(tempDir, `zip-${Date.now()}-${Math.random().toString(16).slice(2)}.zip`)
+  fs.writeFileSync(zipPath, zipBytes)
+  const { stdout } = await execFileAsync('unzip', ['-p', zipPath, entryName], {
+    encoding: 'buffer',
+    maxBuffer: 50 * 1024 * 1024,
+  })
+  return stdout
+}
+
+async function readQpdfEncryption(bytes, label) {
+  const pdfPath = path.join(tempDir, `${label}-${Date.now()}-${Math.random().toString(16).slice(2)}.pdf`)
+  fs.writeFileSync(pdfPath, bytes)
+  const { stdout, stderr } = await execFileAsync('qpdf', ['--show-encryption', pdfPath], {
+    encoding: 'utf8',
+    maxBuffer: 20 * 1024 * 1024,
+  })
+  return `${stdout || ''}${stderr || ''}`
+}
+
+async function expectImageHasInk(imageBytes, label) {
+  const { data, info } = await sharp(imageBytes)
+    .removeAlpha()
+    .raw()
+    .toBuffer({ resolveWithObject: true })
+  let darkPixels = 0
+  for (let index = 0; index < data.length; index += info.channels) {
+    if (data[index] < 120 && data[index + 1] < 120 && data[index + 2] < 120) {
+      darkPixels += 1
+    }
+  }
+
+  if (darkPixels < 100) {
+    throw new Error(`${label} did not render enough dark text/detail pixels`)
+  }
 }
 
 async function main() {
@@ -184,7 +246,20 @@ async function main() {
       formData.append('pages', '1')
     })
     if (!pdfToImage.downloadBytes.length) throw new Error('PDF to Image ZIP is empty')
+    await expectImageHasInk(await readZipEntry(pdfToImage.downloadBytes, 'page-1.png'), 'PDF to Image')
     results.push('pdf-to-image')
+
+    const pdfToWord = await postForm('/api/pdf/pdf-to-word', async formData => {
+      formData.append('file', toFile(pdfABytes, 'a.pdf', 'application/pdf'))
+      formData.append('pages', '1')
+    })
+    if (pdfToWord.filename?.endsWith('.docx') !== true) throw new Error('PDF to Word did not return a DOCX filename')
+    if (pdfToWord.downloadBytes[0] !== 0x50 || pdfToWord.downloadBytes[1] !== 0x4b) {
+      throw new Error('PDF to Word output is not a DOCX zip container')
+    }
+    const wordXml = decodeText(await readZipEntry(pdfToWord.downloadBytes, 'word/document.xml'))
+    if (!wordXml.includes('Alpha page 1')) throw new Error('PDF to Word did not include expected text')
+    results.push('pdf-to-word')
 
     const rotate = await postForm('/api/pdf/rotate', async formData => {
       formData.append('file', toFile(pdfABytes, 'a.pdf', 'application/pdf'))
@@ -217,14 +292,33 @@ async function main() {
       formData.append('userPassword', 'secret123')
       formData.append('ownerPassword', 'owner123')
     })
-    await loadPdf(protect.downloadBytes, { password: 'secret123' })
+    const protectEncryption = await readQpdfEncryption(protect.downloadBytes, 'protected')
+    if (protectEncryption.includes('File is not encrypted')) throw new Error('Protect did not encrypt the PDF')
     results.push('protect')
+
+    await expectBadRequest('/api/pdf/protect', async formData => {
+      formData.append('file', toFile(pdfABytes, 'a.pdf', 'application/pdf'))
+    }, 'Enter an open password')
+    results.push('protect-validation')
+
+    await expectBadRequest('/api/pdf/unlock', async formData => {
+      formData.append('file', toFile(pdfABytes, 'a.pdf', 'application/pdf'))
+      formData.append('password', 'secret123')
+    }, 'not encrypted')
+    results.push('unlock-unencrypted-validation')
+
+    await expectBadRequest('/api/pdf/unlock', async formData => {
+      formData.append('file', toFile(protect.downloadBytes, 'protected.pdf', 'application/pdf'))
+      formData.append('password', 'wrong-password')
+    }, 'Incorrect password')
+    results.push('unlock-password-validation')
 
     const unlock = await postForm('/api/pdf/unlock', async formData => {
       formData.append('file', toFile(protect.downloadBytes, 'protected.pdf', 'application/pdf'))
       formData.append('password', 'secret123')
     })
-    await loadPdf(unlock.downloadBytes)
+    const unlockEncryption = await readQpdfEncryption(unlock.downloadBytes, 'unlocked')
+    if (!unlockEncryption.includes('File is not encrypted')) throw new Error('Unlock did not remove encryption')
     results.push('unlock')
 
     const info = await postForm('/api/pdf/info', async formData => {
@@ -289,6 +383,22 @@ async function main() {
     const signedDoc = await loadPdf(sign.downloadBytes)
     if (signedDoc.getPageCount() !== 2) throw new Error('Sign output is invalid')
     results.push('sign')
+
+    const edit = await postForm('/api/pdf/edit', async formData => {
+      formData.append('file', toFile(pdfABytes, 'a.pdf', 'application/pdf'))
+      formData.append('editImage', toFile(imageBytes, 'edit-image.png', 'image/png'))
+      formData.append('pages', '1')
+      formData.append('text', 'Edited by smoke test')
+      formData.append('x', '72')
+      formData.append('y', '500')
+      formData.append('fontSize', '18')
+      formData.append('imageX', '72')
+      formData.append('imageY', '340')
+      formData.append('imageWidth', '100')
+    })
+    const editedDoc = await loadPdf(edit.downloadBytes)
+    if (editedDoc.getPageCount() !== 2) throw new Error('Edit PDF output is invalid')
+    results.push('edit')
 
     const metadata = await postForm('/api/pdf/metadata', async formData => {
       formData.append('file', toFile(pdfABytes, 'a.pdf', 'application/pdf'))

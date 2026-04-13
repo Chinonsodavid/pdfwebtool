@@ -1,7 +1,7 @@
 import ToolPage from '../components/ToolPage'
 
 const fields = [
-  { name: 'userPassword', label: 'Open password', type: 'password' },
+  { name: 'userPassword', label: 'Open password', type: 'password', required: true },
   {
     name: 'ownerPassword',
     label: 'Owner password',

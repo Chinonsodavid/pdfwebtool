@@ -10,9 +10,11 @@ Self-hosted PDF tools built with React, Vite, Tailwind CSS, and Express.
 - Compress PDFs
 - Convert images to PDF
 - Convert PDFs to PNG or JPG
+- Convert PDFs with extractable text to DOCX
 - Rotate pages
 - Reorder or delete pages
 - Add text watermarks
+- Edit PDFs with a visual page preview, detected text replacement, text/image overlays, shapes, and whiteout blocks
 - Protect PDFs with passwords
 - Unlock protected PDFs
 - Extract PDF text into TXT
@@ -119,9 +121,11 @@ Optional backend environment variables:
 | POST | `/api/pdf/compress` | Compress a PDF |
 | POST | `/api/pdf/image-to-pdf` | Convert images to PDF |
 | POST | `/api/pdf/pdf-to-image` | Convert PDF pages to images in a ZIP |
+| POST | `/api/pdf/pdf-to-word` | Convert extractable PDF text into a DOCX |
 | POST | `/api/pdf/rotate` | Rotate selected pages |
 | POST | `/api/pdf/reorder` | Reorder or delete pages |
 | POST | `/api/pdf/watermark` | Add a text watermark |
+| POST | `/api/pdf/edit` | Add visual edit layers, including detected text replacements, images, shapes, and whiteout blocks |
 | POST | `/api/pdf/protect` | Password-protect a PDF |
 | POST | `/api/pdf/unlock` | Remove a PDF password |
 | POST | `/api/pdf/extract-text` | Extract text to a TXT file |

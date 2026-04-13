@@ -53,7 +53,7 @@ export default function LandingPage() {
 
           <div className="grid sm:grid-cols-3 gap-3">
             {[
-              { label: '19 tools', sub: 'from merge to OCR' },
+              { label: `${tools.length} tools`, sub: 'from merge to OCR' },
               { label: 'Local processing', sub: 'documents stay on your machine' },
               { label: 'Preview-first UI', sub: 'see uploads before processing' },
             ].map(item => (

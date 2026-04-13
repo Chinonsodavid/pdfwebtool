@@ -12,6 +12,7 @@ function TextField({ field, value, onChange }) {
         className="input-field min-h-28 resize-y"
         value={value}
         placeholder={field.placeholder}
+        required={field.required}
         onChange={event => onChange(field.name, event.target.value)}
       />
     )
@@ -74,6 +75,7 @@ function TextField({ field, value, onChange }) {
       step={field.step}
       value={value}
       placeholder={field.placeholder}
+      required={field.required}
       onChange={event => onChange(field.name, event.target.value)}
     />
   )

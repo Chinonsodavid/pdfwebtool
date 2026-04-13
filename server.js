@@ -7,7 +7,12 @@ const pdfRoutes = require('./pdf');
 const app = express();
 const PORT = process.env.PORT || 3001;
 const HOST = process.env.HOST || '127.0.0.1';
-const DEFAULT_ORIGINS = ['http://127.0.0.1:5173', 'http://localhost:5173'];
+const DEFAULT_ORIGINS = [
+  'http://127.0.0.1:5173',
+  'http://localhost:5173',
+  'http://127.0.0.1:4173',
+  'http://localhost:4173',
+];
 const allowedOrigins = (process.env.FRONTEND_ORIGIN || DEFAULT_ORIGINS.join(','))
   .split(',')
   .map(origin => origin.trim())
@@ -31,8 +36,22 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Serve processed files for download
-app.use('/downloads', express.static(path.join(__dirname, 'uploads')));
+// Serve processed files for preview and download
+app.use('/preview', express.static(path.join(__dirname, 'uploads'), {
+  setHeaders(res, filePath) {
+    const filename = path.basename(filePath).replaceAll('"', '');
+    res.setHeader('Content-Disposition', `inline; filename="${filename}"`);
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+  },
+}));
+
+app.use('/downloads', express.static(path.join(__dirname, 'uploads'), {
+  setHeaders(res, filePath) {
+    const filename = path.basename(filePath).replaceAll('"', '');
+    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+  },
+}));
 
 // PDF routes
 app.use('/api/pdf', pdfRoutes);

@@ -8,9 +8,11 @@ import SplitPDF from './pages/SplitPDF'
 import CompressPDF from './pages/CompressPDF'
 import ImageToPDF from './pages/ImageToPDF'
 import PDFToImage from './pages/PDFToImage'
+import PDFToWord from './pages/PDFToWord'
 import RotatePDF from './pages/RotatePDF'
 import ReorderPDF from './pages/ReorderPDF'
 import WatermarkPDF from './pages/WatermarkPDF'
+import EditPDF from './pages/EditPDF'
 import ProtectPDF from './pages/ProtectPDF'
 import UnlockPDF from './pages/UnlockPDF'
 import ExtractTextPDF from './pages/ExtractTextPDF'
@@ -35,9 +37,11 @@ export default function App() {
           <Route path="/compress" element={<CompressPDF />} />
           <Route path="/image-to-pdf" element={<ImageToPDF />} />
           <Route path="/pdf-to-image" element={<PDFToImage />} />
+          <Route path="/pdf-to-word" element={<PDFToWord />} />
           <Route path="/rotate" element={<RotatePDF />} />
           <Route path="/reorder" element={<ReorderPDF />} />
           <Route path="/watermark" element={<WatermarkPDF />} />
+          <Route path="/edit" element={<EditPDF />} />
           <Route path="/protect" element={<ProtectPDF />} />
           <Route path="/unlock" element={<UnlockPDF />} />
           <Route path="/extract-text" element={<ExtractTextPDF />} />
