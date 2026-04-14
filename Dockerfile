@@ -11,6 +11,9 @@ RUN apt-get update \
     fonts-dejavu-core \
     fonts-liberation \
     ghostscript \
+    libreoffice \
+    libreoffice-calc \
+    libreoffice-impress \
     poppler-utils \
     qpdf \
     tesseract-ocr \

@@ -12,11 +12,41 @@ const DEFAULT_ORIGINS = [
   'http://localhost:5173',
   'http://127.0.0.1:4173',
   'http://localhost:4173',
+  'https://pdforge-xi.vercel.app',
 ];
-const allowedOrigins = (process.env.FRONTEND_ORIGIN || DEFAULT_ORIGINS.join(','))
+
+function normalizeOrigin(origin) {
+  if (!origin) return '';
+
+  try {
+    return new URL(origin).origin;
+  } catch {
+    return origin.replace(/\/+$/, '');
+  }
+}
+
+const configuredOrigins = (process.env.FRONTEND_ORIGIN || '')
   .split(',')
   .map(origin => origin.trim())
   .filter(Boolean);
+
+const allowedOrigins = new Set([...DEFAULT_ORIGINS, ...configuredOrigins].map(normalizeOrigin));
+const allowedVercelPrefixes = (process.env.VERCEL_ORIGIN_PREFIXES || 'pdforge-')
+  .split(',')
+  .map(prefix => prefix.trim())
+  .filter(Boolean);
+
+function isAllowedOrigin(origin) {
+  const normalized = normalizeOrigin(origin);
+  if (allowedOrigins.has(normalized)) return true;
+
+  try {
+    const { hostname, protocol } = new URL(normalized);
+    return protocol === 'https:' && hostname.endsWith('.vercel.app') && allowedVercelPrefixes.some(prefix => hostname.startsWith(prefix));
+  } catch {
+    return false;
+  }
+}
 
 // Ensure uploads directory exists
 const uploadsDir = path.join(__dirname, 'uploads');
@@ -25,7 +55,7 @@ if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir, { recursive: true });
 // Middleware
 app.use(cors({
   origin(origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
+    if (!origin || isAllowedOrigin(origin)) {
       return callback(null, true);
     }
 
@@ -59,8 +89,7 @@ app.use('/api/pdf', pdfRoutes);
 // Health check
 app.get('/health', (req, res) => res.json({ status: 'ok', time: new Date().toISOString() }));
 
-// Cleanup old files every 10 minutes (files older than 30 minutes)
-setInterval(() => {
+function cleanupOldUploads() {
   const now = Date.now();
   fs.readdirSync(uploadsDir).forEach(file => {
     const filePath = path.join(uploadsDir, file);
@@ -69,9 +98,11 @@ setInterval(() => {
       try { fs.unlinkSync(filePath); } catch (e) { /* ignore */ }
     }
   });
-}, 10 * 60 * 1000);
+}
 
 if (require.main === module) {
+  // Cleanup old files every 10 minutes (files older than 30 minutes)
+  setInterval(cleanupOldUploads, 10 * 60 * 1000);
   app.listen(PORT, HOST, () => {
     console.log(`PDF Tools API running on http://${HOST}:${PORT}`);
   });

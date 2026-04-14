@@ -6,6 +6,7 @@ import { execFile, spawn } from 'node:child_process'
 import { promisify } from 'node:util'
 import sharp from 'sharp'
 import { PDFDocument, degrees } from 'pdf-lib'
+import pptxgen from 'pptxgenjs'
 
 const execFileAsync = promisify(execFile)
 const workspace = process.cwd()
@@ -155,6 +156,15 @@ function decodeText(bytes) {
   return new TextDecoder().decode(bytes)
 }
 
+async function commandExists(command) {
+  try {
+    await execFileAsync('/bin/sh', ['-lc', `command -v ${command}`])
+    return true
+  } catch {
+    return false
+  }
+}
+
 async function readZipEntry(zipBytes, entryName) {
   const zipPath = path.join(tempDir, `zip-${Date.now()}-${Math.random().toString(16).slice(2)}.zip`)
   fs.writeFileSync(zipPath, zipBytes)
@@ -192,6 +202,15 @@ async function expectImageHasInk(imageBytes, label) {
   }
 }
 
+async function createPresentation(filePath) {
+  const pptx = new pptxgen()
+  pptx.layout = 'LAYOUT_WIDE'
+  const slide = pptx.addSlide()
+  slide.background = { color: 'FFFFFF' }
+  slide.addText('Smoke deck', { x: 1, y: 1, w: 8, h: 1, fontSize: 32, color: '111111' })
+  await pptx.writeFile({ fileName: filePath })
+}
+
 async function main() {
   try {
     await waitForServer()
@@ -199,13 +218,19 @@ async function main() {
     const pdfAPath = path.join(tempDir, 'a.pdf')
     const pdfBPath = path.join(tempDir, 'b.pdf')
     const imagePath = path.join(tempDir, 'sample.png')
+    const csvPath = path.join(tempDir, 'sample.csv')
+    const pptxPath = path.join(tempDir, 'sample.pptx')
     await createPdf(pdfAPath, 'Alpha', 2)
     await createPdf(pdfBPath, 'Beta', 1)
     await createImage(imagePath)
+    fs.writeFileSync(csvPath, 'Name,Value\nAlpha,1\nBeta,2\n')
+    await createPresentation(pptxPath)
 
     const pdfABytes = fs.readFileSync(pdfAPath)
     const pdfBBytes = fs.readFileSync(pdfBPath)
     const imageBytes = fs.readFileSync(imagePath)
+    const csvBytes = fs.readFileSync(csvPath)
+    const pptxBytes = fs.readFileSync(pptxPath)
 
     const results = []
 
@@ -260,6 +285,48 @@ async function main() {
     const wordXml = decodeText(await readZipEntry(pdfToWord.downloadBytes, 'word/document.xml'))
     if (!wordXml.includes('Alpha page 1')) throw new Error('PDF to Word did not include expected text')
     results.push('pdf-to-word')
+
+    const pdfToExcel = await postForm('/api/pdf/pdf-to-excel', async formData => {
+      formData.append('file', toFile(pdfABytes, 'a.pdf', 'application/pdf'))
+      formData.append('pages', '1')
+    })
+    if (pdfToExcel.filename?.endsWith('.xlsx') !== true) throw new Error('PDF to Excel did not return an XLSX filename')
+    if (pdfToExcel.downloadBytes[0] !== 0x50 || pdfToExcel.downloadBytes[1] !== 0x4b) {
+      throw new Error('PDF to Excel output is not an XLSX zip container')
+    }
+    const sheetXml = decodeText(await readZipEntry(pdfToExcel.downloadBytes, 'xl/worksheets/sheet1.xml'))
+    if (!sheetXml.includes('Alpha page 1')) throw new Error('PDF to Excel did not include expected text')
+    results.push('pdf-to-excel')
+
+    const pdfToPowerPoint = await postForm('/api/pdf/pdf-to-powerpoint', async formData => {
+      formData.append('file', toFile(pdfABytes, 'a.pdf', 'application/pdf'))
+      formData.append('pages', '1')
+    })
+    if (pdfToPowerPoint.filename?.endsWith('.pptx') !== true) throw new Error('PDF to PowerPoint did not return a PPTX filename')
+    if (pdfToPowerPoint.downloadBytes[0] !== 0x50 || pdfToPowerPoint.downloadBytes[1] !== 0x4b) {
+      throw new Error('PDF to PowerPoint output is not a PPTX zip container')
+    }
+    await readZipEntry(pdfToPowerPoint.downloadBytes, 'ppt/presentation.xml')
+    results.push('pdf-to-powerpoint')
+
+    const hasOfficeConverter = await commandExists('libreoffice') || await commandExists('soffice')
+    if (hasOfficeConverter) {
+      const excelToPdf = await postForm('/api/pdf/excel-to-pdf', async formData => {
+        formData.append('file', toFile(csvBytes, 'sample.csv', 'text/csv'))
+      })
+      const excelPdfDoc = await loadPdf(excelToPdf.downloadBytes)
+      if (excelPdfDoc.getPageCount() < 1) throw new Error('Excel to PDF did not create a page')
+      results.push('excel-to-pdf')
+
+      const powerPointToPdf = await postForm('/api/pdf/powerpoint-to-pdf', async formData => {
+        formData.append('file', toFile(pptxBytes, 'sample.pptx', 'application/vnd.openxmlformats-officedocument.presentationml.presentation'))
+      })
+      const powerPointPdfDoc = await loadPdf(powerPointToPdf.downloadBytes)
+      if (powerPointPdfDoc.getPageCount() < 1) throw new Error('PowerPoint to PDF did not create a page')
+      results.push('powerpoint-to-pdf')
+    } else {
+      results.push('office-to-pdf-skipped-no-libreoffice')
+    }
 
     const rotate = await postForm('/api/pdf/rotate', async formData => {
       formData.append('file', toFile(pdfABytes, 'a.pdf', 'application/pdf'))

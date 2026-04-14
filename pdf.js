@@ -21,6 +21,17 @@ const pdfjsStandardFontDir = path.join(__dirname, 'node_modules', 'pdfjs-dist', 
 const MAX_FILE_SIZE = 100 * 1024 * 1024;
 const PDF_MIME_TYPES = ['application/pdf'];
 const IMAGE_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+const EXCEL_MIME_TYPES = [
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  'application/vnd.ms-excel',
+  'text/csv',
+];
+const POWERPOINT_MIME_TYPES = [
+  'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+  'application/vnd.ms-powerpoint',
+];
+const EXCEL_EXTENSIONS = ['.xlsx', '.xls', '.csv'];
+const POWERPOINT_EXTENSIONS = ['.pptx', '.ppt'];
 
 if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
@@ -31,15 +42,17 @@ const storage = multer.diskStorage({
   filename: (req, file, cb) => cb(null, `${uuidv4()}-${file.originalname}`),
 });
 
-function createUploader(allowedMimeTypes) {
+function createUploader(allowedMimeTypes, allowedExtensions = []) {
   return multer({
     storage,
     limits: { fileSize: MAX_FILE_SIZE },
     fileFilter: (req, file, cb) => {
-      if (allowedMimeTypes.includes(file.mimetype)) {
+      const extension = path.extname(file.originalname || '').toLowerCase();
+      if (allowedMimeTypes.includes(file.mimetype) || allowedExtensions.includes(extension)) {
         cb(null, true);
       } else {
-        cb(new Error(`Only ${allowedMimeTypes.join(', ')} files are allowed`));
+        const allowed = [...allowedMimeTypes, ...allowedExtensions].join(', ');
+        cb(new Error(`Only ${allowed} files are allowed`));
       }
     },
   });
@@ -48,6 +61,8 @@ function createUploader(allowedMimeTypes) {
 const pdfUpload = createUploader(PDF_MIME_TYPES);
 const imageUpload = createUploader(IMAGE_MIME_TYPES);
 const mixedUpload = createUploader([...PDF_MIME_TYPES, ...IMAGE_MIME_TYPES]);
+const excelUpload = createUploader(EXCEL_MIME_TYPES, EXCEL_EXTENSIONS);
+const powerPointUpload = createUploader(POWERPOINT_MIME_TYPES, POWERPOINT_EXTENSIONS);
 
 function cleanup(...filePaths) {
   filePaths.flat().forEach(filePath => {
@@ -194,6 +209,65 @@ function escapeXml(value) {
     .replaceAll("'", '&apos;');
 }
 
+function columnReference(index) {
+  let value = '';
+  let cursor = index + 1;
+
+  while (cursor > 0) {
+    const remainder = (cursor - 1) % 26;
+    value = String.fromCharCode(65 + remainder) + value;
+    cursor = Math.floor((cursor - 1) / 26);
+  }
+
+  return value;
+}
+
+function rowsFromExtractedText(text) {
+  const rows = [];
+
+  String(text || '').split(/\r?\n/).forEach(line => {
+    const trimmed = line.trim();
+    if (!trimmed) return;
+
+    if (/^Page \d+$/i.test(trimmed)) {
+      if (rows.length) rows.push([]);
+      rows.push([trimmed]);
+      return;
+    }
+
+    const cells = trimmed
+      .split(/\t+| {2,}/)
+      .map(cell => cell.trim())
+      .filter(Boolean);
+    rows.push(cells.length ? cells : [trimmed]);
+  });
+
+  return rows.length ? rows : [['No extractable table text found in this PDF.']];
+}
+
+function buildWorksheetXml(rows) {
+  const maxColumns = Math.max(1, ...rows.map(row => row.length));
+  const dimension = `A1:${columnReference(maxColumns - 1)}${Math.max(rows.length, 1)}`;
+  const sheetData = rows.map((row, rowIndex) => {
+    const rowNumber = rowIndex + 1;
+    const cells = row.map((cell, columnIndex) => {
+      const cellRef = `${columnReference(columnIndex)}${rowNumber}`;
+      return `<c r="${cellRef}" t="inlineStr"><is><t xml:space="preserve">${escapeXml(cell)}</t></is></c>`;
+    }).join('');
+    return `<row r="${rowNumber}">${cells}</row>`;
+  }).join('');
+
+  return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
+  <dimension ref="${dimension}"/>
+  <sheetViews>
+    <sheetView workbookViewId="0"/>
+  </sheetViews>
+  <sheetFormatPr defaultRowHeight="15"/>
+  <sheetData>${sheetData}</sheetData>
+</worksheet>`;
+}
+
 function buildWordDocumentXml(text) {
   const paragraphs = String(text || '')
     .split(/\r?\n/)
@@ -307,6 +381,148 @@ async function writeDocx(prefix, text) {
   });
 
   return { filename, outputPath, url: `/downloads/${filename}` };
+}
+
+async function writeXlsx(prefix, rows) {
+  const filename = `${prefix}-${uuidv4()}.xlsx`;
+  const outputPath = path.join(uploadsDir, filename);
+  const output = fs.createWriteStream(outputPath);
+  const archive = archiver('zip', { zlib: { level: 6 } });
+  archive.pipe(output);
+
+  archive.append(`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
+  <Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>
+  <Default Extension="xml" ContentType="application/xml"/>
+  <Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/>
+  <Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>
+  <Override PartName="/docProps/core.xml" ContentType="application/vnd.openxmlformats-package.core-properties+xml"/>
+  <Override PartName="/docProps/app.xml" ContentType="application/vnd.openxmlformats-officedocument.extended-properties+xml"/>
+</Types>`, { name: '[Content_Types].xml' });
+  archive.append(`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+  <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/>
+  <Relationship Id="rId2" Type="http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties" Target="docProps/core.xml"/>
+  <Relationship Id="rId3" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/extended-properties" Target="docProps/app.xml"/>
+</Relationships>`, { name: '_rels/.rels' });
+  archive.append(`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
+  <sheets>
+    <sheet name="PDF Text" sheetId="1" r:id="rId1"/>
+  </sheets>
+</workbook>`, { name: 'xl/workbook.xml' });
+  archive.append(`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+  <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/>
+</Relationships>`, { name: 'xl/_rels/workbook.xml.rels' });
+  archive.append(buildWorksheetXml(rows), { name: 'xl/worksheets/sheet1.xml' });
+  archive.append(`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<cp:coreProperties xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <dc:title>Converted PDF table text</dc:title>
+  <dc:creator>PDFForge</dc:creator>
+  <cp:lastModifiedBy>PDFForge</cp:lastModifiedBy>
+  <dcterms:created xsi:type="dcterms:W3CDTF">${new Date().toISOString()}</dcterms:created>
+  <dcterms:modified xsi:type="dcterms:W3CDTF">${new Date().toISOString()}</dcterms:modified>
+</cp:coreProperties>`, { name: 'docProps/core.xml' });
+  archive.append(`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Properties xmlns="http://schemas.openxmlformats.org/officeDocument/2006/extended-properties" xmlns:vt="http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes">
+  <Application>PDFForge</Application>
+</Properties>`, { name: 'docProps/app.xml' });
+
+  await new Promise((resolve, reject) => {
+    output.on('close', resolve);
+    archive.on('error', reject);
+    archive.finalize();
+  });
+
+  return { filename, outputPath, url: `/downloads/${filename}` };
+}
+
+async function writePptxFromRenderedPages(prefix, renderedPages) {
+  const PptxGenJS = require('pptxgenjs');
+  const pptx = new PptxGenJS();
+  const slideWidth = 13.333;
+  const slideHeight = 7.5;
+  const imageDir = fs.mkdtempSync(path.join(uploadsDir, 'pptx-pages-'));
+  const filename = `${prefix}-${uuidv4()}.pptx`;
+  const outputPath = path.join(uploadsDir, filename);
+
+  pptx.author = 'PDFForge';
+  pptx.company = 'PDFForge';
+  pptx.subject = 'Converted PDF pages';
+  pptx.title = 'Converted PDF pages';
+  pptx.defineLayout({ name: 'PDF_FORGE_WIDE', width: slideWidth, height: slideHeight });
+  pptx.layout = 'PDF_FORGE_WIDE';
+
+  try {
+    for (const page of renderedPages) {
+      const imagePath = path.join(imageDir, `page-${page.pageNumber}.png`);
+      fs.writeFileSync(imagePath, page.buffer);
+
+      const imageRatio = page.width && page.height ? page.width / page.height : slideWidth / slideHeight;
+      let width = slideWidth;
+      let height = width / imageRatio;
+      if (height > slideHeight) {
+        height = slideHeight;
+        width = height * imageRatio;
+      }
+
+      const slide = pptx.addSlide();
+      slide.background = { color: 'FFFFFF' };
+      slide.addImage({
+        path: imagePath,
+        x: (slideWidth - width) / 2,
+        y: (slideHeight - height) / 2,
+        w: width,
+        h: height,
+      });
+    }
+
+    await pptx.writeFile({ fileName: outputPath });
+    return { filename, outputPath, url: `/downloads/${filename}` };
+  } finally {
+    cleanup(imageDir);
+  }
+}
+
+async function findOfficeCommand() {
+  for (const command of ['libreoffice', 'soffice']) {
+    if (await commandExists(command)) {
+      return command;
+    }
+  }
+
+  return null;
+}
+
+async function convertOfficeToPdf(inputPath, prefix) {
+  const officeCommand = await findOfficeCommand();
+  if (!officeCommand) {
+    throw new Error('Office to PDF conversion requires LibreOffice to be installed on the server.');
+  }
+
+  const outputDir = fs.mkdtempSync(path.join(uploadsDir, 'office-pdf-'));
+  try {
+    await execFileAsync(officeCommand, [
+      '--headless',
+      '--nologo',
+      '--nofirststartwizard',
+      '--convert-to',
+      'pdf',
+      '--outdir',
+      outputDir,
+      inputPath,
+    ], { timeout: 180000, maxBuffer: 50 * 1024 * 1024 });
+
+    const pdfFile = fs.readdirSync(outputDir).find(file => file.toLowerCase().endsWith('.pdf'));
+    if (!pdfFile) {
+      throw new Error('LibreOffice did not produce a PDF output.');
+    }
+
+    return saveOutput(prefix, 'pdf', fs.readFileSync(path.join(outputDir, pdfFile)));
+  } finally {
+    cleanup(outputDir);
+  }
 }
 
 async function loadPdfFromPath(filePath, options) {
@@ -1279,6 +1495,67 @@ router.post('/pdf-to-word', pdfUpload.single('file'), async (req, res) => {
   } catch (error) {
     cleanup(req.file?.path);
     res.status(500).json({ error: `PDF to Word conversion failed. ${error.message}` });
+  }
+});
+
+router.post('/pdf-to-excel', pdfUpload.single('file'), async (req, res) => {
+  if (!req.file) return res.status(400).json({ error: 'No file uploaded.' });
+
+  try {
+    const bytes = fs.readFileSync(req.file.path);
+    const { doc } = await loadPdfFromPath(req.file.path, { ignoreEncryption: true });
+    const pageNumbers = parsePageSelection(req.body.pages || 'all', doc.getPageCount()).map(index => index + 1);
+    const extractedText = await extractTextFromPdf(bytes, pageNumbers, req.file.path);
+    const rows = rowsFromExtractedText(extractedText);
+    const output = await writeXlsx('pdf-to-excel', rows);
+    cleanup(req.file.path);
+    res.json({ success: true, filename: output.filename, url: output.url, pages: pageNumbers.length, rows: rows.length });
+  } catch (error) {
+    cleanup(req.file?.path);
+    res.status(500).json({ error: `PDF to Excel conversion failed. ${error.message}` });
+  }
+});
+
+router.post('/pdf-to-powerpoint', pdfUpload.single('file'), async (req, res) => {
+  if (!req.file) return res.status(400).json({ error: 'No file uploaded.' });
+
+  try {
+    const bytes = fs.readFileSync(req.file.path);
+    const { doc } = await loadPdfFromPath(req.file.path, { ignoreEncryption: true });
+    const pageNumbers = parsePageSelection(req.body.pages || 'all', doc.getPageCount()).map(index => index + 1);
+    const renderedPages = await renderPdfPages(bytes, pageNumbers, 'png', req.file.path);
+    const output = await writePptxFromRenderedPages('pdf-to-powerpoint', renderedPages);
+    cleanup(req.file.path);
+    res.json({ success: true, filename: output.filename, url: output.url, pages: pageNumbers.length });
+  } catch (error) {
+    cleanup(req.file?.path);
+    res.status(500).json({ error: `PDF to PowerPoint conversion failed. ${error.message}` });
+  }
+});
+
+router.post('/excel-to-pdf', excelUpload.single('file'), async (req, res) => {
+  if (!req.file) return res.status(400).json({ error: 'No file uploaded.' });
+
+  try {
+    const output = await convertOfficeToPdf(req.file.path, 'excel-to-pdf');
+    cleanup(req.file.path);
+    res.json({ success: true, filename: output.filename, url: output.url });
+  } catch (error) {
+    cleanup(req.file?.path);
+    res.status(500).json({ error: `Excel to PDF conversion failed. ${error.message}` });
+  }
+});
+
+router.post('/powerpoint-to-pdf', powerPointUpload.single('file'), async (req, res) => {
+  if (!req.file) return res.status(400).json({ error: 'No file uploaded.' });
+
+  try {
+    const output = await convertOfficeToPdf(req.file.path, 'powerpoint-to-pdf');
+    cleanup(req.file.path);
+    res.json({ success: true, filename: output.filename, url: output.url });
+  } catch (error) {
+    cleanup(req.file?.path);
+    res.status(500).json({ error: `PowerPoint to PDF conversion failed. ${error.message}` });
   }
 });
 

@@ -11,6 +11,10 @@ Self-hosted PDF tools built with React, Vite, Tailwind CSS, and Express.
 - Convert images to PDF
 - Convert PDFs to PNG or JPG
 - Convert PDFs with extractable text to DOCX
+- Convert table-like PDF text to XLSX
+- Convert XLSX, XLS, or CSV spreadsheets to PDF
+- Convert PPTX or PPT presentations to PDF
+- Convert PDF pages into PowerPoint slides
 - Rotate pages
 - Reorder or delete pages
 - Add text watermarks
@@ -54,6 +58,7 @@ Self-hosted PDF tools built with React, Vite, Tailwind CSS, and Express.
 
 - Node.js 18+
 - npm 9+
+- LibreOffice for Excel/PowerPoint to PDF conversions
 
 Tested locally here with Node `v22.17.1` and npm `10.9.2`.
 
@@ -110,6 +115,7 @@ Optional backend environment variables:
 - `PORT` - API port, default `3001`
 - `HOST` - bind host, default `127.0.0.1`
 - `FRONTEND_ORIGIN` - comma-separated allowed origins for CORS
+- `VERCEL_ORIGIN_PREFIXES` - optional comma-separated Vercel preview hostname prefixes, default `pdforge-`
 
 ## API Endpoints
 
@@ -121,6 +127,10 @@ Optional backend environment variables:
 | POST | `/api/pdf/image-to-pdf` | Convert images to PDF |
 | POST | `/api/pdf/pdf-to-image` | Convert PDF pages to images in a ZIP |
 | POST | `/api/pdf/pdf-to-word` | Convert extractable PDF text into a DOCX |
+| POST | `/api/pdf/pdf-to-excel` | Convert table-like PDF text into an XLSX |
+| POST | `/api/pdf/excel-to-pdf` | Convert XLSX, XLS, or CSV spreadsheets to PDF |
+| POST | `/api/pdf/powerpoint-to-pdf` | Convert PPTX or PPT presentations to PDF |
+| POST | `/api/pdf/pdf-to-powerpoint` | Convert PDF pages into PowerPoint slides |
 | POST | `/api/pdf/rotate` | Rotate selected pages |
 | POST | `/api/pdf/reorder` | Reorder or delete pages |
 | POST | `/api/pdf/watermark` | Add a text watermark |
@@ -147,3 +157,4 @@ Optional backend environment variables:
 - PDF-only routes reject non-PDF uploads with a `400` response.
 - PDF rendering and text extraction prefer Poppler when available, then fall back to PDF.js.
 - Compression prefers Ghostscript, unlock/protect uses QPDF, and OCR prefers native Tesseract with a `tesseract.js` fallback.
+- Excel/PowerPoint to PDF conversion uses LibreOffice in headless mode.

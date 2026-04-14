@@ -4,6 +4,8 @@ import {
   Minimize2,
   ImagePlus,
   GalleryThumbnails,
+  FileSpreadsheet,
+  Presentation,
   RotateCw,
   LayoutGrid,
   Stamp,
@@ -85,6 +87,26 @@ export const tools = [
     id: 'pdf-to-word', path: '/pdf-to-word', icon: FileType2, label: 'PDF to Word',
     desc: 'Convert extractable PDF text into DOCX',
     color: '#2563eb', bg: '#eff6ff', category: 'convert',
+  },
+  {
+    id: 'pdf-to-excel', path: '/pdf-to-excel', icon: FileSpreadsheet, label: 'PDF to Excel',
+    desc: 'Convert table-like PDF text into XLSX',
+    color: '#16a34a', bg: '#f0fdf4', category: 'convert',
+  },
+  {
+    id: 'excel-to-pdf', path: '/excel-to-pdf', icon: FileSpreadsheet, label: 'Excel to PDF',
+    desc: 'Convert spreadsheets into PDF',
+    color: '#15803d', bg: '#f0fdf4', category: 'convert',
+  },
+  {
+    id: 'powerpoint-to-pdf', path: '/powerpoint-to-pdf', icon: Presentation, label: 'PowerPoint to PDF',
+    desc: 'Convert presentations into PDF',
+    color: '#dc2626', bg: '#fef2f2', category: 'convert',
+  },
+  {
+    id: 'pdf-to-powerpoint', path: '/pdf-to-powerpoint', icon: Presentation, label: 'PDF to PowerPoint',
+    desc: 'Turn PDF pages into slides',
+    color: '#b91c1c', bg: '#fef2f2', category: 'convert',
   },
   {
     id: 'extract-text', path: '/extract-text', icon: FileText, label: 'PDF to Text',

@@ -9,6 +9,10 @@ import CompressPDF from './pages/CompressPDF'
 import ImageToPDF from './pages/ImageToPDF'
 import PDFToImage from './pages/PDFToImage'
 import PDFToWord from './pages/PDFToWord'
+import PDFToExcel from './pages/PDFToExcel'
+import ExcelToPDF from './pages/ExcelToPDF'
+import PowerPointToPDF from './pages/PowerPointToPDF'
+import PDFToPowerPoint from './pages/PDFToPowerPoint'
 import RotatePDF from './pages/RotatePDF'
 import ReorderPDF from './pages/ReorderPDF'
 import WatermarkPDF from './pages/WatermarkPDF'
@@ -38,6 +42,10 @@ export default function App() {
           <Route path="/image-to-pdf" element={<ImageToPDF />} />
           <Route path="/pdf-to-image" element={<PDFToImage />} />
           <Route path="/pdf-to-word" element={<PDFToWord />} />
+          <Route path="/pdf-to-excel" element={<PDFToExcel />} />
+          <Route path="/excel-to-pdf" element={<ExcelToPDF />} />
+          <Route path="/powerpoint-to-pdf" element={<PowerPointToPDF />} />
+          <Route path="/pdf-to-powerpoint" element={<PDFToPowerPoint />} />
           <Route path="/rotate" element={<RotatePDF />} />
           <Route path="/reorder" element={<ReorderPDF />} />
           <Route path="/watermark" element={<WatermarkPDF />} />
