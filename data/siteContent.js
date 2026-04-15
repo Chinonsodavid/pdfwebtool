@@ -1,8 +1,8 @@
 export const siteInfo = {
-  name: 'PDFForge',
+  name: 'Constant PDF',
   url: 'https://pdforge-xi.vercel.app',
   backendUrl: 'https://pdfwebtool-ls3x.onrender.com',
-  contactEmail: 'support@pdforge.com',
+  contactEmail: 'support@constantpdf.com',
   fileRetention: '30 minutes',
   country: 'Nigeria',
 }

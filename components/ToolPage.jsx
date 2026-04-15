@@ -161,19 +161,19 @@ export default function ToolPage({
   }
 
   return (
-    <div className="grid lg:grid-cols-[1.2fr_0.8fr] gap-6 items-start animate-fade-in">
+    <div className="grid lg:grid-cols-[1.2fr_0.8fr] gap-5 sm:gap-6 items-start animate-fade-in">
       <section className="space-y-6">
         <div className="space-y-2">
           <p className="text-xs uppercase tracking-[0.25em]" style={{ color: 'var(--accent)' }}>
             PDF tool
           </p>
           <h1 className="page-title">{title}</h1>
-          <p className="text-base max-w-2xl" style={{ color: 'var(--text-muted)' }}>
+          <p className="text-sm sm:text-base max-w-2xl" style={{ color: 'var(--text-muted)' }}>
             {description}
           </p>
         </div>
 
-        <form className="card p-6 space-y-6" onSubmit={handleSubmit}>
+        <form className="card p-4 sm:p-6 space-y-5 sm:space-y-6" onSubmit={handleSubmit}>
           <FileDropzone
             files={files}
             onChange={nextFiles => setFiles(Array.from(nextFiles || []))}
@@ -183,7 +183,7 @@ export default function ToolPage({
           />
 
           {fields.length ? (
-            <div className="grid sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {fields.map(field => (
                 <label key={field.name} className={field.fullWidth ? 'sm:col-span-2 space-y-2' : 'space-y-2'}>
                   <span className="text-sm font-medium" style={{ color: 'var(--text)' }}>
@@ -201,7 +201,7 @@ export default function ToolPage({
           ) : null}
 
           <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-            <button className="btn-primary" type="submit" disabled={isSubmitting}>
+            <button className="btn-primary justify-center sm:justify-start" type="submit" disabled={isSubmitting}>
               {isSubmitting ? 'Processing…' : title}
             </button>
             {isSubmitting ? <ProcessingSpinner /> : null}
@@ -217,7 +217,7 @@ export default function ToolPage({
       </section>
 
       <aside className="space-y-5 lg:sticky lg:top-24">
-        <div className="card p-5 space-y-3">
+        <div className="card p-4 sm:p-5 space-y-3">
           <h2 className="section-title">How it works</h2>
           <p className="text-sm" style={{ color: 'var(--text-muted)' }}>
             Files are uploaded to the processing backend, handled for the selected task, and cleaned up automatically after 30 minutes.
@@ -229,14 +229,14 @@ export default function ToolPage({
 
       {help ? (
         <section className="lg:col-span-2 grid lg:grid-cols-3 gap-5">
-          <div className="card p-6 space-y-3">
+          <div className="card p-4 sm:p-6 space-y-3">
             <h2 className="section-title text-2xl">About this tool</h2>
             <p className="text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>
               {help.intro}
             </p>
           </div>
 
-          <div className="card p-6 space-y-3">
+          <div className="card p-4 sm:p-6 space-y-3">
             <h2 className="section-title text-2xl">Steps</h2>
             <ol className="space-y-2 list-decimal pl-5">
               {help.steps.map(step => (
@@ -247,7 +247,7 @@ export default function ToolPage({
             </ol>
           </div>
 
-          <div className="card p-6 space-y-3">
+          <div className="card p-4 sm:p-6 space-y-3">
             <h2 className="section-title text-2xl">Tips</h2>
             <ul className="space-y-2 list-disc pl-5">
               {help.tips.map(tip => (
@@ -258,7 +258,7 @@ export default function ToolPage({
             </ul>
           </div>
 
-          <div className="card p-6 space-y-4 lg:col-span-3">
+          <div className="card p-4 sm:p-6 space-y-4 lg:col-span-3">
             <h2 className="section-title text-2xl">Common questions</h2>
             <div className="grid md:grid-cols-2 gap-4">
               {help.faq.map(([question, answer]) => (

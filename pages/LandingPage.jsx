@@ -28,8 +28,8 @@ const faqs = [
 
 export default function LandingPage() {
   return (
-    <div className="space-y-16 sm:space-y-20 animate-fade-in">
-      <section className="grid lg:grid-cols-[1.1fr_0.9fr] gap-8 items-center pt-4">
+    <div className="space-y-12 sm:space-y-20 animate-fade-in">
+      <section className="grid lg:grid-cols-[1.1fr_0.9fr] gap-6 sm:gap-8 items-center pt-2 sm:pt-4">
         <div className="space-y-6">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold font-display"
             style={{ background: 'var(--accent-light)', color: 'var(--accent)' }}>
@@ -38,13 +38,13 @@ export default function LandingPage() {
           </div>
 
           <div className="space-y-4">
-            <h1 className="font-display font-extrabold tracking-tight text-5xl sm:text-6xl lg:text-7xl leading-[0.95]" style={{ color: 'var(--text)' }}>
+            <h1 className="font-display font-extrabold tracking-tight text-4xl sm:text-6xl lg:text-7xl leading-tight sm:leading-[0.95]" style={{ color: 'var(--text)' }}>
               Serious PDF tools
               <span className="block" style={{ color: 'var(--accent)' }}>
                 for everyday file work.
               </span>
             </h1>
-            <p className="text-lg max-w-2xl leading-relaxed" style={{ color: 'var(--text-muted)' }}>
+            <p className="text-base sm:text-lg max-w-2xl leading-relaxed" style={{ color: 'var(--text-muted)' }}>
               Merge, split, compress, convert, OCR, sign, secure, label, crop, and organize documents from one focused workspace.
             </p>
           </div>
@@ -54,12 +54,12 @@ export default function LandingPage() {
               Explore all tools
               <ArrowRight size={16} />
             </Link>
-            <a href="#categories" className="btn-secondary">
+            <a href="#categories" className="btn-secondary justify-center sm:justify-start">
               See categories
             </a>
           </div>
 
-          <div className="grid sm:grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               {[
               { label: `${tools.length} tools`, sub: 'PDF, image, Office, and OCR workflows' },
               { label: 'Temporary files', sub: 'cleanup scheduled after processing' },
@@ -116,14 +116,14 @@ export default function LandingPage() {
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-3">
           <div>
             <p className="text-sm font-display font-semibold" style={{ color: 'var(--accent)' }}>Featured tools</p>
-            <h2 className="font-display font-bold text-3xl" style={{ color: 'var(--text)' }}>
+            <h2 className="font-display font-bold text-2xl sm:text-3xl" style={{ color: 'var(--text)' }}>
               The core document jobs people reach for first
             </h2>
           </div>
           <Link to="/tools" className="btn-secondary">Open full directory</Link>
         </div>
 
-        <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
           {featuredTools.map(tool => (
             <Link key={tool.id} to={tool.path} className="card p-5 group transition-transform hover:-translate-y-1">
               <div className="w-12 h-12 rounded-2xl flex items-center justify-center" style={{ background: tool.bg, color: tool.color }}>
@@ -143,18 +143,18 @@ export default function LandingPage() {
       <section id="categories" className="space-y-6">
         <div>
           <p className="text-sm font-display font-semibold" style={{ color: 'var(--accent)' }}>Tool categories</p>
-          <h2 className="font-display font-bold text-3xl" style={{ color: 'var(--text)' }}>
+          <h2 className="font-display font-bold text-2xl sm:text-3xl" style={{ color: 'var(--text)' }}>
             Explore the toolkit by job, not by guesswork
           </h2>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-5">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
           {categoryHighlights.map(category => (
             <div key={category.id} className="card p-6">
               <div className="flex items-start justify-between gap-4">
                 <div>
                   <p className="text-sm font-display font-semibold" style={{ color: 'var(--accent)' }}>{category.label}</p>
-                  <h3 className="font-display font-bold text-2xl mt-1" style={{ color: 'var(--text)' }}>{category.description}</h3>
+                  <h3 className="font-display font-bold text-xl sm:text-2xl mt-1" style={{ color: 'var(--text)' }}>{category.description}</h3>
                 </div>
                 <div className="px-3 py-1 rounded-full text-xs font-display font-semibold" style={{ background: 'var(--accent-light)', color: 'var(--accent)' }}>
                   {category.tools.length} tools
@@ -185,11 +185,11 @@ export default function LandingPage() {
               <ShieldCheck size={16} />
               Private by design
             </div>
-            <h2 className="font-display font-bold text-3xl" style={{ color: 'var(--text)' }}>
+            <h2 className="font-display font-bold text-2xl sm:text-3xl" style={{ color: 'var(--text)' }}>
               Built for responsible document workflows
             </h2>
             <p className="text-base leading-relaxed max-w-3xl" style={{ color: 'var(--text-muted)' }}>
-              PDFForge keeps the process clear: upload a file, run the selected tool, download the result, and review it before using it for important work.
+              Constant PDF keeps the process clear: upload a file, run the selected tool, download the result, and review it before using it for important work.
             </p>
           </div>
 
@@ -211,7 +211,7 @@ export default function LandingPage() {
               <BookOpen size={16} />
               Guides
             </div>
-            <h2 className="font-display font-bold text-3xl mt-2" style={{ color: 'var(--text)' }}>
+            <h2 className="font-display font-bold text-2xl sm:text-3xl mt-2" style={{ color: 'var(--text)' }}>
               Learn before you convert
             </h2>
             <p className="text-base mt-2 max-w-2xl" style={{ color: 'var(--text-muted)' }}>
@@ -221,7 +221,7 @@ export default function LandingPage() {
           <Link to="/guides" className="btn-secondary">Browse all guides</Link>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {guideSummaries.slice(0, 3).map(guide => (
             <Link key={guide.slug} to={`/guides/${guide.slug}`} className="card p-5 group transition-transform hover:-translate-y-1">
               <p className="text-xs font-display font-semibold" style={{ color: 'var(--accent)' }}>{guide.readTime}</p>
@@ -239,11 +239,11 @@ export default function LandingPage() {
       <section className="space-y-5">
         <div>
           <p className="text-sm font-display font-semibold" style={{ color: 'var(--accent)' }}>FAQ</p>
-          <h2 className="font-display font-bold text-3xl" style={{ color: 'var(--text)' }}>
+          <h2 className="font-display font-bold text-2xl sm:text-3xl" style={{ color: 'var(--text)' }}>
             Common questions before using the tools
           </h2>
         </div>
-        <div className="grid md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {faqs.map(([question, answer]) => (
             <div key={question} className="card p-5 space-y-2">
               <h3 className="font-display font-bold" style={{ color: 'var(--text)' }}>{question}</h3>

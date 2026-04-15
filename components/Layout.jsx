@@ -18,14 +18,14 @@ export default function Layout({ children }) {
   return (
     <div className="min-h-screen" style={{ background: 'radial-gradient(circle at top, rgba(249,83,14,0.08), transparent 32%), var(--bg)' }}>
       <header className="sticky top-0 z-20 backdrop-blur border-b" style={{ background: 'color-mix(in srgb, var(--bg) 88%, transparent)', borderColor: 'var(--border)' }}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between gap-4">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between gap-3">
           <Link to="/" className="flex items-center gap-3">
-            <div className="w-11 h-11 rounded-2xl flex items-center justify-center" style={{ background: 'var(--accent)', color: 'white', boxShadow: '0 10px 24px rgba(249,83,14,0.25)' }}>
-              <Wrench size={20} />
+            <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl flex items-center justify-center shrink-0" style={{ background: 'var(--accent)', color: 'white', boxShadow: '0 10px 24px rgba(249,83,14,0.25)' }}>
+              <Wrench size={18} />
             </div>
-            <div>
-              <p className="font-display font-bold text-lg leading-none" style={{ color: 'var(--text)' }}>
-                PDFForge
+            <div className="min-w-0">
+              <p className="font-display font-bold text-base sm:text-lg leading-none truncate" style={{ color: 'var(--text)' }}>
+                {siteInfo.name}
               </p>
               <p className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>
                 PDF tools
@@ -53,15 +53,32 @@ export default function Layout({ children }) {
             <Link to="/tools" className="hidden sm:inline-flex btn-primary">
               Open tools
             </Link>
-            <button type="button" onClick={toggleTheme} className="btn-secondary">
+            <button type="button" onClick={toggleTheme} className="btn-secondary px-3 sm:px-5">
               {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
-              {theme === 'dark' ? 'Light mode' : 'Dark mode'}
+              <span className="hidden sm:inline">{theme === 'dark' ? 'Light mode' : 'Dark mode'}</span>
             </button>
           </div>
         </div>
+        <nav className="sm:hidden px-4 pb-3 overflow-x-auto">
+          <div className="flex min-w-max gap-2">
+            {navItems.map(item => (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                className="px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                style={({ isActive }) => ({
+                  background: isActive ? 'var(--accent-light)' : 'var(--bg-subtle)',
+                  color: isActive ? 'var(--accent)' : 'var(--text-muted)',
+                })}
+              >
+                {item.label}
+              </NavLink>
+            ))}
+          </div>
+        </nav>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-10">{children}</main>
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-10">{children}</main>
       <CookieNotice />
 
       <footer className="border-t mt-12" style={{ borderColor: 'var(--border)' }}>

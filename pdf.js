@@ -364,14 +364,14 @@ async function writeDocx(prefix, text) {
   archive.append(`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <cp:coreProperties xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <dc:title>Converted PDF text</dc:title>
-  <dc:creator>PDFForge</dc:creator>
-  <cp:lastModifiedBy>PDFForge</cp:lastModifiedBy>
+  <dc:creator>Constant PDF</dc:creator>
+  <cp:lastModifiedBy>Constant PDF</cp:lastModifiedBy>
   <dcterms:created xsi:type="dcterms:W3CDTF">${new Date().toISOString()}</dcterms:created>
   <dcterms:modified xsi:type="dcterms:W3CDTF">${new Date().toISOString()}</dcterms:modified>
 </cp:coreProperties>`, { name: 'docProps/core.xml' });
   archive.append(`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Properties xmlns="http://schemas.openxmlformats.org/officeDocument/2006/extended-properties" xmlns:vt="http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes">
-  <Application>PDFForge</Application>
+  <Application>Constant PDF</Application>
 </Properties>`, { name: 'docProps/app.xml' });
 
   await new Promise((resolve, reject) => {
@@ -419,14 +419,14 @@ async function writeXlsx(prefix, rows) {
   archive.append(`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <cp:coreProperties xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <dc:title>Converted PDF table text</dc:title>
-  <dc:creator>PDFForge</dc:creator>
-  <cp:lastModifiedBy>PDFForge</cp:lastModifiedBy>
+  <dc:creator>Constant PDF</dc:creator>
+  <cp:lastModifiedBy>Constant PDF</cp:lastModifiedBy>
   <dcterms:created xsi:type="dcterms:W3CDTF">${new Date().toISOString()}</dcterms:created>
   <dcterms:modified xsi:type="dcterms:W3CDTF">${new Date().toISOString()}</dcterms:modified>
 </cp:coreProperties>`, { name: 'docProps/core.xml' });
   archive.append(`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Properties xmlns="http://schemas.openxmlformats.org/officeDocument/2006/extended-properties" xmlns:vt="http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes">
-  <Application>PDFForge</Application>
+  <Application>Constant PDF</Application>
 </Properties>`, { name: 'docProps/app.xml' });
 
   await new Promise((resolve, reject) => {
@@ -447,8 +447,8 @@ async function writePptxFromRenderedPages(prefix, renderedPages) {
   const filename = `${prefix}-${uuidv4()}.pptx`;
   const outputPath = path.join(uploadsDir, filename);
 
-  pptx.author = 'PDFForge';
-  pptx.company = 'PDFForge';
+  pptx.author = 'Constant PDF';
+  pptx.company = 'Constant PDF';
   pptx.subject = 'Converted PDF pages';
   pptx.title = 'Converted PDF pages';
   pptx.defineLayout({ name: 'PDF_FORGE_WIDE', width: slideWidth, height: slideHeight });

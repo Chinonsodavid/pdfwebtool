@@ -10,7 +10,7 @@ import pptxgen from 'pptxgenjs'
 
 const execFileAsync = promisify(execFile)
 const workspace = process.cwd()
-const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'pdfforge-smoke-'))
+const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'constant-pdf-smoke-'))
 const baseUrl = 'http://127.0.0.1:3101'
 const server = spawn(process.execPath, ['server.js'], {
   cwd: workspace,
@@ -73,7 +73,7 @@ async function createImage(filePath) {
     <svg width="800" height="400" xmlns="http://www.w3.org/2000/svg">
       <rect width="100%" height="100%" fill="#ffffff" />
       <text x="60" y="160" font-size="62" font-family="Arial" fill="#111111">OCR SAMPLE 123</text>
-      <text x="60" y="250" font-size="34" font-family="Arial" fill="#f9530e">PDFForge smoke test</text>
+      <text x="60" y="250" font-size="34" font-family="Arial" fill="#f9530e">Constant PDF smoke test</text>
     </svg>
   `
 

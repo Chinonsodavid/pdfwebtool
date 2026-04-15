@@ -28,7 +28,7 @@ export default function FileDropzone({ files, onChange, accept, multiple, helper
 
   return (
     <div
-      className="card block p-6 border-dashed cursor-pointer transition-all hover:-translate-y-0.5"
+      className="card block p-4 sm:p-6 border-dashed cursor-pointer transition-all hover:-translate-y-0.5"
       style={{ borderStyle: 'dashed' }}
     >
       <input
@@ -43,8 +43,8 @@ export default function FileDropzone({ files, onChange, accept, multiple, helper
         }}
       />
       <label htmlFor={inputId} className="flex flex-col items-center text-center gap-3 cursor-pointer">
-        <div className="w-14 h-14 rounded-2xl flex items-center justify-center" style={{ background: 'var(--accent-light)', color: 'var(--accent)' }}>
-          <UploadCloud size={24} />
+        <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center" style={{ background: 'var(--accent-light)', color: 'var(--accent)' }}>
+          <UploadCloud size={22} />
         </div>
         <div>
           <p className="font-display font-bold" style={{ color: 'var(--text)' }}>
@@ -74,7 +74,7 @@ export default function FileDropzone({ files, onChange, accept, multiple, helper
             </div>
           ))}
 
-          <div className="grid sm:grid-cols-2 gap-3 pt-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
             {previewUrls.map(preview => (
               <div key={preview.key} className="relative rounded-2xl overflow-hidden border" style={{ borderColor: 'var(--border)', background: 'var(--bg-subtle)' }}>
                 <button
@@ -85,7 +85,7 @@ export default function FileDropzone({ files, onChange, accept, multiple, helper
                 >
                   <X size={13} />
                 </button>
-                <div className="h-36 flex items-center justify-center overflow-hidden" style={{ background: 'linear-gradient(135deg, rgba(249,83,14,0.08), rgba(0,0,0,0.02))' }}>
+                <div className="h-32 sm:h-36 flex items-center justify-center overflow-hidden" style={{ background: 'linear-gradient(135deg, rgba(249,83,14,0.08), rgba(0,0,0,0.02))' }}>
                   {preview.type.startsWith('image/') ? (
                     <img src={preview.url} alt={preview.name} className="w-full h-full object-cover" />
                   ) : preview.type === 'application/pdf' ? (
