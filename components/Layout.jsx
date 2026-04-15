@@ -1,10 +1,15 @@
 import { Link, NavLink } from 'react-router-dom'
 import { Moon, Sun, ShieldCheck, Wrench } from 'lucide-react'
 import { useTheme } from '../hooks/useTheme'
+import { guideSummaries, siteInfo, trustLinks } from '../data/siteContent'
+import CookieNotice from './CookieNotice'
 
 const navItems = [
   { to: '/', label: 'Home' },
   { to: '/tools', label: 'Tools' },
+  { to: '/guides', label: 'Guides' },
+  { to: '/about', label: 'About' },
+  { to: '/contact', label: 'Contact' },
 ]
 
 export default function Layout({ children }) {
@@ -57,16 +62,59 @@ export default function Layout({ children }) {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-10">{children}</main>
+      <CookieNotice />
 
       <footer className="border-t mt-12" style={{ borderColor: 'var(--border)' }}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
-          <div className="flex items-center gap-2 text-sm" style={{ color: 'var(--text-muted)' }}>
-            <ShieldCheck size={16} />
-            Files are processed on your server and cleaned up automatically.
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10 space-y-8">
+          <div className="grid md:grid-cols-[1.2fr_0.8fr_0.8fr] gap-8">
+            <div className="space-y-3">
+              <Link to="/" className="inline-flex items-center gap-3">
+                <div className="w-10 h-10 rounded-md flex items-center justify-center" style={{ background: 'var(--accent)', color: 'white' }}>
+                  <Wrench size={18} />
+                </div>
+                <span className="font-display font-bold text-lg" style={{ color: 'var(--text)' }}>
+                  {siteInfo.name}
+                </span>
+              </Link>
+              <div className="flex items-start gap-2 text-sm leading-relaxed max-w-xl" style={{ color: 'var(--text-muted)' }}>
+                <ShieldCheck size={16} className="mt-0.5 shrink-0" />
+                <span>
+                  Files are processed by the backend for the selected task and temporary files are scheduled for cleanup after {siteInfo.fileRetention}.
+                </span>
+              </div>
+            </div>
+
+            <div>
+              <h2 className="text-sm font-display font-bold" style={{ color: 'var(--text)' }}>Helpful guides</h2>
+              <div className="mt-3 grid gap-2">
+                {guideSummaries.slice(0, 5).map(guide => (
+                  <Link key={guide.slug} to={`/guides/${guide.slug}`} className="text-sm hover:underline" style={{ color: 'var(--text-muted)' }}>
+                    {guide.title}
+                  </Link>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <h2 className="text-sm font-display font-bold" style={{ color: 'var(--text)' }}>Site</h2>
+              <div className="mt-3 grid grid-cols-2 gap-2">
+                {trustLinks.map(link => (
+                  <Link key={link.to} to={link.to} className="text-sm hover:underline" style={{ color: 'var(--text-muted)' }}>
+                    {link.label}
+                  </Link>
+                ))}
+              </div>
+            </div>
           </div>
-          <p className="text-sm" style={{ color: 'var(--text-muted)' }}>
-            PDFForge
-          </p>
+
+          <div className="pt-6 border-t flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between" style={{ borderColor: 'var(--border)' }}>
+            <p className="text-sm" style={{ color: 'var(--text-muted)' }}>
+              © {new Date().getFullYear()} {siteInfo.name}. Document tools for responsible use.
+            </p>
+            <p className="text-sm" style={{ color: 'var(--text-muted)' }}>
+              Contact: {siteInfo.contactEmail}
+            </p>
+          </div>
         </div>
       </footer>
     </div>

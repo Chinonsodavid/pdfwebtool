@@ -3,6 +3,10 @@ import { ThemeProvider } from './hooks/useTheme'
 import Layout from './components/Layout'
 import LandingPage from './pages/LandingPage'
 import Dashboard from './pages/Dashboard'
+import Guides from './pages/Guides'
+import GuideArticle from './pages/GuideArticle'
+import InfoPage from './pages/InfoPage'
+import NotFound from './pages/NotFound'
 import MergePDF from './pages/MergePDF'
 import SplitPDF from './pages/SplitPDF'
 import CompressPDF from './pages/CompressPDF'
@@ -36,6 +40,16 @@ export default function App() {
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/tools" element={<Dashboard />} />
+          <Route path="/guides" element={<Guides />} />
+          <Route path="/guides/:slug" element={<GuideArticle />} />
+          <Route path="/about" element={<InfoPage pageKey="about" />} />
+          <Route path="/contact" element={<InfoPage pageKey="contact" />} />
+          <Route path="/privacy" element={<InfoPage pageKey="privacy" />} />
+          <Route path="/terms" element={<InfoPage pageKey="terms" />} />
+          <Route path="/cookies" element={<InfoPage pageKey="cookies" />} />
+          <Route path="/disclaimer" element={<InfoPage pageKey="disclaimer" />} />
+          <Route path="/copyright" element={<InfoPage pageKey="copyright" />} />
+          <Route path="/file-handling" element={<InfoPage pageKey="file-handling" />} />
           <Route path="/merge" element={<MergePDF />} />
           <Route path="/split" element={<SplitPDF />} />
           <Route path="/compress" element={<CompressPDF />} />
@@ -61,6 +75,7 @@ export default function App() {
           <Route path="/metadata" element={<MetadataPDF />} />
           <Route path="/page-manager" element={<PageManagerPDF />} />
           <Route path="/batch" element={<BatchPDF />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </Layout>
     </ThemeProvider>

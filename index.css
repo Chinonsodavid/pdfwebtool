@@ -50,12 +50,12 @@
   .card {
     background: var(--bg-card);
     border: 1px solid var(--border);
-    border-radius: 16px;
+    border-radius: 8px;
     box-shadow: var(--shadow);
   }
 
   .btn-primary {
-    @apply inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-display font-semibold text-white text-sm transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply inline-flex items-center gap-2 px-5 py-2.5 rounded-md font-display font-semibold text-white text-sm transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed;
     background: var(--accent);
   }
   .btn-primary:hover:not(:disabled) {
@@ -65,7 +65,7 @@
   }
 
   .btn-secondary {
-    @apply inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-display font-medium text-sm transition-all duration-200;
+    @apply inline-flex items-center gap-2 px-5 py-2.5 rounded-md font-display font-medium text-sm transition-all duration-200;
     background: var(--bg-subtle);
     color: var(--text);
     border: 1px solid var(--border);
@@ -75,7 +75,7 @@
   }
 
   .input-field {
-    @apply w-full px-4 py-2.5 rounded-xl text-sm outline-none transition-all duration-200;
+    @apply w-full px-4 py-2.5 rounded-md text-sm outline-none transition-all duration-200;
     background: var(--bg-subtle);
     border: 1px solid var(--border);
     color: var(--text);
@@ -87,7 +87,7 @@
   .input-field::placeholder { color: var(--text-muted); }
 
   .select-field {
-    @apply w-full px-4 py-2.5 rounded-xl text-sm outline-none transition-all duration-200 cursor-pointer;
+    @apply w-full px-4 py-2.5 rounded-md text-sm outline-none transition-all duration-200 cursor-pointer;
     background: var(--bg-subtle);
     border: 1px solid var(--border);
     color: var(--text);
@@ -118,6 +118,12 @@
     border-radius: 99px;
     transition: width 0.3s ease;
   }
+}
+
+.rounded-xl,
+.rounded-2xl,
+.rounded-3xl {
+  border-radius: 8px !important;
 }
 
 /* Custom scrollbar */

@@ -4,6 +4,7 @@ import FileDropzone from './FileDropzone'
 import ProcessingSpinner from './ProcessingSpinner'
 import ResultCard from './ResultCard'
 import { api, withApiBase } from '../utils/api'
+import { toolHelp } from '../data/siteContent'
 
 function TextField({ field, value, onChange }) {
   if (field.type === 'textarea') {
@@ -98,6 +99,8 @@ export default function ToolPage({
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState('')
   const [result, setResult] = useState(null)
+  const toolId = endpoint?.replace('/api/pdf/', '')
+  const help = toolHelp[toolId]
 
   function updateValue(name, value) {
     setValues(current => ({ ...current, [name]: value }))
@@ -217,12 +220,63 @@ export default function ToolPage({
         <div className="card p-5 space-y-3">
           <h2 className="section-title">How it works</h2>
           <p className="text-sm" style={{ color: 'var(--text-muted)' }}>
-            Files are uploaded to your local server, processed there, and cleaned up automatically after 30 minutes.
+            Files are uploaded to the processing backend, handled for the selected task, and cleaned up automatically after 30 minutes.
           </p>
         </div>
 
         {result ? <ResultCard {...result} /> : null}
       </aside>
+
+      {help ? (
+        <section className="lg:col-span-2 grid lg:grid-cols-3 gap-5">
+          <div className="card p-6 space-y-3">
+            <h2 className="section-title text-2xl">About this tool</h2>
+            <p className="text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>
+              {help.intro}
+            </p>
+          </div>
+
+          <div className="card p-6 space-y-3">
+            <h2 className="section-title text-2xl">Steps</h2>
+            <ol className="space-y-2 list-decimal pl-5">
+              {help.steps.map(step => (
+                <li key={step} className="text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>
+                  {step}
+                </li>
+              ))}
+            </ol>
+          </div>
+
+          <div className="card p-6 space-y-3">
+            <h2 className="section-title text-2xl">Tips</h2>
+            <ul className="space-y-2 list-disc pl-5">
+              {help.tips.map(tip => (
+                <li key={tip} className="text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>
+                  {tip}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="card p-6 space-y-4 lg:col-span-3">
+            <h2 className="section-title text-2xl">Common questions</h2>
+            <div className="grid md:grid-cols-2 gap-4">
+              {help.faq.map(([question, answer]) => (
+                <div key={question} className="space-y-1">
+                  <h3 className="font-display font-bold" style={{ color: 'var(--text)' }}>{question}</h3>
+                  <p className="text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>{answer}</p>
+                </div>
+              ))}
+              <div className="space-y-1">
+                <h3 className="font-display font-bold" style={{ color: 'var(--text)' }}>How long are files kept?</h3>
+                <p className="text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>
+                  Temporary uploaded and generated files are scheduled for cleanup after 30 minutes.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+      ) : null}
     </div>
   )
 }
