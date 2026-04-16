@@ -17,7 +17,7 @@ export default function Layout({ children }) {
 
   return (
     <div className="min-h-screen" style={{ background: 'radial-gradient(circle at top, rgba(249,83,14,0.08), transparent 32%), var(--bg)' }}>
-      <header className="sticky top-0 z-20 backdrop-blur border-b" style={{ background: 'color-mix(in srgb, var(--bg) 88%, transparent)', borderColor: 'var(--border)' }}>
+      <header className="sticky top-0 z-20 backdrop-blur border-b" style={{ background: 'color-mix(in srgb, var(--bg) 94%, transparent)', borderColor: 'var(--border)' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between gap-3">
           <Link to="/" className="flex items-center gap-3">
             <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl flex items-center justify-center shrink-0" style={{ background: 'var(--accent)', color: 'white', boxShadow: '0 10px 24px rgba(249,83,14,0.25)' }}>
@@ -33,15 +33,15 @@ export default function Layout({ children }) {
             </div>
           </Link>
 
-          <nav className="hidden sm:flex items-center gap-2">
+          <nav className="hidden sm:flex items-center gap-1">
             {navItems.map(item => (
               <NavLink
                 key={item.to}
                 to={item.to}
-                className="px-3 py-2 rounded-xl text-sm font-medium transition-colors"
+                className="relative px-3 py-2 text-sm font-medium transition-colors nav-link"
                 style={({ isActive }) => ({
-                  background: isActive ? 'var(--accent-light)' : 'transparent',
                   color: isActive ? 'var(--accent)' : 'var(--text-muted)',
+                  '--nav-line-opacity': isActive ? 1 : 0,
                 })}
               >
                 {item.label}
@@ -65,10 +65,10 @@ export default function Layout({ children }) {
               <NavLink
                 key={item.to}
                 to={item.to}
-                className="px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                className="relative px-3 py-2 text-sm font-medium transition-colors nav-link"
                 style={({ isActive }) => ({
-                  background: isActive ? 'var(--accent-light)' : 'var(--bg-subtle)',
                   color: isActive ? 'var(--accent)' : 'var(--text-muted)',
+                  '--nav-line-opacity': isActive ? 1 : 0,
                 })}
               >
                 {item.label}
