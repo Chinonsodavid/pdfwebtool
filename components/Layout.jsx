@@ -1,5 +1,6 @@
+import { useState } from 'react'
 import { Link, NavLink } from 'react-router-dom'
-import { Moon, Sun, ShieldCheck, Wrench } from 'lucide-react'
+import { Menu, Moon, Sun, ShieldCheck, Wrench, X } from 'lucide-react'
 import { useTheme } from '../hooks/useTheme'
 import { guideSummaries, siteInfo, trustLinks } from '../data/siteContent'
 import CookieNotice from './CookieNotice'
@@ -14,21 +15,53 @@ const navItems = [
 
 export default function Layout({ children }) {
   const { theme, toggleTheme } = useTheme()
+  const [menuOpen, setMenuOpen] = useState(false)
 
   return (
     <div className="min-h-screen" style={{ background: 'radial-gradient(circle at top, rgba(249,83,14,0.08), transparent 32%), var(--bg)' }}>
       <header className="sticky top-0 z-20 backdrop-blur border-b" style={{ background: 'color-mix(in srgb, var(--bg) 94%, transparent)', borderColor: 'var(--border)' }}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between gap-3">
+        <div className="sm:hidden grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3 px-4 py-3">
+          <Link to="/" className="flex min-w-0 items-center gap-2">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full" style={{ background: 'var(--accent)', color: 'white', boxShadow: '0 10px 24px rgba(249,83,14,0.25)' }}>
+              <Wrench size={17} />
+            </div>
+            <span className="min-w-0 truncate font-display text-sm font-bold leading-none" style={{ color: 'var(--text)' }}>
+              {siteInfo.name}
+            </span>
+          </Link>
+
+          <button
+            type="button"
+            onClick={toggleTheme}
+            className="inline-flex h-10 w-10 items-center justify-center rounded-full border transition-colors"
+            aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+            style={{ background: 'var(--bg-subtle)', borderColor: 'var(--border)', color: 'var(--text)' }}
+          >
+            {theme === 'dark' ? <Sun size={17} /> : <Moon size={17} />}
+          </button>
+
+          <div className="flex justify-end">
+            <button
+              type="button"
+              onClick={() => setMenuOpen(current => !current)}
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full border transition-colors"
+              aria-expanded={menuOpen}
+              aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+              style={{ background: 'var(--bg-subtle)', borderColor: 'var(--border)', color: 'var(--text)' }}
+            >
+              {menuOpen ? <X size={19} /> : <Menu size={19} />}
+            </button>
+          </div>
+        </div>
+
+        <div className="hidden max-w-7xl mx-auto px-6 py-4 sm:flex items-center justify-between gap-3">
           <Link to="/" className="flex items-center gap-3">
-            <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl flex items-center justify-center shrink-0" style={{ background: 'var(--accent)', color: 'white', boxShadow: '0 10px 24px rgba(249,83,14,0.25)' }}>
+            <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full flex items-center justify-center shrink-0" style={{ background: 'var(--accent)', color: 'white', boxShadow: '0 10px 24px rgba(249,83,14,0.25)' }}>
               <Wrench size={18} />
             </div>
             <div className="min-w-0">
               <p className="font-display font-bold text-base sm:text-lg leading-none truncate" style={{ color: 'var(--text)' }}>
                 {siteInfo.name}
-              </p>
-              <p className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>
-                PDF tools
               </p>
             </div>
           </Link>
@@ -49,7 +82,7 @@ export default function Layout({ children }) {
             ))}
           </nav>
 
-          <div className="flex items-center gap-2">
+          <div className="hidden sm:flex items-center gap-2">
             <Link to="/tools" className="hidden sm:inline-flex btn-primary">
               Open tools
             </Link>
@@ -59,23 +92,29 @@ export default function Layout({ children }) {
             </button>
           </div>
         </div>
-        <nav className="sm:hidden px-4 pb-3 overflow-x-auto">
-          <div className="flex min-w-max gap-2">
-            {navItems.map(item => (
-              <NavLink
-                key={item.to}
-                to={item.to}
-                className="relative px-3 py-2 text-sm font-medium transition-colors nav-link"
-                style={({ isActive }) => ({
-                  color: isActive ? 'var(--accent)' : 'var(--text-muted)',
-                  '--nav-line-opacity': isActive ? 1 : 0,
-                })}
-              >
-                {item.label}
-              </NavLink>
-            ))}
-          </div>
-        </nav>
+        {menuOpen ? (
+          <nav className="sm:hidden border-t px-4 py-3" style={{ borderColor: 'var(--border)', background: 'var(--bg)' }}>
+            <div className="grid gap-1">
+              {navItems.map(item => (
+                <NavLink
+                  key={item.to}
+                  to={item.to}
+                  onClick={() => setMenuOpen(false)}
+                  className="relative px-3 py-3 text-sm font-medium transition-colors nav-link"
+                  style={({ isActive }) => ({
+                    color: isActive ? 'var(--accent)' : 'var(--text-muted)',
+                    '--nav-line-opacity': isActive ? 1 : 0,
+                  })}
+                >
+                  {item.label}
+                </NavLink>
+              ))}
+              <Link to="/tools" onClick={() => setMenuOpen(false)} className="btn-primary mt-2 justify-center">
+                Open tools
+              </Link>
+            </div>
+          </nav>
+        ) : null}
       </header>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-10">{children}</main>

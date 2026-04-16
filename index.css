@@ -139,6 +139,85 @@
     opacity: 0.45;
     transform: scaleX(1);
   }
+
+  .tool-panel {
+    @apply space-y-5 p-4 sm:p-6;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    box-shadow: var(--shadow-lg);
+  }
+
+  .tool-flow {
+    @apply grid grid-cols-3 gap-2;
+  }
+
+  .tool-flow-step {
+    @apply flex flex-col sm:flex-row items-center justify-center gap-1.5 rounded-md px-2 py-2 text-xs sm:text-sm font-medium text-center;
+    background: var(--bg-subtle);
+    color: var(--text-muted);
+    min-height: 56px;
+  }
+
+  .tool-flow-icon {
+    @apply inline-flex h-7 w-7 items-center justify-center rounded-full;
+    background: var(--accent-light);
+    color: var(--accent);
+  }
+
+  .tool-section {
+    @apply space-y-4 rounded-md border p-3 sm:p-4;
+    border-color: var(--border);
+    background: color-mix(in srgb, var(--bg-card) 82%, var(--bg-subtle));
+  }
+
+  .tool-section-heading {
+    @apply flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3;
+  }
+
+  .tool-status-pill {
+    @apply inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold;
+    background: var(--accent-light);
+    color: var(--accent);
+    align-self: flex-start;
+  }
+
+  .tool-submit-row {
+    @apply flex flex-col sm:flex-row sm:items-center gap-4 border-t pt-5;
+    border-color: var(--border);
+  }
+
+  .faq-list {
+    @apply divide-y;
+    border-color: var(--border);
+  }
+
+  .faq-item {
+    border-color: var(--border);
+  }
+
+  .faq-summary {
+    @apply flex cursor-pointer list-none items-center justify-between gap-4 py-4 font-display font-bold;
+    color: var(--text);
+  }
+
+  .faq-summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .faq-icon {
+    @apply shrink-0 transition-transform;
+    color: var(--accent);
+  }
+
+  .faq-item[open] .faq-icon {
+    transform: rotate(180deg);
+  }
+
+  .faq-answer {
+    @apply pb-4 text-sm leading-relaxed;
+    color: var(--text-muted);
+  }
 }
 
 .rounded-xl,

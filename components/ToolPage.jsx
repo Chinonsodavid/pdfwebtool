@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { AlertCircle } from 'lucide-react'
+import { AlertCircle, CheckCircle2, Download, SlidersHorizontal, UploadCloud } from 'lucide-react'
+import FAQAccordion from './FAQAccordion'
 import FileDropzone from './FileDropzone'
 import ProcessingSpinner from './ProcessingSpinner'
 import ResultCard from './ResultCard'
@@ -173,34 +174,77 @@ export default function ToolPage({
           </p>
         </div>
 
-        <form className="card p-4 sm:p-6 space-y-5 sm:space-y-6" onSubmit={handleSubmit}>
-          <FileDropzone
-            files={files}
-            onChange={nextFiles => setFiles(Array.from(nextFiles || []))}
-            accept={accept}
-            multiple={multiple}
-            helperText={multiple ? 'Upload one or more files. The tool will process them in the order shown.' : 'Upload one file to continue.'}
-          />
+        <form className="tool-panel" onSubmit={handleSubmit}>
+          <div className="tool-flow" aria-label="Tool workflow">
+            {[
+              { label: 'Upload', icon: UploadCloud },
+              { label: fields.length ? 'Options' : 'Process', icon: SlidersHorizontal },
+              { label: 'Download', icon: Download },
+            ].map((step, index) => (
+              <div key={step.label} className="tool-flow-step">
+                <span className="tool-flow-icon">
+                  <step.icon size={15} />
+                </span>
+                <span>{index + 1}. {step.label}</span>
+              </div>
+            ))}
+          </div>
+
+          <section className="tool-section">
+            <div className="tool-section-heading">
+              <div>
+                <h2 className="section-title">Upload your file</h2>
+                <p className="text-sm mt-1" style={{ color: 'var(--text-muted)' }}>
+                  {multiple ? 'Add the files in the order you want them processed.' : 'Choose one file to start this tool.'}
+                </p>
+              </div>
+              {files.length ? (
+                <span className="tool-status-pill">
+                  <CheckCircle2 size={14} />
+                  {files.length} selected
+                </span>
+              ) : null}
+            </div>
+
+            <FileDropzone
+              files={files}
+              onChange={nextFiles => setFiles(Array.from(nextFiles || []))}
+              accept={accept}
+              multiple={multiple}
+              helperText={multiple ? 'Upload one or more files. The tool will process them in the order shown.' : 'Upload one file to continue.'}
+            />
+          </section>
 
           {fields.length ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {fields.map(field => (
-                <label key={field.name} className={field.fullWidth ? 'sm:col-span-2 space-y-2' : 'space-y-2'}>
-                  <span className="text-sm font-medium" style={{ color: 'var(--text)' }}>
-                    {field.label}
-                  </span>
-                  <TextField field={field} value={values[field.name]} onChange={updateValue} />
-                  {field.helpText ? (
-                    <span className="text-xs block" style={{ color: 'var(--text-muted)' }}>
-                      {field.helpText}
+            <section className="tool-section">
+              <div className="tool-section-heading">
+                <div>
+                  <h2 className="section-title">Set options</h2>
+                  <p className="text-sm mt-1" style={{ color: 'var(--text-muted)' }}>
+                    Defaults work for most files. Adjust only what you need.
+                  </p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {fields.map(field => (
+                  <label key={field.name} className={field.fullWidth ? 'sm:col-span-2 space-y-2' : 'space-y-2'}>
+                    <span className="text-sm font-medium" style={{ color: 'var(--text)' }}>
+                      {field.label}
                     </span>
-                  ) : null}
-                </label>
-              ))}
-            </div>
+                    <TextField field={field} value={values[field.name]} onChange={updateValue} />
+                    {field.helpText ? (
+                      <span className="text-xs block" style={{ color: 'var(--text-muted)' }}>
+                        {field.helpText}
+                      </span>
+                    ) : null}
+                  </label>
+                ))}
+              </div>
+            </section>
           ) : null}
 
-          <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+          <div className="tool-submit-row">
             <button className="btn-primary justify-center sm:justify-start" type="submit" disabled={isSubmitting}>
               {isSubmitting ? 'Processing…' : title}
             </button>
@@ -260,20 +304,12 @@ export default function ToolPage({
 
           <div className="card p-4 sm:p-6 space-y-4 lg:col-span-3">
             <h2 className="section-title text-2xl">Common questions</h2>
-            <div className="grid md:grid-cols-2 gap-4">
-              {help.faq.map(([question, answer]) => (
-                <div key={question} className="space-y-1">
-                  <h3 className="font-display font-bold" style={{ color: 'var(--text)' }}>{question}</h3>
-                  <p className="text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>{answer}</p>
-                </div>
-              ))}
-              <div className="space-y-1">
-                <h3 className="font-display font-bold" style={{ color: 'var(--text)' }}>How long are files kept?</h3>
-                <p className="text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>
-                  Temporary uploaded and generated files are scheduled for cleanup after 30 minutes.
-                </p>
-              </div>
-            </div>
+            <FAQAccordion
+              items={[
+                ...help.faq,
+                ['How long are files kept?', 'Temporary uploaded and generated files are scheduled for cleanup after 30 minutes.'],
+              ]}
+            />
           </div>
         </section>
       ) : null}

@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { ArrowRight, BookOpen, CheckCircle2, ShieldCheck, Sparkles, Zap } from 'lucide-react'
+import FAQAccordion from '../components/FAQAccordion'
 import { guideSummaries } from '../data/siteContent'
 import { toolCategories, tools } from '../utils/toolCatalog'
 
@@ -243,14 +244,7 @@ export default function LandingPage() {
             Common questions before using the tools
           </h2>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {faqs.map(([question, answer]) => (
-            <div key={question} className="card p-5 space-y-2">
-              <h3 className="font-display font-bold" style={{ color: 'var(--text)' }}>{question}</h3>
-              <p className="text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>{answer}</p>
-            </div>
-          ))}
-        </div>
+        <FAQAccordion items={faqs} />
       </section>
     </div>
   )

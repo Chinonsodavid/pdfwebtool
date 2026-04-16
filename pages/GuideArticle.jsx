@@ -1,5 +1,6 @@
 import { Link, useParams } from 'react-router-dom'
 import { ArrowRight } from 'lucide-react'
+import FAQAccordion from '../components/FAQAccordion'
 import { guideArticles, guideSummaries } from '../data/siteContent'
 import { tools } from '../utils/toolCatalog'
 
@@ -51,12 +52,7 @@ export default function GuideArticle() {
 
         <section className="card p-6 space-y-4">
           <h2 className="section-title text-2xl">Questions</h2>
-          {article.faq.map(([question, answer]) => (
-            <div key={question} className="space-y-1">
-              <h3 className="font-display font-bold" style={{ color: 'var(--text)' }}>{question}</h3>
-              <p className="text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>{answer}</p>
-            </div>
-          ))}
+          <FAQAccordion items={article.faq} />
         </section>
       </div>
 
