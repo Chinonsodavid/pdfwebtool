@@ -26,11 +26,16 @@ const EXCEL_MIME_TYPES = [
   'application/vnd.ms-excel',
   'text/csv',
 ];
+const WORD_MIME_TYPES = [
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  'application/msword',
+];
 const POWERPOINT_MIME_TYPES = [
   'application/vnd.openxmlformats-officedocument.presentationml.presentation',
   'application/vnd.ms-powerpoint',
 ];
 const EXCEL_EXTENSIONS = ['.xlsx', '.xls', '.csv'];
+const WORD_EXTENSIONS = ['.docx', '.doc'];
 const POWERPOINT_EXTENSIONS = ['.pptx', '.ppt'];
 
 if (!fs.existsSync(uploadsDir)) {
@@ -62,6 +67,7 @@ const pdfUpload = createUploader(PDF_MIME_TYPES);
 const imageUpload = createUploader(IMAGE_MIME_TYPES);
 const mixedUpload = createUploader([...PDF_MIME_TYPES, ...IMAGE_MIME_TYPES]);
 const excelUpload = createUploader(EXCEL_MIME_TYPES, EXCEL_EXTENSIONS);
+const wordUpload = createUploader(WORD_MIME_TYPES, WORD_EXTENSIONS);
 const powerPointUpload = createUploader(POWERPOINT_MIME_TYPES, POWERPOINT_EXTENSIONS);
 
 function cleanup(...filePaths) {
@@ -1543,6 +1549,19 @@ router.post('/excel-to-pdf', excelUpload.single('file'), async (req, res) => {
   } catch (error) {
     cleanup(req.file?.path);
     res.status(500).json({ error: `Excel to PDF conversion failed. ${error.message}` });
+  }
+});
+
+router.post('/word-to-pdf', wordUpload.single('file'), async (req, res) => {
+  if (!req.file) return res.status(400).json({ error: 'No file uploaded.' });
+
+  try {
+    const output = await convertOfficeToPdf(req.file.path, 'word-to-pdf');
+    cleanup(req.file.path);
+    res.json({ success: true, filename: output.filename, url: output.url });
+  } catch (error) {
+    cleanup(req.file?.path);
+    res.status(500).json({ error: `Word to PDF conversion failed. ${error.message}` });
   }
 });
 

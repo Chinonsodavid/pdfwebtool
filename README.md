@@ -9,6 +9,7 @@ Self-hosted PDF tools built with React, Vite, Tailwind CSS, and Express.
 - Split PDFs by range or by page
 - Compress PDFs
 - Convert images to PDF
+- Convert DOCX or DOC documents to PDF
 - Convert PDFs to PNG or JPG
 - Convert PDFs with extractable text to DOCX
 - Convert table-like PDF text to XLSX
@@ -31,6 +32,7 @@ Self-hosted PDF tools built with React, Vite, Tailwind CSS, and Express.
 - Insert blank pages or another PDF
 - Batch-process many PDFs at once
 - Inspect PDF page counts and sizes
+- Programmatic SEO landing pages for high-intent tool URLs
 
 ## Project Layout
 
@@ -91,6 +93,8 @@ npm run build
 npm run preview -- --host 127.0.0.1 --port 4173
 ```
 
+The production build pre-renders public pages into static HTML, including pSEO tool landing pages such as `/convert/pdf-to-word`, `/tools/merge-pdf-files`, and `/compress/shrink-pdf-size`.
+
 ## Smoke Test
 
 This project includes an end-to-end smoke test that:
@@ -125,6 +129,7 @@ Optional backend environment variables:
 | POST | `/api/pdf/split` | Split by range or every page |
 | POST | `/api/pdf/compress` | Compress a PDF |
 | POST | `/api/pdf/image-to-pdf` | Convert images to PDF |
+| POST | `/api/pdf/word-to-pdf` | Convert DOCX or DOC documents to PDF |
 | POST | `/api/pdf/pdf-to-image` | Convert PDF pages to images in a ZIP |
 | POST | `/api/pdf/pdf-to-word` | Convert extractable PDF text into a DOCX |
 | POST | `/api/pdf/pdf-to-excel` | Convert table-like PDF text into an XLSX |

@@ -311,6 +311,13 @@ async function main() {
 
     const hasOfficeConverter = await commandExists('libreoffice') || await commandExists('soffice')
     if (hasOfficeConverter) {
+      const wordToPdf = await postForm('/api/pdf/word-to-pdf', async formData => {
+        formData.append('file', toFile(pdfToWord.downloadBytes, 'sample.docx', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'))
+      })
+      const wordPdfDoc = await loadPdf(wordToPdf.downloadBytes)
+      if (wordPdfDoc.getPageCount() < 1) throw new Error('Word to PDF did not create a page')
+      results.push('word-to-pdf')
+
       const excelToPdf = await postForm('/api/pdf/excel-to-pdf', async formData => {
         formData.append('file', toFile(csvBytes, 'sample.csv', 'text/csv'))
       })

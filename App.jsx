@@ -7,11 +7,13 @@ import Guides from './pages/Guides'
 import GuideArticle from './pages/GuideArticle'
 import InfoPage from './pages/InfoPage'
 import NotFound from './pages/NotFound'
+import SeoToolLanding from './pages/SeoToolLanding'
 import MergePDF from './pages/MergePDF'
 import SplitPDF from './pages/SplitPDF'
 import CompressPDF from './pages/CompressPDF'
 import ImageToPDF from './pages/ImageToPDF'
 import PDFToImage from './pages/PDFToImage'
+import WordToPDF from './pages/WordToPDF'
 import PDFToWord from './pages/PDFToWord'
 import PDFToExcel from './pages/PDFToExcel'
 import ExcelToPDF from './pages/ExcelToPDF'
@@ -55,6 +57,7 @@ export default function App() {
           <Route path="/compress" element={<CompressPDF />} />
           <Route path="/image-to-pdf" element={<ImageToPDF />} />
           <Route path="/pdf-to-image" element={<PDFToImage />} />
+          <Route path="/word-to-pdf" element={<WordToPDF />} />
           <Route path="/pdf-to-word" element={<PDFToWord />} />
           <Route path="/pdf-to-excel" element={<PDFToExcel />} />
           <Route path="/excel-to-pdf" element={<ExcelToPDF />} />
@@ -75,6 +78,9 @@ export default function App() {
           <Route path="/metadata" element={<MetadataPDF />} />
           <Route path="/page-manager" element={<PageManagerPDF />} />
           <Route path="/batch" element={<BatchPDF />} />
+          <Route path="/convert/:slug" element={<SeoToolLanding />} />
+          <Route path="/tools/:slug" element={<SeoToolLanding />} />
+          <Route path="/compress/:slug" element={<SeoToolLanding />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Layout>

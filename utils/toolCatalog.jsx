@@ -84,6 +84,11 @@ export const tools = [
     color: '#f59e0b', bg: '#fffbeb', category: 'convert',
   },
   {
+    id: 'word-to-pdf', path: '/word-to-pdf', icon: FileType2, label: 'Word to PDF',
+    desc: 'Convert DOCX or DOC documents into PDF',
+    color: '#2563eb', bg: '#eff6ff', category: 'convert',
+  },
+  {
     id: 'pdf-to-word', path: '/pdf-to-word', icon: FileType2, label: 'PDF to Word',
     desc: 'Convert extractable PDF text into DOCX',
     color: '#2563eb', bg: '#eff6ff', category: 'convert',

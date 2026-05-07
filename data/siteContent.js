@@ -372,6 +372,12 @@ export const toolHelp = {
     tips: ['Use clear, well-lit images.', 'Crop photos before upload when possible.'],
     faq: [['Will image text become selectable?', 'No. Use OCR if you need searchable text.']],
   },
+  'word-to-pdf': {
+    intro: 'Convert Word documents into PDFs for sharing, printing, and archiving.',
+    steps: ['Upload a DOCX or DOC file.', 'Run the conversion.', 'Download the finished PDF and check the layout.'],
+    tips: ['Use common fonts for more predictable output.', 'Review page breaks, tables, and images after conversion.'],
+    faq: [['Does it keep Word editing features?', 'No. The PDF keeps the visible document output, not Word editing controls.']],
+  },
   'pdf-to-image': {
     intro: 'Export PDF pages as PNG or JPG images for previews, thumbnails, or visual sharing.',
     steps: ['Upload a PDF.', 'Choose PNG or JPG.', 'Select all pages or a page range.'],

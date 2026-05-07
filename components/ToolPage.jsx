@@ -4,6 +4,7 @@ import FAQAccordion from './FAQAccordion'
 import FileDropzone from './FileDropzone'
 import ProcessingSpinner from './ProcessingSpinner'
 import ResultCard from './ResultCard'
+import { useSeoLanding } from './SeoLandingContext'
 import { api, withApiBase } from '../utils/api'
 import { toolHelp } from '../data/siteContent'
 
@@ -93,6 +94,7 @@ export default function ToolPage({
   buildPayload,
   successMessage,
 }) {
+  const seoLanding = useSeoLanding()
   const [files, setFiles] = useState([])
   const [values, setValues] = useState(
     Object.fromEntries(fields.map(field => [field.name, field.defaultValue ?? (field.type === 'checkbox' ? false : field.type === 'file' ? (field.multiple ? [] : null) : '')])),
@@ -102,6 +104,11 @@ export default function ToolPage({
   const [result, setResult] = useState(null)
   const toolId = endpoint?.replace('/api/pdf/', '')
   const help = toolHelp[toolId]
+  const displayTitle = seoLanding?.h1 || title
+  const displayDescription = seoLanding?.description || description
+  const faqItems = seoLanding?.faq?.length
+    ? [...seoLanding.faq, ...(help?.faq || [])]
+    : help?.faq || []
 
   function updateValue(name, value) {
     setValues(current => ({ ...current, [name]: value }))
@@ -168,9 +175,9 @@ export default function ToolPage({
           <p className="text-xs uppercase tracking-[0.25em]" style={{ color: 'var(--accent)' }}>
             PDF tool
           </p>
-          <h1 className="page-title">{title}</h1>
+          <h1 className="page-title">{displayTitle}</h1>
           <p className="text-sm sm:text-base max-w-2xl" style={{ color: 'var(--text-muted)' }}>
-            {description}
+            {displayDescription}
           </p>
         </div>
 
@@ -306,7 +313,7 @@ export default function ToolPage({
             <h2 className="section-title text-2xl">Common questions</h2>
             <FAQAccordion
               items={[
-                ...help.faq,
+                ...faqItems,
                 ['How long are files kept?', 'Temporary uploaded and generated files are scheduled for cleanup after 30 minutes.'],
               ]}
             />

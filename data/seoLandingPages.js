@@ -1,0 +1,191 @@
+export const seoLandingPages = [
+  {
+    path: '/convert/word-to-pdf',
+    canonicalPath: '/convert/word-to-pdf',
+    toolId: 'word-to-pdf',
+    h1: 'Fast and Free Word to PDF Converter',
+    title: 'Word to PDF Converter - Fast, Free Online Tool | Constant PDF',
+    description: 'Convert DOCX or DOC documents into a clean PDF that is easy to share, store, and review online.',
+    metaDescription: 'Convert Word documents to PDF with Constant PDF. Upload a DOCX or DOC file and download a clean PDF.',
+    faq: [
+      ['Can I convert Word to PDF here?', 'Yes. Upload a DOCX or DOC file and the backend converts it to PDF with LibreOffice.'],
+      ['Will the PDF be easy to share?', 'Yes. The output is a standard PDF designed for downloading, sending, and archiving.'],
+    ],
+  },
+  {
+    path: '/convert/pdf-to-word',
+    canonicalPath: '/convert/pdf-to-word',
+    toolId: 'pdf-to-word',
+    h1: 'Fast and Free PDF to Word Converter',
+    title: 'PDF to Word Converter - Convert PDF to DOCX | Constant PDF',
+    description: 'Turn extractable PDF text into an editable Word document you can download as DOCX.',
+    metaDescription: 'Convert searchable PDF files to editable Word documents with Constant PDF. Upload a PDF, choose pages, and download a DOCX.',
+    faq: [
+      ['Does PDF to Word work with scanned PDFs?', 'Scanned PDFs need OCR first because the page text is stored as an image.'],
+      ['Will the Word file match the PDF perfectly?', 'Simple text documents convert best. Complex layouts may need manual cleanup after download.'],
+    ],
+  },
+  {
+    path: '/convert/pdf-to-excel',
+    canonicalPath: '/convert/pdf-to-excel',
+    toolId: 'pdf-to-excel',
+    h1: 'PDF to Excel Converter',
+    title: 'PDF to Excel Converter - Extract Tables to XLSX | Constant PDF',
+    description: 'Convert table-like PDF text into an Excel spreadsheet for review, cleanup, and reporting.',
+    metaDescription: 'Use Constant PDF to convert table-like PDF content into an XLSX spreadsheet with a focused PDF to Excel workflow.',
+    faq: [
+      ['Can PDF to Excel recover formulas?', 'No. It extracts visible table-like text, not hidden formulas from the original spreadsheet.'],
+      ['What PDFs convert best?', 'Reports, lists, and invoices with selectable table text usually produce cleaner spreadsheets.'],
+    ],
+  },
+  {
+    path: '/convert/excel-to-pdf',
+    canonicalPath: '/convert/excel-to-pdf',
+    toolId: 'excel-to-pdf',
+    h1: 'Excel to PDF Converter',
+    title: 'Excel to PDF Converter - Convert XLSX to PDF | Constant PDF',
+    description: 'Convert spreadsheets into PDFs for sharing, printing, and archiving.',
+    metaDescription: 'Convert Excel spreadsheets into PDF files with Constant PDF. Upload XLSX or spreadsheet files and download a shareable PDF.',
+    faq: [
+      ['Why convert Excel to PDF?', 'PDF is easier to share when recipients should see a stable document instead of editing spreadsheet cells.'],
+      ['Should I check the result?', 'Yes. Always open the PDF to confirm sheet layout, page breaks, and visible columns.'],
+    ],
+  },
+  {
+    path: '/convert/powerpoint-to-pdf',
+    canonicalPath: '/convert/powerpoint-to-pdf',
+    toolId: 'powerpoint-to-pdf',
+    h1: 'PowerPoint to PDF Converter',
+    title: 'PowerPoint to PDF Converter - PPTX to PDF | Constant PDF',
+    description: 'Convert presentations into PDF files that are easier to send, print, and review.',
+    metaDescription: 'Use Constant PDF to convert PowerPoint presentations into PDF files with a simple upload and download workflow.',
+    faq: [
+      ['Why convert a presentation to PDF?', 'PDF keeps slides easy to view even when the recipient does not have presentation software installed.'],
+      ['Will animations stay interactive?', 'No. A PDF keeps the slide pages, not interactive PowerPoint animations.'],
+    ],
+  },
+  {
+    path: '/convert/pdf-to-powerpoint',
+    canonicalPath: '/convert/pdf-to-powerpoint',
+    toolId: 'pdf-to-powerpoint',
+    h1: 'PDF to PowerPoint Converter',
+    title: 'PDF to PowerPoint Converter - PDF Pages to Slides | Constant PDF',
+    description: 'Turn PDF pages into PowerPoint slides for presentation cleanup and reuse.',
+    metaDescription: 'Convert PDF pages into PowerPoint slides with Constant PDF. Upload your PDF and download an editable presentation file.',
+    faq: [
+      ['Will the slides be fully editable?', 'The tool focuses on turning PDF pages into slides. Text and layout editability depends on the source file.'],
+      ['When is this useful?', 'It is useful when you need to present PDF pages or rebuild a slide deck from an existing PDF.'],
+    ],
+  },
+  {
+    path: '/convert/pdf-to-jpg',
+    canonicalPath: '/convert/pdf-to-jpg',
+    toolId: 'pdf-to-image',
+    h1: 'PDF to JPG Converter',
+    title: 'PDF to JPG Converter - Export PDF Pages as Images | Constant PDF',
+    description: 'Export PDF pages as image files for previews, sharing, and design workflows.',
+    metaDescription: 'Convert PDF pages to image files with Constant PDF. Upload a PDF and export pages as JPG or PNG.',
+    faq: [
+      ['Can I export every page?', 'Yes. The tool exports PDF pages as image files in a downloadable result.'],
+      ['Will text remain selectable?', 'No. Image exports are pictures of the pages, so text is no longer selectable.'],
+    ],
+  },
+  {
+    path: '/tools/merge-pdf-files',
+    canonicalPath: '/tools/merge-pdf-files',
+    toolId: 'merge',
+    h1: 'Merge PDF Files Online',
+    title: 'Merge PDF Files Online - Free PDF Combiner | Constant PDF',
+    description: 'Combine multiple PDF files into one organized document in the order you choose.',
+    metaDescription: 'Merge PDF files online with Constant PDF. Upload multiple PDFs, keep them in order, and download one combined PDF.',
+    faq: [
+      ['Can I merge more than two PDFs?', 'Yes. Upload multiple PDF files and they will be combined in the order shown.'],
+      ['Can I change page order after merging?', 'Use the reorder or page manager tools if the final document needs page changes.'],
+    ],
+  },
+  {
+    path: '/tools/split-pdf-pages',
+    canonicalPath: '/tools/split-pdf-pages',
+    toolId: 'split',
+    h1: 'Split PDF Pages Online',
+    title: 'Split PDF Pages Online - Extract PDF Ranges | Constant PDF',
+    description: 'Split a PDF by page range and download only the pages you need.',
+    metaDescription: 'Split PDF pages online with Constant PDF. Upload a PDF, choose page ranges, and download the extracted result.',
+    faq: [
+      ['Can I extract one page?', 'Yes. Enter the single page number or a range that includes only the pages you want.'],
+      ['Does splitting change the original file?', 'No. The tool creates a new downloadable file and leaves the original unchanged.'],
+    ],
+  },
+  {
+    path: '/tools/edit-pdf-online',
+    canonicalPath: '/tools/edit-pdf-online',
+    toolId: 'edit',
+    h1: 'Edit PDF Online',
+    title: 'Edit PDF Online - Add Text, Images, and Whiteout | Constant PDF',
+    description: 'Edit a PDF visually by adding text, image overlays, and whiteout blocks to selected pages.',
+    metaDescription: 'Edit PDF files online with Constant PDF. Add visible text, images, and whiteout overlays before downloading the edited PDF.',
+    faq: [
+      ['Can I rewrite existing PDF text directly?', 'The editor is built for reliable visual edits such as overlays and whiteout. Direct internal text-stream rewriting is not reliable across all PDFs.'],
+      ['Can I add images?', 'Yes. You can place image overlays on selected PDF pages.'],
+    ],
+  },
+  {
+    path: '/tools/sign-pdf-online',
+    canonicalPath: '/tools/sign-pdf-online',
+    toolId: 'sign',
+    h1: 'Sign PDF Online',
+    title: 'Sign PDF Online - Add a Signature to PDF | Constant PDF',
+    description: 'Place a typed or image-based signature onto a PDF and download the signed file.',
+    metaDescription: 'Sign PDF files online with Constant PDF. Upload a PDF, place your signature, and download the signed document.',
+    faq: [
+      ['Is this a digital certificate signature?', 'No. This tool places a visible signature mark on the PDF.'],
+      ['Can I use an image signature?', 'Yes. You can place an image-based signature when the signing options support it.'],
+    ],
+  },
+  {
+    path: '/tools/unlock-pdf',
+    canonicalPath: '/tools/unlock-pdf',
+    toolId: 'unlock',
+    h1: 'Unlock PDF Online',
+    title: 'Unlock PDF Online - Remove PDF Password | Constant PDF',
+    description: 'Remove password protection from PDFs you own or are authorized to manage.',
+    metaDescription: 'Unlock authorized password-protected PDF files with Constant PDF. Upload the file, enter the password, and download the unlocked PDF.',
+    faq: [
+      ['Can this recover a forgotten password?', 'No. You need the current password to unlock the PDF.'],
+      ['Should I unlock someone else’s PDF?', 'Only unlock files you own or have permission to modify.'],
+    ],
+  },
+  {
+    path: '/compress/shrink-pdf-size',
+    canonicalPath: '/compress/shrink-pdf-size',
+    toolId: 'compress',
+    h1: 'Shrink PDF Size Online',
+    title: 'Shrink PDF Size Online - Free PDF Compressor | Constant PDF',
+    description: 'Reduce PDF file size with practical compression options for sharing and uploads.',
+    metaDescription: 'Shrink PDF file size online with Constant PDF. Upload your PDF, choose compression settings, and download a smaller file.',
+    faq: [
+      ['Can this compress PDF to 100KB?', 'It can reduce file size, but exact targets depend on the original PDF content, images, and current optimization.'],
+      ['Will compression reduce quality?', 'Strong compression can affect images. Choose lighter settings for print or detailed documents.'],
+    ],
+  },
+  {
+    path: '/compress/pdf-compressor',
+    canonicalPath: '/compress/pdf-compressor',
+    toolId: 'compress',
+    h1: 'PDF Compressor',
+    title: 'PDF Compressor - Reduce PDF File Size | Constant PDF',
+    description: 'Compress PDF files to make them easier to upload, email, and store.',
+    metaDescription: 'Use Constant PDF as a practical PDF compressor for reducing file size while keeping documents readable.',
+    faq: [
+      ['Why did my PDF not shrink much?', 'Some PDFs are already optimized, so compression may only reduce them slightly.'],
+      ['Should I preview the result?', 'Yes. Check small text, logos, and important images after compression.'],
+    ],
+  },
+]
+
+export const seoLandingPaths = seoLandingPages.map(page => page.path)
+
+export function getSeoLandingByPath(pathname) {
+  const cleanPath = pathname.length > 1 ? pathname.replace(/\/$/, '') : pathname
+  return seoLandingPages.find(page => page.path === cleanPath) || null
+}
