@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { AlertCircle, FileImage, Highlighter, ImagePlus, MousePointer2, Search, Square, Type } from 'lucide-react'
+import { AlertCircle, FileImage, Highlighter, ImagePlus, MousePointer2, Search, Square, Type, UploadCloud } from 'lucide-react'
 import * as pdfjsLib from 'pdfjs-dist/build/pdf.mjs'
 import pdfWorkerUrl from 'pdfjs-dist/build/pdf.worker.mjs?url'
 import ProcessingSpinner from '../components/ProcessingSpinner'
@@ -81,6 +81,7 @@ export default function EditPDF() {
   const [imagePreviews, setImagePreviews] = useState([])
   const [isRendering, setIsRendering] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isDraggingFile, setIsDraggingFile] = useState(false)
   const [error, setError] = useState('')
   const [result, setResult] = useState(null)
 
@@ -233,8 +234,7 @@ export default function EditPDF() {
     }
   }, [pageSize])
 
-  function handleFileChange(event) {
-    const nextFile = event.target.files?.[0]
+  function setSelectedPdf(nextFile) {
     if (!nextFile) return
     imagePreviews.forEach(preview => URL.revokeObjectURL(preview.url))
     setFile(nextFile)
@@ -243,6 +243,17 @@ export default function EditPDF() {
     setImagePreviews([])
     setPendingImageIndex(null)
     setActiveTool('select')
+  }
+
+  function handleFileChange(event) {
+    setSelectedPdf(event.target.files?.[0])
+    event.target.value = ''
+  }
+
+  function handlePdfDrop(event) {
+    event.preventDefault()
+    setIsDraggingFile(false)
+    setSelectedPdf(Array.from(event.dataTransfer.files || []).find(nextFile => nextFile.type === 'application/pdf'))
   }
 
   function getPointFromEvent(event, width = 180, height = 56) {
@@ -387,6 +398,54 @@ export default function EditPDF() {
 
   const selectedLayer = layers.find(layer => layer.id === selectedId)
   const visibleLayers = layers.filter(layer => layer.page === pageNumber)
+
+  if (!file) {
+    return (
+      <div className="animate-fade-in">
+        <section className="mx-auto max-w-4xl space-y-6 py-4 text-center sm:py-8">
+          <div className="space-y-3">
+            <h1 className="hero-display-title text-4xl leading-tight sm:text-5xl" style={{ color: 'var(--text)' }}>
+              Edit PDF
+            </h1>
+            <p className="mx-auto max-w-2xl text-sm leading-relaxed sm:text-base" style={{ color: 'var(--text-muted)' }}>
+              Add text, images, highlights, whiteout blocks, or click detected PDF text to replace it, then export the finished document.
+            </p>
+            <p className="mx-auto max-w-2xl text-xs sm:text-sm" style={{ color: 'var(--text-muted)' }}>
+              Files are processed over HTTPS and temporary uploads and results are scheduled for cleanup after 30 minutes.
+            </p>
+          </div>
+
+          <div
+            className={isDraggingFile ? 'upload-dropzone upload-dropzone-active' : 'upload-dropzone'}
+            onDragOver={event => {
+              event.preventDefault()
+              setIsDraggingFile(true)
+            }}
+            onDragLeave={() => setIsDraggingFile(false)}
+            onDrop={handlePdfDrop}
+          >
+            <input id="edit-pdf-upload" className="sr-only" type="file" accept="application/pdf" onChange={handleFileChange} />
+            <label htmlFor="edit-pdf-upload" className="flex cursor-pointer flex-col items-center gap-3 text-center">
+              <span className="upload-select-button">
+                <UploadCloud size={22} />
+                Select PDF file
+              </span>
+              <span className="text-sm" style={{ color: 'var(--text-muted)' }}>
+                or drop PDF here
+              </span>
+            </label>
+          </div>
+
+          {error ? (
+            <div className="rounded-xl px-4 py-3 text-sm flex items-start gap-2 text-left" style={{ background: 'rgba(239,68,68,0.08)', color: '#b91c1c' }}>
+              <AlertCircle size={16} className="mt-0.5 shrink-0" />
+              <span>{error}</span>
+            </div>
+          ) : null}
+        </section>
+      </div>
+    )
+  }
 
   return (
     <div className="space-y-6 animate-fade-in">

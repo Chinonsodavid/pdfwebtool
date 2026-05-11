@@ -1,33 +1,59 @@
 import { useState } from 'react'
 import { Link, NavLink } from 'react-router-dom'
-import { Menu, Moon, Sun, ShieldCheck, Wrench, X } from 'lucide-react'
+import { ChevronDown, Menu, Moon, ShieldCheck, Sun, X } from 'lucide-react'
 import { useTheme } from '../hooks/useTheme'
 import { guideSummaries, siteInfo, trustLinks } from '../data/siteContent'
+import { primaryNavTools, toolGroups } from '../utils/toolCatalog'
 import CookieNotice from './CookieNotice'
 
-const navItems = [
-  { to: '/', label: 'Home' },
-  { to: '/tools', label: 'Tools' },
-  { to: '/guides', label: 'Guides' },
-  { to: '/about', label: 'About' },
-  { to: '/contact', label: 'Contact' },
-]
+const convertGroupIds = ['convert-to', 'convert-from']
+
+function BrandWordmark({ size = 'base' }) {
+  const sizeClass = size === 'large' ? 'text-lg sm:text-xl' : 'text-base sm:text-lg'
+
+  return (
+    <span className={`brand-wordmark ${sizeClass}`}>
+      Constant<span className="brand-wordmark-pdf">PDF</span>
+    </span>
+  )
+}
 
 export default function Layout({ children }) {
   const { theme, toggleTheme } = useTheme()
   const [menuOpen, setMenuOpen] = useState(false)
+  const [activeMenu, setActiveMenu] = useState('')
+  const convertGroups = toolGroups.filter(group => convertGroupIds.includes(group.id))
+
+  function ToolMegaMenu({ groups }) {
+    return (
+      <div className="mega-menu">
+        <div className="mega-menu-grid">
+          {groups.map(group => (
+            <div key={group.id} className="space-y-2">
+              <p className="mega-menu-title">{group.label}</p>
+              <div className="grid gap-1">
+                {group.tools.map(tool => (
+                  <Link key={tool.id} to={tool.path} className="mega-menu-link" onClick={() => setActiveMenu('')}>
+                    <span className="mega-menu-icon" style={{ background: tool.bg, color: tool.color }}>
+                      <tool.icon size={16} />
+                    </span>
+                    <span>{tool.label}</span>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    )
+  }
 
   return (
-    <div className="min-h-screen" style={{ background: 'radial-gradient(circle at top, rgba(249,83,14,0.08), transparent 32%), var(--bg)' }}>
+    <div className="min-h-screen" style={{ background: 'var(--bg)' }}>
       <header className="sticky top-0 z-20 backdrop-blur border-b" style={{ background: 'color-mix(in srgb, var(--bg) 94%, transparent)', borderColor: 'var(--border)' }}>
         <div className="sm:hidden grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3 px-4 py-3">
           <Link to="/" className="flex min-w-0 items-center gap-2">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full" style={{ background: 'var(--accent)', color: 'white', boxShadow: '0 10px 24px rgba(249,83,14,0.25)' }}>
-              <Wrench size={17} />
-            </div>
-            <span className="min-w-0 truncate font-display text-sm font-bold leading-none" style={{ color: 'var(--text)' }}>
-              {siteInfo.name}
-            </span>
+            <BrandWordmark />
           </Link>
 
           <button
@@ -54,64 +80,149 @@ export default function Layout({ children }) {
           </div>
         </div>
 
-        <div className="hidden max-w-7xl mx-auto px-6 py-4 sm:flex items-center justify-between gap-3">
+        <div className="hidden max-w-7xl mx-auto px-6 py-2.5 sm:flex items-center justify-between gap-4">
           <Link to="/" className="flex items-center gap-3">
-            <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full flex items-center justify-center shrink-0" style={{ background: 'var(--accent)', color: 'white', boxShadow: '0 10px 24px rgba(249,83,14,0.25)' }}>
-              <Wrench size={18} />
-            </div>
-            <div className="min-w-0">
-              <p className="font-display font-bold text-base sm:text-lg leading-none truncate" style={{ color: 'var(--text)' }}>
-                {siteInfo.name}
-              </p>
-            </div>
+            <BrandWordmark size="large" />
           </Link>
 
           <nav className="hidden sm:flex items-center gap-1">
-            {navItems.map(item => (
+            {primaryNavTools.map(tool => (
               <NavLink
-                key={item.to}
-                to={item.to}
+                key={tool.id}
+                to={tool.path}
                 className="relative px-3 py-2 text-sm font-medium transition-colors nav-link"
                 style={({ isActive }) => ({
                   color: isActive ? 'var(--accent)' : 'var(--text-muted)',
                   '--nav-line-opacity': isActive ? 1 : 0,
                 })}
               >
-                {item.label}
+                {tool.label}
               </NavLink>
             ))}
+
+            <div className="relative">
+              <button
+                type="button"
+                className="nav-dropdown-trigger"
+                onClick={() => setActiveMenu(activeMenu === 'convert' ? '' : 'convert')}
+              >
+                Convert PDF
+                <ChevronDown size={15} />
+              </button>
+              {activeMenu === 'convert' ? <ToolMegaMenu groups={convertGroups} /> : null}
+            </div>
+
+            <div className="relative">
+              <button
+                type="button"
+                className="nav-dropdown-trigger"
+                onClick={() => setActiveMenu(activeMenu === 'tools' ? '' : 'tools')}
+              >
+                All PDF Tools
+                <ChevronDown size={15} />
+              </button>
+              {activeMenu === 'tools' ? <ToolMegaMenu groups={toolGroups} /> : null}
+            </div>
+
+            <NavLink
+              to="/guides"
+              className="relative px-3 py-2 text-sm font-medium transition-colors nav-link"
+              style={({ isActive }) => ({
+                color: isActive ? 'var(--accent)' : 'var(--text-muted)',
+                '--nav-line-opacity': isActive ? 1 : 0,
+              })}
+            >
+              Guides
+            </NavLink>
           </nav>
 
           <div className="hidden sm:flex items-center gap-2">
-            <Link to="/tools" className="hidden sm:inline-flex btn-primary">
-              Open tools
-            </Link>
-            <button type="button" onClick={toggleTheme} className="btn-secondary px-3 sm:px-5">
+            <button
+              type="button"
+              onClick={toggleTheme}
+              className="nav-icon-button"
+              aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+              title={theme === 'dark' ? 'Light mode' : 'Dark mode'}
+            >
               {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
-              <span className="hidden sm:inline">{theme === 'dark' ? 'Light mode' : 'Dark mode'}</span>
+            </button>
+            <button type="button" className="nav-auth-link">
+              Login
+            </button>
+            <button type="button" className="nav-signup-button">
+              Sign up
             </button>
           </div>
         </div>
         {menuOpen ? (
-          <nav className="sm:hidden border-t px-4 py-3" style={{ borderColor: 'var(--border)', background: 'var(--bg)' }}>
-            <div className="grid gap-1">
-              {navItems.map(item => (
+          <nav className="sm:hidden border-t px-4 py-4" style={{ borderColor: 'var(--border)', background: 'var(--bg)' }}>
+            <div className="mobile-menu-shell">
+              <div className="mobile-menu-actions">
+                <button type="button" className="mobile-login-link">
+                  Login
+                </button>
+                <button type="button" className="nav-signup-button mobile-signup-button">
+                  Sign up
+                </button>
+              </div>
+
+              <div className="mobile-menu-primary">
+              {primaryNavTools.map(tool => (
                 <NavLink
-                  key={item.to}
-                  to={item.to}
+                  key={tool.id}
+                  to={tool.path}
                   onClick={() => setMenuOpen(false)}
-                  className="relative px-3 py-3 text-sm font-medium transition-colors nav-link"
+                  className="mobile-primary-link"
                   style={({ isActive }) => ({
-                    color: isActive ? 'var(--accent)' : 'var(--text-muted)',
-                    '--nav-line-opacity': isActive ? 1 : 0,
+                    color: isActive ? 'var(--accent)' : 'var(--text)',
                   })}
                 >
-                  {item.label}
+                  {tool.label}
                 </NavLink>
               ))}
+              </div>
+
               <Link to="/tools" onClick={() => setMenuOpen(false)} className="btn-primary mt-2 justify-center">
-                Open tools
+                All PDF Tools
               </Link>
+
+              <div className="mt-3 space-y-3 border-t pt-4" style={{ borderColor: 'var(--border)' }}>
+                {toolGroups.map(group => (
+                  <details key={group.id} className="mobile-menu-group">
+                    <summary className="mobile-menu-summary">
+                      <span>{group.label}</span>
+                      <ChevronDown size={16} className="mobile-menu-chevron" />
+                    </summary>
+                    <div className="mobile-menu-links">
+                      {group.tools.map(tool => (
+                        <Link
+                          key={tool.id}
+                          to={tool.path}
+                          onClick={() => setMenuOpen(false)}
+                          className="mobile-menu-link"
+                        >
+                          {tool.label}
+                        </Link>
+                      ))}
+                    </div>
+                  </details>
+                ))}
+              </div>
+
+              <div className="mt-3 border-t pt-4" style={{ borderColor: 'var(--border)' }}>
+                <Link to="/guides" onClick={() => setMenuOpen(false)} className="mobile-primary-link" style={{ color: 'var(--text)' }}>
+                Guides
+                </Link>
+              </div>
+
+              <div className="mt-3 flex items-center justify-between rounded-md border px-3 py-3" style={{ borderColor: 'var(--border)', background: 'var(--bg-subtle)' }}>
+                <span className="text-sm font-medium" style={{ color: 'var(--text)' }}>
+                  {theme === 'dark' ? 'Dark mode' : 'Light mode'}
+                </span>
+                <button type="button" onClick={toggleTheme} className="nav-icon-button" aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}>
+                  {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
+                </button>
+              </div>
             </div>
           </nav>
         ) : null}
@@ -125,12 +236,7 @@ export default function Layout({ children }) {
           <div className="grid md:grid-cols-[1.2fr_0.8fr_0.8fr] gap-8">
             <div className="space-y-3">
               <Link to="/" className="inline-flex items-center gap-3">
-                <div className="w-10 h-10 rounded-md flex items-center justify-center" style={{ background: 'var(--accent)', color: 'white' }}>
-                  <Wrench size={18} />
-                </div>
-                <span className="font-display font-bold text-lg" style={{ color: 'var(--text)' }}>
-                  {siteInfo.name}
-                </span>
+                <BrandWordmark size="large" />
               </Link>
               <div className="flex items-start gap-2 text-sm leading-relaxed max-w-xl" style={{ color: 'var(--text-muted)' }}>
                 <ShieldCheck size={16} className="mt-0.5 shrink-0" />

@@ -27,23 +27,38 @@ import {
 export const toolCategories = [
   {
     id: 'organize',
-    label: 'Organize',
+    label: 'Organize PDF',
     description: 'Clean up page order, split large files, and rebuild documents.',
   },
   {
-    id: 'convert',
-    label: 'Convert',
-    description: 'Move between PDF, image, and text workflows without leaving the browser.',
+    id: 'optimize',
+    label: 'Optimize PDF',
+    description: 'Reduce file size and prepare scanned documents for cleaner use.',
+  },
+  {
+    id: 'convert-to',
+    label: 'Convert to PDF',
+    description: 'Turn images, Word files, spreadsheets, and presentations into PDFs.',
+  },
+  {
+    id: 'convert-from',
+    label: 'Convert from PDF',
+    description: 'Export PDF content into images, Office files, text, and spreadsheets.',
   },
   {
     id: 'edit',
-    label: 'Edit',
+    label: 'Edit PDF',
     description: 'Add visible document polish like labels, crops, signatures, and watermarks.',
   },
   {
     id: 'secure',
-    label: 'Secure',
+    label: 'PDF Security',
     description: 'Control access, update metadata, and prepare documents for distribution.',
+  },
+  {
+    id: 'extract',
+    label: 'OCR & Extract',
+    description: 'Read text from searchable, scanned, or image-based PDFs.',
   },
 ]
 
@@ -76,57 +91,57 @@ export const tools = [
   {
     id: 'image-to-pdf', path: '/image-to-pdf', icon: ImagePlus, label: 'Image to PDF',
     desc: 'Convert JPG, PNG images to PDF',
-    color: '#10b981', bg: '#f0fdf4', category: 'convert',
+    color: '#10b981', bg: '#f0fdf4', category: 'convert-to',
   },
   {
     id: 'pdf-to-image', path: '/pdf-to-image', icon: GalleryThumbnails, label: 'PDF to Image',
     desc: 'Export PDF pages as PNG or JPG',
-    color: '#f59e0b', bg: '#fffbeb', category: 'convert',
+    color: '#f59e0b', bg: '#fffbeb', category: 'convert-from',
   },
   {
     id: 'word-to-pdf', path: '/word-to-pdf', icon: FileType2, label: 'Word to PDF',
     desc: 'Convert DOCX or DOC documents into PDF',
-    color: '#2563eb', bg: '#eff6ff', category: 'convert',
+    color: '#2563eb', bg: '#eff6ff', category: 'convert-to',
   },
   {
     id: 'pdf-to-word', path: '/pdf-to-word', icon: FileType2, label: 'PDF to Word',
     desc: 'Convert extractable PDF text into DOCX',
-    color: '#2563eb', bg: '#eff6ff', category: 'convert',
+    color: '#2563eb', bg: '#eff6ff', category: 'convert-from',
   },
   {
     id: 'pdf-to-excel', path: '/pdf-to-excel', icon: FileSpreadsheet, label: 'PDF to Excel',
     desc: 'Convert table-like PDF text into XLSX',
-    color: '#16a34a', bg: '#f0fdf4', category: 'convert',
+    color: '#16a34a', bg: '#f0fdf4', category: 'convert-from',
   },
   {
     id: 'excel-to-pdf', path: '/excel-to-pdf', icon: FileSpreadsheet, label: 'Excel to PDF',
     desc: 'Convert spreadsheets into PDF',
-    color: '#15803d', bg: '#f0fdf4', category: 'convert',
+    color: '#15803d', bg: '#f0fdf4', category: 'convert-to',
   },
   {
     id: 'powerpoint-to-pdf', path: '/powerpoint-to-pdf', icon: Presentation, label: 'PowerPoint to PDF',
     desc: 'Convert presentations into PDF',
-    color: '#dc2626', bg: '#fef2f2', category: 'convert',
+    color: '#dc2626', bg: '#fef2f2', category: 'convert-to',
   },
   {
     id: 'pdf-to-powerpoint', path: '/pdf-to-powerpoint', icon: Presentation, label: 'PDF to PowerPoint',
     desc: 'Turn PDF pages into slides',
-    color: '#b91c1c', bg: '#fef2f2', category: 'convert',
+    color: '#b91c1c', bg: '#fef2f2', category: 'convert-from',
   },
   {
     id: 'extract-text', path: '/extract-text', icon: FileText, label: 'PDF to Text',
     desc: 'Extract searchable text into a TXT file',
-    color: '#0f766e', bg: '#ecfeff', category: 'convert',
+    color: '#0f766e', bg: '#ecfeff', category: 'extract',
   },
   {
     id: 'ocr', path: '/ocr', icon: ScanSearch, label: 'OCR PDF',
     desc: 'Recognize text from scanned or image PDFs',
-    color: '#059669', bg: '#ecfdf5', category: 'convert',
+    color: '#059669', bg: '#ecfdf5', category: 'extract',
   },
   {
     id: 'compress', path: '/compress', icon: Minimize2, label: 'Compress PDF',
     desc: 'Reduce file size with quality options',
-    color: '#0ea5e9', bg: '#f0f9ff', category: 'edit',
+    color: '#0ea5e9', bg: '#f0f9ff', category: 'optimize',
   },
   {
     id: 'rotate', path: '/rotate', icon: RotateCw, label: 'Rotate PDF',
@@ -179,3 +194,10 @@ export const tools = [
     color: '#b45309', bg: '#fffbeb', category: 'secure',
   },
 ]
+
+export const primaryNavTools = ['merge', 'split', 'compress'].map(id => tools.find(tool => tool.id === id)).filter(Boolean)
+
+export const toolGroups = toolCategories.map(category => ({
+  ...category,
+  tools: tools.filter(tool => tool.category === category.id),
+})).filter(group => group.tools.length)

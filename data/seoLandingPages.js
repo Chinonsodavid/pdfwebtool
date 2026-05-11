@@ -13,6 +13,19 @@ export const seoLandingPages = [
     ],
   },
   {
+    path: '/convert/word-to-pdf-free',
+    canonicalPath: '/convert/word-to-pdf-free',
+    toolId: 'word-to-pdf',
+    h1: 'Convert Word to PDF Free',
+    title: 'Convert Word to PDF Free - DOCX to PDF Online | Constant PDF',
+    description: 'Upload a DOCX or DOC file and create a shareable PDF with a focused Word to PDF workflow.',
+    metaDescription: 'Convert Word to PDF free with Constant PDF. Upload DOCX or DOC files and download a shareable PDF online.',
+    faq: [
+      ['Is this Word to PDF converter free to try?', 'Yes. The tool page is built for a simple upload, convert, and download workflow.'],
+      ['Will Word tables and images stay visible?', 'The converter uses LibreOffice on the backend. Always preview the result to confirm tables, images, and page breaks.'],
+    ],
+  },
+  {
     path: '/convert/pdf-to-word',
     canonicalPath: '/convert/pdf-to-word',
     toolId: 'pdf-to-word',
@@ -36,6 +49,19 @@ export const seoLandingPages = [
     faq: [
       ['Can PDF to Excel recover formulas?', 'No. It extracts visible table-like text, not hidden formulas from the original spreadsheet.'],
       ['What PDFs convert best?', 'Reports, lists, and invoices with selectable table text usually produce cleaner spreadsheets.'],
+    ],
+  },
+  {
+    path: '/convert/pdf-table-to-excel',
+    canonicalPath: '/convert/pdf-table-to-excel',
+    toolId: 'pdf-to-excel',
+    h1: 'Convert PDF Tables to Excel',
+    title: 'Convert PDF Tables to Excel - Extract Table Text to XLSX | Constant PDF',
+    description: 'Extract table-like PDF text into an Excel file for cleanup, reporting, and review.',
+    metaDescription: 'Convert PDF tables to Excel with Constant PDF. Works best with searchable PDFs that contain aligned table text.',
+    faq: [
+      ['Does it detect real spreadsheet cells?', 'PDFs do not store cells like Excel. The tool extracts visible table-like text and creates spreadsheet rows for cleanup.'],
+      ['How do I get better results from scanned tables?', 'Run OCR first, then convert or review the recognized text before using the spreadsheet.'],
     ],
   },
   {
@@ -91,6 +117,19 @@ export const seoLandingPages = [
     ],
   },
   {
+    path: '/convert/pdf-to-png',
+    canonicalPath: '/convert/pdf-to-png',
+    toolId: 'pdf-to-image',
+    h1: 'PDF to PNG Converter',
+    title: 'PDF to PNG Converter - Export PDF Pages as PNG | Constant PDF',
+    description: 'Turn PDF pages into PNG images for crisp previews, thumbnails, and visual sharing.',
+    metaDescription: 'Convert PDF pages to PNG images with Constant PDF. Upload your PDF and export pages as image files.',
+    faq: [
+      ['Why choose PNG instead of JPG?', 'PNG is usually better for crisp text, screenshots, and line art. JPG is often smaller for photos.'],
+      ['Can I select text in the PNG?', 'No. PNG output is an image of the PDF page, so text is no longer selectable.'],
+    ],
+  },
+  {
     path: '/tools/merge-pdf-files',
     canonicalPath: '/tools/merge-pdf-files',
     toolId: 'merge',
@@ -101,6 +140,19 @@ export const seoLandingPages = [
     faq: [
       ['Can I merge more than two PDFs?', 'Yes. Upload multiple PDF files and they will be combined in the order shown.'],
       ['Can I change page order after merging?', 'Use the reorder or page manager tools if the final document needs page changes.'],
+    ],
+  },
+  {
+    path: '/tools/merge-pdf-online',
+    canonicalPath: '/tools/merge-pdf-online',
+    toolId: 'merge',
+    h1: 'Merge PDF Online',
+    title: 'Merge PDF Online - Combine PDF Files | Constant PDF',
+    description: 'Join multiple PDF files into one document and keep the final page order easy to review.',
+    metaDescription: 'Merge PDF online with Constant PDF. Upload multiple PDFs, combine them in order, and download one file.',
+    faq: [
+      ['How should I prepare files before merging?', 'Rename or arrange them in the order you want, then review the final PDF after download.'],
+      ['What should I do after merging?', 'Compress, sign, or protect the merged PDF if it is ready to share.'],
     ],
   },
   {
@@ -179,6 +231,19 @@ export const seoLandingPages = [
     faq: [
       ['Why did my PDF not shrink much?', 'Some PDFs are already optimized, so compression may only reduce them slightly.'],
       ['Should I preview the result?', 'Yes. Check small text, logos, and important images after compression.'],
+    ],
+  },
+  {
+    path: '/compress/compress-pdf-100kb',
+    canonicalPath: '/compress/compress-pdf-100kb',
+    toolId: 'compress',
+    h1: 'Compress PDF Toward 100KB',
+    title: 'Compress PDF to 100KB - Reduce PDF Size Online | Constant PDF',
+    description: 'Reduce PDF size for upload limits while keeping important text and images readable.',
+    metaDescription: 'Try to compress PDF files toward 100KB with Constant PDF. Results depend on pages, images, scans, and current optimization.',
+    faq: [
+      ['Can every PDF become 100KB?', 'No. A long or image-heavy PDF may not reach 100KB without unacceptable quality loss.'],
+      ['What helps reduce size the most?', 'Scanned pages and large images usually matter most. Stronger compression can help, but always review readability.'],
     ],
   },
 ]

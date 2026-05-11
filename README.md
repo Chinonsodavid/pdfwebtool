@@ -121,6 +121,10 @@ Optional backend environment variables:
 - `FRONTEND_ORIGIN` - comma-separated allowed origins for CORS
 - `VERCEL_ORIGIN_PREFIXES` - optional comma-separated Vercel preview hostname prefixes, default `pdforge-`
 
+Optional frontend environment variables:
+
+- `VITE_GOOGLE_CLIENT_ID` - Google OAuth client ID for the Continue with Google account button
+
 ## API Endpoints
 
 | Method | Endpoint | Description |

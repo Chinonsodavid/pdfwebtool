@@ -1,10 +1,11 @@
 import { useEffect, useId, useState } from 'react'
 import { FileText, Image as ImageIcon, UploadCloud, X } from 'lucide-react'
 
-export default function FileDropzone({ files, onChange, accept, multiple, helperText }) {
+export default function FileDropzone({ files, onChange, accept, multiple, selectLabel, dropLabel }) {
   const inputId = useId()
   const fileList = Array.from(files || [])
   const [previewUrls, setPreviewUrls] = useState([])
+  const [isDragging, setIsDragging] = useState(false)
 
   useEffect(() => {
     const previews = fileList.slice(0, 4).map((file, index) => ({
@@ -26,10 +27,22 @@ export default function FileDropzone({ files, onChange, accept, multiple, helper
     onChange(fileList.filter((_, index) => index !== indexToRemove))
   }
 
+  function handleDrop(event) {
+    event.preventDefault()
+    setIsDragging(false)
+    const droppedFiles = Array.from(event.dataTransfer.files || [])
+    onChange(multiple ? droppedFiles : droppedFiles.slice(0, 1))
+  }
+
   return (
     <div
-      className="card block p-4 sm:p-6 border-dashed cursor-pointer transition-all hover:-translate-y-0.5"
-      style={{ borderStyle: 'dashed' }}
+      className={isDragging ? 'upload-dropzone upload-dropzone-active' : 'upload-dropzone'}
+      onDragOver={event => {
+        event.preventDefault()
+        setIsDragging(true)
+      }}
+      onDragLeave={() => setIsDragging(false)}
+      onDrop={handleDrop}
     >
       <input
         id={inputId}
@@ -43,23 +56,20 @@ export default function FileDropzone({ files, onChange, accept, multiple, helper
         }}
       />
       <label htmlFor={inputId} className="flex flex-col items-center text-center gap-3 cursor-pointer">
-        <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center" style={{ background: 'var(--accent-light)', color: 'var(--accent)' }}>
+        <span className="upload-select-button">
           <UploadCloud size={22} />
-        </div>
-        <div>
-          <p className="font-display font-bold" style={{ color: 'var(--text)' }}>
-            {multiple ? 'Choose files' : 'Choose a file'}
-          </p>
-          <p className="text-sm mt-1" style={{ color: 'var(--text-muted)' }}>
-            {helperText}
-          </p>
-        </div>
+          {selectLabel || (multiple ? 'Select files' : 'Select file')}
+        </span>
+        <span className="text-sm" style={{ color: 'var(--text-muted)' }}>
+          {dropLabel || (multiple ? 'or drop files here' : 'or drop file here')}
+        </span>
       </label>
 
       {fileList.length > 0 ? (
-        <div className="mt-5 space-y-2">
+        <div className="mx-auto mt-6 max-w-2xl space-y-2">
           {fileList.map((file, index) => (
-            <div key={`${file.name}-${file.size}-${file.lastModified}-${index}`} className="flex items-center gap-3 rounded-xl px-3 py-2 text-sm" style={{ background: 'var(--bg-subtle)', color: 'var(--text)' }}>
+            <div key={`${file.name}-${file.size}-${file.lastModified}-${index}`} className="selected-file-row">
+              <FileText size={16} style={{ color: 'var(--accent)' }} />
               <span className="min-w-0 flex-1 truncate">
                 {file.name}
               </span>
@@ -76,7 +86,7 @@ export default function FileDropzone({ files, onChange, accept, multiple, helper
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
             {previewUrls.map(preview => (
-              <div key={preview.key} className="relative rounded-2xl overflow-hidden border" style={{ borderColor: 'var(--border)', background: 'var(--bg-subtle)' }}>
+              <div key={preview.key} className="relative overflow-hidden rounded-md border" style={{ borderColor: 'var(--border)', background: 'var(--bg-subtle)' }}>
                 <button
                   type="button"
                   aria-label={`Remove ${preview.name}`}
@@ -85,7 +95,7 @@ export default function FileDropzone({ files, onChange, accept, multiple, helper
                 >
                   <X size={13} />
                 </button>
-                <div className="h-32 sm:h-36 flex items-center justify-center overflow-hidden" style={{ background: 'linear-gradient(135deg, rgba(249,83,14,0.08), rgba(0,0,0,0.02))' }}>
+                <div className="h-32 sm:h-36 flex items-center justify-center overflow-hidden" style={{ background: 'var(--bg-subtle)' }}>
                   {preview.type.startsWith('image/') ? (
                     <img src={preview.url} alt={preview.name} className="w-full h-full object-cover" />
                   ) : preview.type === 'application/pdf' ? (

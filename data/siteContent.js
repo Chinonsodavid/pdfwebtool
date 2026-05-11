@@ -89,6 +89,20 @@ export const guideSummaries = [
     readTime: '5 min read',
     relatedTools: ['excel-to-pdf', 'powerpoint-to-pdf', 'pdf-to-powerpoint'],
   },
+  {
+    slug: 'why-pdf-files-get-large',
+    title: 'Why Is My PDF So Large?',
+    description: 'A clear guide to DPI, scanned pages, embedded images, fonts, and why some PDFs compress better than others.',
+    readTime: '6 min read',
+    relatedTools: ['compress', 'pdf-to-image', 'metadata'],
+  },
+  {
+    slug: 'share-sensitive-documents-safely',
+    title: 'How to Safely Share Sensitive Documents Online',
+    description: 'Use passwords, metadata cleanup, careful links, and file checks before sending private PDF documents.',
+    readTime: '6 min read',
+    relatedTools: ['protect', 'metadata', 'compress', 'sign'],
+  },
 ]
 
 export const guideArticles = {
@@ -345,6 +359,97 @@ export const guideArticles = {
       ['Can PowerPoint animations become PDF?', 'No. PDF is static, so animations and transitions are not preserved.'],
     ],
   },
+  'why-pdf-files-get-large': {
+    title: 'Why Is My PDF So Large?',
+    intro: 'Large PDFs usually come from images, scans, fonts, and hidden document data. Understanding what is inside the file helps you choose the right compression approach.',
+    sections: [
+      {
+        heading: 'Scans and image-heavy pages are the biggest cause',
+        body: [
+          'A scanned page is often stored as a full-page image. High DPI scans can make a PDF much larger than a document exported from Word or Excel.',
+          'Photos, logos, screenshots, and full-page graphics add size quickly, especially when they are embedded at print quality.',
+        ],
+      },
+      {
+        heading: 'DPI affects file size and clarity',
+        body: [
+          'Higher DPI keeps more image detail, which is useful for print but often unnecessary for email or online uploads.',
+          'Lower DPI can make files smaller, but reducing it too much can blur small text, stamps, or signatures.',
+        ],
+      },
+      {
+        heading: 'Use compression with a purpose',
+        body: [
+          'If the PDF is for screen reading, stronger compression is usually acceptable. If it is for printing, use a lighter setting and review the result.',
+          'After compressing, open the file and check important pages before sending it.',
+        ],
+      },
+    ],
+    faq: [
+      ['Can I compress every PDF to 100KB?', 'Not always. The final size depends on page count, images, scan quality, and whether the PDF is already optimized.'],
+      ['Should I use PNG or JPG for PDF page images?', 'PNG is better for crisp text previews. JPG can be smaller for photo-heavy pages.'],
+    ],
+  },
+  'share-sensitive-documents-safely': {
+    title: 'How to Safely Share Sensitive Documents Online',
+    intro: 'Sensitive PDFs need a little preparation before sharing. The goal is to send only what is needed, to the right person, with the right level of access.',
+    sections: [
+      {
+        heading: 'Check the document before sending',
+        body: [
+          'Open the final PDF and confirm the page order, signatures, dates, and visible personal details.',
+          'Remove pages that do not belong in the shared copy, especially attachments, IDs, or internal notes.',
+        ],
+      },
+      {
+        heading: 'Protect access when appropriate',
+        body: [
+          'Use password protection for private files, and send the password through a separate channel from the PDF.',
+          'For public uploads, avoid passwords unless the recipient or platform specifically supports them.',
+        ],
+      },
+      {
+        heading: 'Clean metadata for public files',
+        body: [
+          'Metadata can include document titles, author names, software details, and keywords that are not visible on the page.',
+          'Before publishing a file online, review or remove metadata that should not be exposed.',
+        ],
+      },
+    ],
+    faq: [
+      ['Does password protection make a PDF fully secure?', 'No. It is one useful layer, but sensitive files still need careful storage and sharing.'],
+      ['Should I compress sensitive PDFs?', 'Yes, if file size is a problem, but review the output so important text and signatures remain readable.'],
+    ],
+  },
+}
+
+export const toolNextSteps = {
+  merge: ['compress', 'sign', 'protect'],
+  split: ['merge', 'compress', 'protect'],
+  reorder: ['compress', 'sign', 'protect'],
+  'extract-pages': ['merge', 'protect', 'compress'],
+  'page-manager': ['reorder', 'compress', 'sign'],
+  compress: ['sign', 'protect', 'metadata'],
+  'image-to-pdf': ['ocr', 'compress', 'merge'],
+  'pdf-to-image': ['image-to-pdf', 'compress', 'watermark'],
+  'word-to-pdf': ['compress', 'sign', 'protect'],
+  'pdf-to-word': ['ocr', 'extract-text', 'compress'],
+  'pdf-to-excel': ['extract-text', 'ocr', 'compress'],
+  'excel-to-pdf': ['compress', 'sign', 'protect'],
+  'powerpoint-to-pdf': ['compress', 'sign', 'protect'],
+  'pdf-to-powerpoint': ['compress', 'pdf-to-image', 'extract-text'],
+  'extract-text': ['ocr', 'pdf-to-word', 'metadata'],
+  ocr: ['pdf-to-word', 'extract-text', 'compress'],
+  rotate: ['crop', 'compress', 'ocr'],
+  watermark: ['protect', 'sign', 'compress'],
+  edit: ['sign', 'compress', 'protect'],
+  'page-labels': ['watermark', 'sign', 'compress'],
+  crop: ['compress', 'ocr', 'pdf-to-image'],
+  sign: ['protect', 'compress', 'metadata'],
+  protect: ['metadata', 'compress', 'sign'],
+  unlock: ['compress', 'metadata', 'protect'],
+  metadata: ['protect', 'compress', 'sign'],
+  batch: ['compress', 'merge', 'protect'],
 }
 
 export const toolHelp = {

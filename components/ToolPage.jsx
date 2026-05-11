@@ -1,12 +1,13 @@
 import { useState } from 'react'
-import { AlertCircle, CheckCircle2, Download, SlidersHorizontal, UploadCloud } from 'lucide-react'
+import { AlertCircle } from 'lucide-react'
 import FAQAccordion from './FAQAccordion'
 import FileDropzone from './FileDropzone'
 import ProcessingSpinner from './ProcessingSpinner'
 import ResultCard from './ResultCard'
 import { useSeoLanding } from './SeoLandingContext'
 import { api, withApiBase } from '../utils/api'
-import { toolHelp } from '../data/siteContent'
+import { siteInfo, toolHelp, toolNextSteps } from '../data/siteContent'
+import { tools } from '../utils/toolCatalog'
 
 function TextField({ field, value, onChange }) {
   if (field.type === 'textarea') {
@@ -84,6 +85,44 @@ function TextField({ field, value, onChange }) {
   )
 }
 
+function uploadCopy({ accept = '', multiple = false, title = '' }) {
+  const normalizedAccept = accept.toLowerCase()
+  const normalizedTitle = title.toLowerCase()
+
+  if (normalizedAccept.includes('image/')) {
+    return {
+      selectLabel: multiple ? 'Select image files' : 'Select image file',
+      dropLabel: multiple ? 'or drop images here' : 'or drop image here',
+    }
+  }
+
+  if (normalizedTitle.includes('word')) {
+    return {
+      selectLabel: multiple ? 'Select Word files' : 'Select Word file',
+      dropLabel: multiple ? 'or drop Word files here' : 'or drop Word file here',
+    }
+  }
+
+  if (normalizedTitle.includes('excel')) {
+    return {
+      selectLabel: multiple ? 'Select Excel files' : 'Select Excel file',
+      dropLabel: multiple ? 'or drop Excel files here' : 'or drop Excel file here',
+    }
+  }
+
+  if (normalizedTitle.includes('powerpoint')) {
+    return {
+      selectLabel: multiple ? 'Select PowerPoint files' : 'Select PowerPoint file',
+      dropLabel: multiple ? 'or drop PowerPoint files here' : 'or drop PowerPoint file here',
+    }
+  }
+
+  return {
+    selectLabel: multiple ? 'Select PDF files' : 'Select PDF file',
+    dropLabel: multiple ? 'or drop PDFs here' : 'or drop PDF here',
+  }
+}
+
 export default function ToolPage({
   title,
   description,
@@ -104,8 +143,12 @@ export default function ToolPage({
   const [result, setResult] = useState(null)
   const toolId = endpoint?.replace('/api/pdf/', '')
   const help = toolHelp[toolId]
+  const nextSteps = (toolNextSteps[toolId] || [])
+    .map(id => tools.find(tool => tool.id === id))
+    .filter(Boolean)
   const displayTitle = seoLanding?.h1 || title
   const displayDescription = seoLanding?.description || description
+  const uploadLabels = uploadCopy({ accept, multiple, title })
   const faqItems = seoLanding?.faq?.length
     ? [...seoLanding.faq, ...(help?.faq || [])]
     : help?.faq || []
@@ -169,60 +212,31 @@ export default function ToolPage({
   }
 
   return (
-    <div className="grid lg:grid-cols-[1.2fr_0.8fr] gap-5 sm:gap-6 items-start animate-fade-in">
-      <section className="space-y-6">
-        <div className="space-y-2">
-          <p className="text-xs uppercase tracking-[0.25em]" style={{ color: 'var(--accent)' }}>
-            PDF tool
-          </p>
-          <h1 className="page-title">{displayTitle}</h1>
-          <p className="text-sm sm:text-base max-w-2xl" style={{ color: 'var(--text-muted)' }}>
+    <div className="animate-fade-in">
+      <section className="mx-auto max-w-4xl space-y-6 py-4 text-center sm:py-8">
+        <div className="space-y-3">
+          <h1 className="hero-display-title text-4xl leading-tight sm:text-5xl" style={{ color: 'var(--text)' }}>
+            {displayTitle}
+          </h1>
+          <p className="mx-auto max-w-2xl text-sm leading-relaxed sm:text-base" style={{ color: 'var(--text-muted)' }}>
             {displayDescription}
+          </p>
+          <p className="mx-auto max-w-2xl text-xs sm:text-sm" style={{ color: 'var(--text-muted)' }}>
+            Files are processed over HTTPS and temporary uploads and results are scheduled for cleanup after {siteInfo.fileRetention}.
           </p>
         </div>
 
         <form className="tool-panel" onSubmit={handleSubmit}>
-          <div className="tool-flow" aria-label="Tool workflow">
-            {[
-              { label: 'Upload', icon: UploadCloud },
-              { label: fields.length ? 'Options' : 'Process', icon: SlidersHorizontal },
-              { label: 'Download', icon: Download },
-            ].map((step, index) => (
-              <div key={step.label} className="tool-flow-step">
-                <span className="tool-flow-icon">
-                  <step.icon size={15} />
-                </span>
-                <span>{index + 1}. {step.label}</span>
-              </div>
-            ))}
-          </div>
+          <FileDropzone
+            files={files}
+            onChange={nextFiles => setFiles(Array.from(nextFiles || []))}
+            accept={accept}
+            multiple={multiple}
+            selectLabel={uploadLabels.selectLabel}
+            dropLabel={uploadLabels.dropLabel}
+          />
 
-          <section className="tool-section">
-            <div className="tool-section-heading">
-              <div>
-                <h2 className="section-title">Upload your file</h2>
-                <p className="text-sm mt-1" style={{ color: 'var(--text-muted)' }}>
-                  {multiple ? 'Add the files in the order you want them processed.' : 'Choose one file to start this tool.'}
-                </p>
-              </div>
-              {files.length ? (
-                <span className="tool-status-pill">
-                  <CheckCircle2 size={14} />
-                  {files.length} selected
-                </span>
-              ) : null}
-            </div>
-
-            <FileDropzone
-              files={files}
-              onChange={nextFiles => setFiles(Array.from(nextFiles || []))}
-              accept={accept}
-              multiple={multiple}
-              helperText={multiple ? 'Upload one or more files. The tool will process them in the order shown.' : 'Upload one file to continue.'}
-            />
-          </section>
-
-          {fields.length ? (
+          {files.length && fields.length ? (
             <section className="tool-section">
               <div className="tool-section-heading">
                 <div>
@@ -251,12 +265,14 @@ export default function ToolPage({
             </section>
           ) : null}
 
-          <div className="tool-submit-row">
-            <button className="btn-primary justify-center sm:justify-start" type="submit" disabled={isSubmitting}>
-              {isSubmitting ? 'Processing…' : title}
-            </button>
-            {isSubmitting ? <ProcessingSpinner /> : null}
-          </div>
+          {files.length ? (
+            <div className="tool-submit-row justify-center">
+              <button className="btn-primary justify-center px-8 py-4 text-base sm:text-lg" type="submit" disabled={isSubmitting}>
+                {isSubmitting ? 'Processing...' : title}
+              </button>
+              {isSubmitting ? <ProcessingSpinner /> : null}
+            </div>
+          ) : null}
 
           {error ? (
             <div className="rounded-xl px-4 py-3 text-sm flex items-start gap-2" style={{ background: 'rgba(239,68,68,0.08)', color: '#b91c1c' }}>
@@ -265,21 +281,12 @@ export default function ToolPage({
             </div>
           ) : null}
         </form>
+
+        {result ? <ResultCard {...result} nextSteps={nextSteps} /> : null}
       </section>
 
-      <aside className="space-y-5 lg:sticky lg:top-24">
-        <div className="card p-4 sm:p-5 space-y-3">
-          <h2 className="section-title">How it works</h2>
-          <p className="text-sm" style={{ color: 'var(--text-muted)' }}>
-            Files are uploaded to the processing backend, handled for the selected task, and cleaned up automatically after 30 minutes.
-          </p>
-        </div>
-
-        {result ? <ResultCard {...result} /> : null}
-      </aside>
-
       {help ? (
-        <section className="lg:col-span-2 grid lg:grid-cols-3 gap-5">
+        <section className="open-section mt-8 grid gap-5 pt-8 lg:grid-cols-3">
           <div className="card p-4 sm:p-6 space-y-3">
             <h2 className="section-title text-2xl">About this tool</h2>
             <p className="text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>
@@ -314,7 +321,7 @@ export default function ToolPage({
             <FAQAccordion
               items={[
                 ...faqItems,
-                ['How long are files kept?', 'Temporary uploaded and generated files are scheduled for cleanup after 30 minutes.'],
+                ['How long are files kept?', `Temporary uploaded and generated files are scheduled for cleanup after ${siteInfo.fileRetention}.`],
               ]}
             />
           </div>
