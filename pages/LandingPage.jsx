@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import { toolGroups, tools } from "../utils/toolCatalog";
+import PricingSection from "../components/PricingSection";
 
 const popularToolIds = [
   "merge",
@@ -167,6 +168,8 @@ export default function LandingPage() {
           </div>
         </div>
       </div>
+
+      <PricingSection />
     </div>
   );
 }
