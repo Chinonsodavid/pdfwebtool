@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { ChevronDown, Menu, Moon, ShieldCheck, Sun, X } from "lucide-react";
 import { useTheme } from "../hooks/useTheme";
@@ -23,9 +23,34 @@ export default function Layout({ children }) {
   const { theme, toggleTheme } = useTheme();
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeMenu, setActiveMenu] = useState("");
+  const closeTimerRef = useRef(null);
   const convertGroups = toolGroups.filter((group) =>
     convertGroupIds.includes(group.id),
   );
+
+  useEffect(() => {
+    return () => {
+      if (closeTimerRef.current) {
+        clearTimeout(closeTimerRef.current);
+      }
+    };
+  }, []);
+
+  const openDropdown = (menuKey) => {
+    if (closeTimerRef.current) {
+      clearTimeout(closeTimerRef.current);
+      closeTimerRef.current = null;
+    }
+    setActiveMenu(menuKey);
+  };
+
+  const closeDropdownWithDelay = () => {
+    if (closeTimerRef.current) clearTimeout(closeTimerRef.current);
+    closeTimerRef.current = setTimeout(() => {
+      setActiveMenu("");
+      closeTimerRef.current = null;
+    }, 140);
+  };
 
   function ToolMegaMenu({ groups }) {
     return (
@@ -128,33 +153,33 @@ export default function Layout({ children }) {
             ))}
 
             <div className="relative">
-              <button
-                type="button"
-                className="nav-dropdown-trigger"
-                onMouseEnter={() => setActiveMenu("convert")}
-                onMouseLeave={() => setActiveMenu("")}
+              <div
+                onMouseEnter={() => openDropdown("convert")}
+                onMouseLeave={closeDropdownWithDelay}
               >
-                Convert PDF
-                <ChevronDown size={15} />
-              </button>
-              {activeMenu === "convert" ? (
-                <ToolMegaMenu groups={convertGroups} />
-              ) : null}
+                <button type="button" className="nav-dropdown-trigger">
+                  Convert PDF
+                  <ChevronDown size={15} />
+                </button>
+                {activeMenu === "convert" ? (
+                  <ToolMegaMenu groups={convertGroups} />
+                ) : null}
+              </div>
             </div>
 
             <div className="relative">
-              <button
-                type="button"
-                className="nav-dropdown-trigger"
-                onMouseEnter={() => setActiveMenu("tools")}
-                onMouseLeave={() => setActiveMenu("")}
+              <div
+                onMouseEnter={() => openDropdown("tools")}
+                onMouseLeave={closeDropdownWithDelay}
               >
-                All PDF Tools
-                <ChevronDown size={15} />
-              </button>
-              {activeMenu === "tools" ? (
-                <ToolMegaMenu groups={toolGroups} />
-              ) : null}
+                <button type="button" className="nav-dropdown-trigger">
+                  All PDF Tools
+                  <ChevronDown size={15} />
+                </button>
+                {activeMenu === "tools" ? (
+                  <ToolMegaMenu groups={toolGroups} />
+                ) : null}
+              </div>
             </div>
 
             <NavLink
@@ -166,6 +191,16 @@ export default function Layout({ children }) {
               })}
             >
               Guides
+            </NavLink>
+            <NavLink
+              to="/pricing"
+              className="relative px-3 py-2 text-sm font-medium transition-colors nav-link"
+              style={({ isActive }) => ({
+                color: isActive ? "var(--accent)" : "var(--text-muted)",
+                "--nav-line-opacity": isActive ? 1 : 0,
+              })}
+            >
+              Pricing
             </NavLink>
           </nav>
 
@@ -271,6 +306,14 @@ export default function Layout({ children }) {
                 >
                   Guides
                 </Link>
+                <Link
+                  to="/pricing"
+                  onClick={() => setMenuOpen(false)}
+                  className="mobile-primary-link"
+                  style={{ color: "var(--text)" }}
+                >
+                  Pricing
+                </Link>
               </div>
 
               <div
@@ -361,6 +404,13 @@ export default function Layout({ children }) {
                 Site
               </h2>
               <div className="mt-3 grid grid-cols-2 gap-2">
+                <Link
+                  to="/faq"
+                  className="text-sm hover:underline"
+                  style={{ color: "var(--text-muted)" }}
+                >
+                  FAQ
+                </Link>
                 {trustLinks.map((link) => (
                   <Link
                     key={link.to}

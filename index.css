@@ -514,7 +514,7 @@
     margin-left: -50vw;
     /* background-color: #F5F4F1; */
     overflow: hidden;
-    /* Kill any top gap — flush directly under navbar */
+    /* Kill any top gap  flush directly under navbar */
     margin-top: 0;
   }
 
@@ -616,7 +616,7 @@
     margin-bottom: 1rem;
   }
 
-  /* Tool grid — 2 cols on mobile, scales up */
+  /* Tool grid  2 cols on mobile, scales up */
   .lp-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -878,7 +878,7 @@
     box-shadow: 0 8px 18px color-mix(in srgb, var(--accent) 22%, transparent);
   }
 
-  /* Keep active pill looking exactly the same on hover — no color flip */
+  /* Keep active pill looking exactly the same on hover  no color flip */
   .category-pill-active:hover {
     border-color: var(--accent);
     background: var(--accent);
@@ -938,7 +938,7 @@
     z-index: 1;
   }
 
-  /* Cursor override fix — ensure interactive elements show pointer.
+  /* Cursor override fix  ensure interactive elements show pointer.
      This is intentionally narrow and uses !important to counteract accidental overrides. */
   :where(
     a,
@@ -982,7 +982,7 @@
   background: var(--text-muted);
 }
 
-/* Global cursor: pointer — every interactive element ──────────────── */
+/* Global cursor: pointer  every interactive element ──────────────── */
 a,
 button,
 [role="button"],

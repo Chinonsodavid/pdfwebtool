@@ -25,7 +25,7 @@ const popularTools = popularToolIds
   .map((id) => tools.find((t) => t.id === id))
   .filter(Boolean);
 
-/* Premium tools — subscription required */
+/* Premium tools  subscription required */
 const premiumToolIds = new Set([
   "pdf-to-word",
   "pdf-to-excel",
@@ -56,7 +56,7 @@ const faqs = [
   },
   {
     q: "What is the One-Time Pass?",
-    a: "For $0.99 you get 24 hours of full premium access — no subscription, no commitment. It's designed for people who just need to convert or edit one document and don't want a recurring plan.",
+    a: "For $0.99 you get 24 hours of full premium access  no subscription, no commitment. It's designed for people who just need to convert or edit one document and don't want a recurring plan.",
   },
   {
     q: "Can I unlock any PDF?",
@@ -64,7 +64,7 @@ const faqs = [
   },
   {
     q: "Why are some results downloaded as ZIP files?",
-    a: "Tools that produce multiple outputs — such as PDF to image or split PDF — bundle those files into a single ZIP download for convenience.",
+    a: "Tools that produce multiple outputs  such as PDF to image or split PDF  bundle those files into a single ZIP download for convenience.",
   },
 ];
 
@@ -151,7 +151,7 @@ const FREE_FEATURES = [
   "Word to PDF",
   "Protect, Unlock & Sign PDFs",
   "PDF to Text",
-  "No account needed — ever",
+  "No account needed  ever",
 ];
 
 const PREMIUM_FEATURES = [
@@ -169,7 +169,7 @@ const ONETIME_FEATURES = [
   "All 12 premium tools unlocked",
   "24-hour access window",
   "No subscription needed",
-  "Instant — no waiting",
+  "Instant  no waiting",
   "Perfect for a single document",
 ];
 
@@ -200,7 +200,7 @@ export default function LandingPage() {
           </h1>
           <p className="lp-hero-sub">
             The complete PDF workstation for schools, offices, and freelancers.
-            Merge, split, compress, or convert — secure OCR and e-signing
+            Merge, split, compress, or convert secure OCR and e-signing
             included.
           </p>
 
@@ -361,8 +361,8 @@ export default function LandingPage() {
                 margin: "0.75rem auto 0",
               }}
             >
-              14 tools are always free — no account needed. Upgrade only when
-              you need the professional stuff.
+              14 tools are always free no account needed. Upgrade only when you
+              need the professional stuff.
             </p>
 
             <div
@@ -661,8 +661,8 @@ export default function LandingPage() {
                         margin: "0.3rem 0 0",
                       }}
                     >
-                      That&apos;s $0.33/month · billed once yearly — limited
-                      time offer
+                      That&apos;s $0.33/month · billed once yearly limited time
+                      offer
                     </p>
                   </>
                 )}
@@ -804,7 +804,7 @@ export default function LandingPage() {
                   lineHeight: 1.5,
                 }}
               >
-                💡 Less than a coffee — and you only pay once.
+                💡 Less than a coffee and you only pay once.
               </div>
               <ul
                 style={{
@@ -861,7 +861,7 @@ export default function LandingPage() {
                   (e.currentTarget.style.background = "transparent")
                 }
               >
-                Get 24-Hour Access — $0.99
+                Get 24-Hour Access $0.99
               </button>
             </div>
           </div>
