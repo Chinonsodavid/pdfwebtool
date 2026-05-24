@@ -1,12 +1,16 @@
 import { useEffect, useRef, useState } from 'react'
 import { AlertCircle, FileImage, Highlighter, ImagePlus, MousePointer2, Search, Square, Type, UploadCloud } from 'lucide-react'
 import * as pdfjsLib from 'pdfjs-dist/build/pdf.mjs'
-import pdfWorkerUrl from 'pdfjs-dist/build/pdf.worker.mjs?url'
 import ProcessingSpinner from '../components/ProcessingSpinner'
 import ResultCard from '../components/ResultCard'
 import { api, withApiBase } from '../utils/api'
 
-pdfjsLib.GlobalWorkerOptions.workerSrc = pdfWorkerUrl
+if (typeof window !== 'undefined') {
+  pdfjsLib.GlobalWorkerOptions.workerPort = new Worker(
+    new URL('pdfjs-dist/build/pdf.worker.min.mjs', import.meta.url),
+    { type: 'module' },
+  )
+}
 
 const textColors = ['#111827', '#dc2626', '#2563eb', '#059669', '#f9530e']
 

@@ -9,10 +9,12 @@ import {
 
 import { Document, Page, pdfjs } from 'react-pdf'
 
-pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-  'pdfjs-dist/build/pdf.worker.min.mjs',
-  import.meta.url,
-).toString()
+if (typeof window !== 'undefined') {
+  pdfjs.GlobalWorkerOptions.workerPort = new Worker(
+    new URL('pdfjs-dist/build/pdf.worker.min.mjs', import.meta.url),
+    { type: 'module' },
+  )
+}
 
 export default function FileDropzone({
   files,
