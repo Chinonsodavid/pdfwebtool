@@ -35,7 +35,7 @@ const premiumToolIds = new Set([
 ]);
 
 export default function LandingPage() {
-  const [activeGroup, setActiveGroup] = useState("all");
+  const [activeGroup, setActiveGroup] = useState("popular");
 
   useEffect(() => {
     const stored = localStorage.getItem("theme");
@@ -45,9 +45,7 @@ export default function LandingPage() {
   const visibleTools =
     activeGroup === "popular"
       ? popularTools
-      : activeGroup === "all"
-        ? tools
-        : tools.filter((t) => t.category === activeGroup);
+      : tools.filter((t) => t.category === activeGroup);
 
   return (
     <div className="animate-fade-in">
@@ -65,9 +63,10 @@ export default function LandingPage() {
 
           <div className="lp-pills">
             {[
-              { id: "all", label: "All PDF Tools" },
               { id: "popular", label: "Popular" },
-              ...toolGroups,
+              ...toolGroups.filter(
+                (group) => !["convert-to", "convert-from"].includes(group.id),
+              ),
             ].map((group) => (
               <button
                 key={group.id}
@@ -97,11 +96,9 @@ export default function LandingPage() {
                   margin: 0,
                 }}
               >
-                {activeGroup === "all"
-                  ? "All PDF Tools"
-                  : activeGroup === "popular"
-                    ? "Popular Tools"
-                    : toolGroups.find((g) => g.id === activeGroup)?.label}
+                {activeGroup === "popular"
+                  ? "Popular Tools"
+                  : toolGroups.find((g) => g.id === activeGroup)?.label}
               </p>
               <h2
                 style={{

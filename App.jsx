@@ -39,13 +39,24 @@ const SignPDF = lazy(() => import('./pages/SignPDF'))
 const MetadataPDF = lazy(() => import('./pages/MetadataPDF'))
 const PageManagerPDF = lazy(() => import('./pages/PageManagerPDF'))
 const BatchPDF = lazy(() => import('./pages/BatchPDF'))
+const Login = lazy(() => import('./pages/Login'))
+const Signup = lazy(() => import('./pages/Signup'))
 
 export default function App() {
   return (
     <ThemeProvider>
-      <Layout>
-        <Suspense fallback={<div>Loading...</div>}>
-          <Routes>
+      <Suspense fallback={<div>Loading...</div>}>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+
+          <Route
+            path="*"
+            element={
+              <Layout>
+                <Suspense fallback={<div>Loading...</div>}>
+                  <Routes>
+
             <Route path="/" element={<LandingPage />} />
             <Route path="/tools" element={<Dashboard />} />
             <Route path="/guides" element={<Guides />} />
@@ -87,14 +98,19 @@ export default function App() {
             <Route path="/metadata" element={<MetadataPDF />} />
             <Route path="/page-manager" element={<PageManagerPDF />} />
             <Route path="/batch" element={<BatchPDF />} />
-
-            <Route path="/convert/:slug" element={<SeoToolLanding />} />
-            <Route path="/tools/:slug" element={<SeoToolLanding />} />
-            <Route path="/compress/:slug" element={<SeoToolLanding />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </Suspense>
-      </Layout>
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
+                    <Route path="/convert/:slug" element={<SeoToolLanding />} />
+                    <Route path="/tools/:slug" element={<SeoToolLanding />} />
+                    <Route path="/compress/:slug" element={<SeoToolLanding />} />
+                    <Route path="*" element={<NotFound />} />
+                  </Routes>
+                </Suspense>
+              </Layout>
+            }
+          />
+        </Routes>
+      </Suspense>
     </ThemeProvider>
   )
 }

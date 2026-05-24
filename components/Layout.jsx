@@ -218,12 +218,12 @@ export default function Layout({ children }) {
             >
               {theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
             </button>
-            <button type="button" className="nav-auth-link">
+            <Link to="/login" className="nav-auth-link">
               Login
-            </button>
-            <button type="button" className="nav-signup-button">
+            </Link>
+            <Link to="/signup" className="nav-signup-button">
               Sign up
-            </button>
+            </Link>
           </div>
         </div>
         {menuOpen ? (
@@ -233,15 +233,20 @@ export default function Layout({ children }) {
           >
             <div className="mobile-menu-shell">
               <div className="mobile-menu-actions">
-                <button type="button" className="mobile-login-link">
+                <Link
+                  to="/login"
+                  onClick={() => setMenuOpen(false)}
+                  className="mobile-login-link"
+                >
                   Login
-                </button>
-                <button
-                  type="button"
+                </Link>
+                <Link
+                  to="/signup"
+                  onClick={() => setMenuOpen(false)}
                   className="nav-signup-button mobile-signup-button"
                 >
                   Sign up
-                </button>
+                </Link>
               </div>
 
               <div className="mobile-menu-primary">

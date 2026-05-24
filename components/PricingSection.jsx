@@ -486,20 +486,7 @@ export default function PricingSection() {
             >
               24 hours of full premium access
             </p>
-            <div
-              style={{
-                marginTop: "1rem",
-                padding: "0.6rem 0.75rem",
-                borderRadius: "6px",
-                background: "var(--bg-subtle)",
-                border: "1px solid var(--border)",
-                fontSize: "0.78rem",
-                color: "var(--text-muted)",
-                lineHeight: 1.5,
-              }}
-            >
-              💡 Less than a coffee and you only pay once.
-            </div>
+
             <ul
               style={{
                 listStyle: "none",
