@@ -8,9 +8,8 @@ import {
 } from 'lucide-react'
 
 import { Document, Page, pdfjs } from 'react-pdf'
-import pdfWorker from 'pdfjs-dist/build/pdf.worker.min.js?worker&url'
 
-pdfjs.GlobalWorkerOptions.workerSrc = pdfWorker
+pdfjs.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.js'
 
 export default function FileDropzone({
   files,
