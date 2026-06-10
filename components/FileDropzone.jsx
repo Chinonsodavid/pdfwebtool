@@ -39,6 +39,8 @@ export default function FileDropzone({
     reorderRef.current = reorderFiles
   }, [files, onChange])
 
+  const hasFiles = fileList.length > 0
+
   useEffect(() => {
     const grid = gridRef.current
     if (!grid) return
@@ -48,10 +50,13 @@ export default function FileDropzone({
     function handleTouchStart(e) {
       const card = e.target.closest('.file-thumb-card')
       if (!card) return
-      
+
+      // Ignore touches on the remove button
+      if (e.target.closest('.file-thumb-remove')) return
+
       const index = parseInt(card.getAttribute('data-index'), 10)
       if (isNaN(index)) return
-      
+
       activeDragIndex = index
       setDraggedIndex(index)
     }
@@ -59,13 +64,29 @@ export default function FileDropzone({
     function handleTouchMove(e) {
       if (activeDragIndex === null) return
 
-      // Prevent default scrolling to prevent screen jittering
+      // Block page scroll while dragging
       if (e.cancelable) {
         e.preventDefault()
       }
 
       const touch = e.touches[0]
+
+      // Hide the dragged card from hit-testing so elementFromPoint
+      // returns the card underneath instead of the one under our finger
+      const draggedCard = grid.querySelector(
+        `.file-thumb-card[data-index="${activeDragIndex}"]`
+      )
+      if (draggedCard) {
+        draggedCard.style.pointerEvents = 'none'
+      }
+
       const element = document.elementFromPoint(touch.clientX, touch.clientY)
+
+      // Restore immediately
+      if (draggedCard) {
+        draggedCard.style.pointerEvents = ''
+      }
+
       if (!element) return
 
       const targetCard = element.closest('.file-thumb-card')
@@ -95,7 +116,7 @@ export default function FileDropzone({
       grid.removeEventListener('touchend', handleTouchEnd)
       grid.removeEventListener('touchcancel', handleTouchEnd)
     }
-  }, [])
+  }, [hasFiles])
 
   useEffect(() => {
     const previews = fileList.map((file, index) => ({
