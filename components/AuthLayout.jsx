@@ -249,8 +249,13 @@ export default function AuthLayout({
 
               <div className="mb-8 text-center">
                 <Link to="/" className="inline-flex items-center gap-2">
-                  <span className="brand-wordmark text-4xl">
+                  <span className="brand-wordmark text-4xl inline-flex items-center gap-3">
                     Constant<span className="brand-wordmark-pdf">PDF</span>
+                    <img
+                      src="/logo.png"
+                      alt="Constant PDF logo"
+                      className="h-10 w-10 object-contain"
+                    />
                   </span>
                 </Link>
               </div>
