@@ -101,7 +101,7 @@ export default function FileDropzone({
           {selectLabel || (multiple ? 'Select files' : 'Select file')}
         </span>
 
-        <span className="text-sm" style={{ color: 'var(--text-muted)' }}>
+        <span className="hidden sm:inline text-sm" style={{ color: 'var(--text-muted)' }}>
           {dropLabel || (multiple ? 'or drop files here' : 'or drop file here')}
         </span>
       </label>

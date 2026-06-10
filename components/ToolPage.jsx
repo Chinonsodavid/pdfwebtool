@@ -191,7 +191,7 @@ export default function ToolPage({
 
         <div className="space-y-3">
           <h1
-            className="hero-display-title text-4xl leading-tight sm:text-5xl"
+            className="hero-display-title text-3xl leading-tight sm:text-5xl"
             style={{ color: "var(--text)" }}
           >
             {displayTitle}
