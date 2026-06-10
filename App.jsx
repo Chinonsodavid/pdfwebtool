@@ -2,6 +2,7 @@ import { Routes, Route } from 'react-router-dom'
 import { ThemeProvider } from './hooks/useTheme'
 import { LanguageProvider } from './hooks/useLanguage'
 import Layout from './components/Layout'
+import PageLoader from './components/PageLoader'
 import { lazy, Suspense } from 'react'
 
 const LandingPage = lazy(() => import('./pages/LandingPage'))
@@ -49,7 +50,7 @@ export default function App() {
   return (
     <ThemeProvider>
       <LanguageProvider>
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={<PageLoader />}>
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
@@ -59,7 +60,7 @@ export default function App() {
               path="*"
               element={
                 <Layout>
-                  <Suspense fallback={<div>Loading...</div>}>
+                  <Suspense fallback={<PageLoader />}>
                     <Routes>
 
                       <Route path="/" element={<LandingPage />} />
