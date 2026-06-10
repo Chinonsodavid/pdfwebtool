@@ -1,5 +1,6 @@
 import { Routes, Route } from 'react-router-dom'
 import { ThemeProvider } from './hooks/useTheme'
+import { LanguageProvider } from './hooks/useLanguage'
 import Layout from './components/Layout'
 import { lazy, Suspense } from 'react'
 
@@ -12,6 +13,7 @@ const FaqPage = lazy(() => import('./pages/FaqPage'))
 const InfoPage = lazy(() => import('./pages/InfoPage'))
 const NotFound = lazy(() => import('./pages/NotFound'))
 const SeoToolLanding = lazy(() => import('./pages/SeoToolLanding'))
+const ContactPage = lazy(() => import('./pages/ContactPage'))
 
 const MergePDF = lazy(() => import('./pages/MergePDF'))
 const SplitPDF = lazy(() => import('./pages/SplitPDF'))
@@ -41,76 +43,81 @@ const PageManagerPDF = lazy(() => import('./pages/PageManagerPDF'))
 const BatchPDF = lazy(() => import('./pages/BatchPDF'))
 const Login = lazy(() => import('./pages/Login'))
 const Signup = lazy(() => import('./pages/Signup'))
+const ForgotPassword = lazy(() => import('./pages/ForgotPassword'))
 
 export default function App() {
   return (
     <ThemeProvider>
-      <Suspense fallback={<div>Loading...</div>}>
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-
-          <Route
-            path="*"
-            element={
-              <Layout>
-                <Suspense fallback={<div>Loading...</div>}>
-                  <Routes>
-
-            <Route path="/" element={<LandingPage />} />
-            <Route path="/tools" element={<Dashboard />} />
-            <Route path="/guides" element={<Guides />} />
-            <Route path="/guides/:slug" element={<GuideArticle />} />
-            <Route path="/pricing" element={<PricingPage />} />
-            <Route path="/faq" element={<FaqPage />} />
-            <Route path="/about" element={<InfoPage pageKey="about" />} />
-            <Route path="/contact" element={<InfoPage pageKey="contact" />} />
-            <Route path="/privacy" element={<InfoPage pageKey="privacy" />} />
-            <Route path="/terms" element={<InfoPage pageKey="terms" />} />
-            <Route path="/cookies" element={<InfoPage pageKey="cookies" />} />
-            <Route path="/disclaimer" element={<InfoPage pageKey="disclaimer" />} />
-            <Route path="/copyright" element={<InfoPage pageKey="copyright" />} />
-            <Route path="/file-handling" element={<InfoPage pageKey="file-handling" />} />
-
-            <Route path="/merge" element={<MergePDF />} />
-            <Route path="/split" element={<SplitPDF />} />
-            <Route path="/compress" element={<CompressPDF />} />
-            <Route path="/image-to-pdf" element={<ImageToPDF />} />
-            <Route path="/pdf-to-image" element={<PDFToImage />} />
-            <Route path="/word-to-pdf" element={<WordToPDF />} />
-            <Route path="/pdf-to-word" element={<PDFToWord />} />
-            <Route path="/pdf-to-excel" element={<PDFToExcel />} />
-            <Route path="/excel-to-pdf" element={<ExcelToPDF />} />
-            <Route path="/powerpoint-to-pdf" element={<PowerPointToPDF />} />
-            <Route path="/pdf-to-powerpoint" element={<PDFToPowerPoint />} />
-            <Route path="/rotate" element={<RotatePDF />} />
-            <Route path="/reorder" element={<ReorderPDF />} />
-            <Route path="/watermark" element={<WatermarkPDF />} />
-            <Route path="/edit" element={<EditPDF />} />
-            <Route path="/protect" element={<ProtectPDF />} />
-            <Route path="/unlock" element={<UnlockPDF />} />
-            <Route path="/extract-text" element={<ExtractTextPDF />} />
-            <Route path="/page-labels" element={<PageLabelsPDF />} />
-            <Route path="/crop" element={<CropPDF />} />
-            <Route path="/extract-pages" element={<ExtractPagesPDF />} />
-            <Route path="/ocr" element={<OCRPDF />} />
-            <Route path="/sign" element={<SignPDF />} />
-            <Route path="/metadata" element={<MetadataPDF />} />
-            <Route path="/page-manager" element={<PageManagerPDF />} />
-            <Route path="/batch" element={<BatchPDF />} />
+      <LanguageProvider>
+        <Suspense fallback={<div>Loading...</div>}>
+          <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
-                    <Route path="/convert/:slug" element={<SeoToolLanding />} />
-                    <Route path="/tools/:slug" element={<SeoToolLanding />} />
-                    <Route path="/compress/:slug" element={<SeoToolLanding />} />
-                    <Route path="*" element={<NotFound />} />
-                  </Routes>
-                </Suspense>
-              </Layout>
-            }
-          />
-        </Routes>
-      </Suspense>
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+
+            <Route
+              path="*"
+              element={
+                <Layout>
+                  <Suspense fallback={<div>Loading...</div>}>
+                    <Routes>
+
+                      <Route path="/" element={<LandingPage />} />
+                      <Route path="/tools" element={<Dashboard />} />
+                      <Route path="/guides" element={<Guides />} />
+                      <Route path="/guides/:slug" element={<GuideArticle />} />
+                      <Route path="/pricing" element={<PricingPage />} />
+                      <Route path="/faq" element={<FaqPage />} />
+                      <Route path="/about" element={<InfoPage pageKey="about" />} />
+                      <Route path="/contact" element={<ContactPage />} />
+                      <Route path="/privacy" element={<InfoPage pageKey="privacy" />} />
+                      <Route path="/terms" element={<InfoPage pageKey="terms" />} />
+                      <Route path="/cookies" element={<InfoPage pageKey="cookies" />} />
+                      <Route path="/disclaimer" element={<InfoPage pageKey="disclaimer" />} />
+                      <Route path="/copyright" element={<InfoPage pageKey="copyright" />} />
+                      <Route path="/file-handling" element={<InfoPage pageKey="file-handling" />} />
+
+                      <Route path="/merge" element={<MergePDF />} />
+                      <Route path="/split" element={<SplitPDF />} />
+                      <Route path="/compress" element={<CompressPDF />} />
+                      <Route path="/image-to-pdf" element={<ImageToPDF />} />
+                      <Route path="/pdf-to-image" element={<PDFToImage />} />
+                      <Route path="/word-to-pdf" element={<WordToPDF />} />
+                      <Route path="/pdf-to-word" element={<PDFToWord />} />
+                      <Route path="/pdf-to-excel" element={<PDFToExcel />} />
+                      <Route path="/excel-to-pdf" element={<ExcelToPDF />} />
+                      <Route path="/powerpoint-to-pdf" element={<PowerPointToPDF />} />
+                      <Route path="/pdf-to-powerpoint" element={<PDFToPowerPoint />} />
+                      <Route path="/rotate" element={<RotatePDF />} />
+                      <Route path="/reorder" element={<ReorderPDF />} />
+                      <Route path="/watermark" element={<WatermarkPDF />} />
+                      <Route path="/edit" element={<EditPDF />} />
+                      <Route path="/protect" element={<ProtectPDF />} />
+                      <Route path="/unlock" element={<UnlockPDF />} />
+                      <Route path="/extract-text" element={<ExtractTextPDF />} />
+                      <Route path="/page-labels" element={<PageLabelsPDF />} />
+                      <Route path="/crop" element={<CropPDF />} />
+                      <Route path="/extract-pages" element={<ExtractPagesPDF />} />
+                      <Route path="/ocr" element={<OCRPDF />} />
+                      <Route path="/sign" element={<SignPDF />} />
+                      <Route path="/metadata" element={<MetadataPDF />} />
+                      <Route path="/page-manager" element={<PageManagerPDF />} />
+                      <Route path="/batch" element={<BatchPDF />} />
+                      <Route path="/login" element={<Login />} />
+                      <Route path="/signup" element={<Signup />} />
+                      <Route path="/forgot-password" element={<ForgotPassword />} />
+                      <Route path="/convert/:slug" element={<SeoToolLanding />} />
+                      <Route path="/tools/:slug" element={<SeoToolLanding />} />
+                      <Route path="/compress/:slug" element={<SeoToolLanding />} />
+                      <Route path="*" element={<NotFound />} />
+                    </Routes>
+                  </Suspense>
+                </Layout>
+              }
+            />
+          </Routes>
+        </Suspense>
+      </LanguageProvider>
     </ThemeProvider>
   )
 }

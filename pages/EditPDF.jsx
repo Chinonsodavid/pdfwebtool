@@ -1,13 +1,13 @@
 import { useEffect, useRef, useState } from 'react'
 import { AlertCircle, FileImage, Highlighter, ImagePlus, MousePointer2, Search, Square, Type, UploadCloud } from 'lucide-react'
-import * as pdfjsLib from 'pdfjs-dist/build/pdf.mjs'
+import * as pdfjsLib from 'pdfjs-dist/build/pdf.js'
 import ProcessingSpinner from '../components/ProcessingSpinner'
 import ResultCard from '../components/ResultCard'
 import { api, withApiBase } from '../utils/api'
 
 if (typeof window !== 'undefined') {
   pdfjsLib.GlobalWorkerOptions.workerPort = new Worker(
-    new URL('pdfjs-dist/build/pdf.worker.min.mjs', import.meta.url),
+    new URL('pdfjs-dist/build/pdf.worker.min.js', import.meta.url),
     { type: 'module' },
   )
 }

@@ -1,56 +1,56 @@
-import ToolPage from '../components/ToolPage'
+import ToolPage from "../components/ToolPage";
 
 const fields = [
   {
-    name: 'signerName',
-    label: 'Signer name',
-    defaultValue: 'Approved',
+    name: "signerName",
+    label: "Signer name",
+    defaultValue: "Approved",
   },
   {
-    name: 'note',
-    label: 'Note',
-    defaultValue: '',
-    placeholder: 'John Doe • 2026-04-06',
+    name: "note",
+    label: "Note",
+    defaultValue: "",
+    placeholder: "simon james • 2026-04-06",
   },
   {
-    name: 'page',
-    label: 'Page',
-    type: 'number',
-    defaultValue: '1',
+    name: "page",
+    label: "Page",
+    type: "number",
+    defaultValue: "1",
     min: 1,
   },
   {
-    name: 'position',
-    label: 'Position',
-    type: 'select',
-    defaultValue: 'bottom-right',
+    name: "position",
+    label: "Position",
+    type: "select",
+    defaultValue: "bottom-right",
     options: [
-      { value: 'bottom-left', label: 'Bottom left' },
-      { value: 'bottom-center', label: 'Bottom center' },
-      { value: 'bottom-right', label: 'Bottom right' },
-      { value: 'top-left', label: 'Top left' },
-      { value: 'top-center', label: 'Top center' },
-      { value: 'top-right', label: 'Top right' },
-      { value: 'center', label: 'Center' },
+      { value: "bottom-left", label: "Bottom left" },
+      { value: "bottom-center", label: "Bottom center" },
+      { value: "bottom-right", label: "Bottom right" },
+      { value: "top-left", label: "Top left" },
+      { value: "top-center", label: "Top center" },
+      { value: "top-right", label: "Top right" },
+      { value: "center", label: "Center" },
     ],
   },
   {
-    name: 'signatureImage',
-    label: 'Optional signature image',
-    type: 'file',
-    accept: 'image/png,image/jpeg,image/webp,image/gif',
-    helpText: 'If provided, the image is used instead of typed signature text.',
+    name: "signatureImage",
+    label: "Optional signature image",
+    type: "file",
+    accept: "image/png,image/jpeg,image/webp,image/gif",
+    helpText: "If provided, the image is used instead of typed signature text.",
     fullWidth: true,
   },
   {
-    name: 'imageWidth',
-    label: 'Image width',
-    type: 'number',
-    defaultValue: '140',
+    name: "imageWidth",
+    label: "Image width",
+    type: "number",
+    defaultValue: "140",
     min: 40,
     max: 400,
   },
-]
+];
 
 export default function SignPDF() {
   return (
@@ -60,7 +60,7 @@ export default function SignPDF() {
       endpoint="/api/pdf/sign"
       accept="application/pdf"
       fields={fields}
-      successMessage={() => 'The signed PDF is ready.'}
+      successMessage={() => "The signed PDF is ready."}
     />
-  )
+  );
 }

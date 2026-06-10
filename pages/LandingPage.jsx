@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
+import { useLanguage } from "../hooks/useLanguage";
 import { toolGroups, tools } from "../utils/toolCatalog";
 import PricingSection from "../components/PricingSection";
 
@@ -36,6 +37,7 @@ const premiumToolIds = new Set([
 
 export default function LandingPage() {
   const [activeGroup, setActiveGroup] = useState("popular");
+  const { t } = useLanguage();
 
   useEffect(() => {
     const stored = localStorage.getItem("theme");
@@ -52,18 +54,21 @@ export default function LandingPage() {
       <div className="lp-hero-slab bg-shapes">
         <div className="lp-hero-inner">
           <h1 className="lp-hero-title">
-            Free Online PDF Tools for Fast
-            <br className="hidden sm:block" /> Document Editing &amp; Conversion
+            {t(
+              "landing.heroTitle",
+              "Free Online PDF Tools for Fast Document Editing & Conversion",
+            )}
           </h1>
           <p className="lp-hero-sub">
-            The complete PDF workstation for schools, offices, and freelancers.
-            Merge, split, compress, or convert with secure OCR and e-signing in
-            one focused workspace.
+            {t(
+              "landing.heroSubtitle",
+              "The complete PDF workstation for schools, offices, and freelancers. Merge, split, compress, or convert with secure OCR and e-signing in one focused workspace.",
+            )}
           </p>
 
           <div className="lp-pills">
             {[
-              { id: "popular", label: "Popular" },
+              { id: "popular", label: t("landing.popular", "Popular") },
               ...toolGroups.filter(
                 (group) => !["convert-to", "convert-from"].includes(group.id),
               ),
@@ -97,7 +102,7 @@ export default function LandingPage() {
                 }}
               >
                 {activeGroup === "popular"
-                  ? "Popular Tools"
+                  ? t("landing.popularTools", "Popular Tools")
                   : toolGroups.find((g) => g.id === activeGroup)?.label}
               </p>
               <h2
@@ -108,7 +113,7 @@ export default function LandingPage() {
                   margin: "0.1rem 0 0",
                 }}
               >
-                Choose a tool and get started
+                {t("landing.chooseTool", "Choose a tool and get started")}
               </h2>
             </div>
             <Link
@@ -120,7 +125,7 @@ export default function LandingPage() {
                 cursor: "pointer",
               }}
             >
-              See more <ArrowRight size={14} />
+              {t("landing.seeMore", "See more")} <ArrowRight size={14} />
             </Link>
           </div>
 

@@ -1,21 +1,13 @@
 import { useMemo, useState } from "react";
 import { AlertCircle } from "lucide-react";
+import { useLanguage } from "../hooks/useLanguage";
 import { api, withApiBase } from "../utils/api";
 import FileDropzone from "./FileDropzone";
 import ResultCard from "./ResultCard";
 import ProcessingSpinner from "./ProcessingSpinner";
 import { siteInfo } from "../data/siteContent";
 
-function uploadCopy({ multiple, title }) {
-  return {
-    selectLabel: multiple ? "Select PDF files" : `Select ${title} file`,
-    dropLabel: multiple
-      ? "or drag and drop files here"
-      : "or drag and drop file here",
-  };
-}
-
-function TextField({ field, value, onChange }) {
+function TextField({ field, value, onChange, t }) {
   const currentValue =
     value !== undefined ? value : field.defaultValue ?? (field.type === "checkbox" ? false : "");
 
@@ -44,7 +36,7 @@ function TextField({ field, value, onChange }) {
           onChange={(event) => onChange(field.name, event.target.checked)}
         />
         <span className="text-sm" style={{ color: "var(--text-muted)" }}>
-          Enable
+          {t("tool.enable", "Enable")}
         </span>
       </label>
     );
@@ -89,6 +81,7 @@ export default function ToolPage({
   seoLanding,
   help,
 }) {
+  const { t } = useLanguage();
   const [files, setFiles] = useState([]);
   const [values, setValues] = useState({});
   const [error, setError] = useState("");
@@ -99,8 +92,13 @@ export default function ToolPage({
   const displayDescription = seoLanding?.description || description;
 
   const uploadLabels = useMemo(
-    () => uploadCopy({ accept, multiple, title }),
-    [accept, multiple, title],
+    () => ({
+      selectLabel: t("tool.selectPdf", "Select PDF file"),
+      dropLabel: multiple
+        ? t("tool.dragFiles", "or drag and drop files here")
+        : t("tool.dragFile", "or drag and drop file here"),
+    }),
+    [multiple, t],
   );
 
   const faqItems = seoLanding?.faq?.length
@@ -120,8 +118,8 @@ export default function ToolPage({
     if (!files.length) {
       setError(
         multiple
-          ? "Choose at least one file before continuing."
-          : "Choose a file before continuing.",
+          ? t("tool.chooseOneFile", "Choose at least one file before continuing.")
+          : t("tool.chooseFile", "Choose a file before continuing."),
       );
       return;
     }
@@ -161,9 +159,9 @@ export default function ToolPage({
       });
 
       setResult({
-        title: `${title} complete`,
+        title: t("tool.complete", "{title} complete", { title }),
         description:
-          successMessage?.(data) || "Your processed file is ready to download.",
+          successMessage?.(data) || t("tool.readyDownload", "Your processed file is ready to download."),
         downloadUrl: withApiBase(data.url),
       });
 
@@ -173,9 +171,9 @@ export default function ToolPage({
       });
     } catch (submitError) {
       setError(
-        submitError.response?.data?.error ||
+          submitError.response?.data?.error ||
           submitError.message ||
-          "Request failed.",
+          t("tool.requestFailed", "Request failed."),
       );
     } finally {
       setIsSubmitting(false);
@@ -210,8 +208,7 @@ export default function ToolPage({
             className="mx-auto max-w-2xl text-xs sm:text-sm"
             style={{ color: "var(--text-muted)" }}
           >
-            Files are processed over HTTPS and temporary uploads and results are
-            scheduled for cleanup after {siteInfo.fileRetention}.
+            {t("tool.filesSecure", "Files are processed over HTTPS and temporary uploads and results are scheduled for cleanup after {fileRetention}.", { fileRetention: siteInfo.fileRetention })}
           </p>
         </div>
 
@@ -229,13 +226,13 @@ export default function ToolPage({
             <section className="tool-section">
               <div className="tool-section-heading">
                 <div>
-                  <h2 className="section-title">Set options</h2>
+                  <h2 className="section-title">{t("tool.setOptions", "Set options")}</h2>
 
                   <p
                     className="text-sm mt-1"
                     style={{ color: "var(--text-muted)" }}
                   >
-                    Defaults work for most files. Adjust only what you need.
+                    {t("tool.defaultsHelp", "Defaults work for most files. Adjust only what you need.")}
                   </p>
                 </div>
               </div>
@@ -259,6 +256,7 @@ export default function ToolPage({
                       field={field}
                       value={values[field.name]}
                       onChange={updateValue}
+                      t={t}
                     />
 
                     {field.helpText ? (
@@ -282,7 +280,7 @@ export default function ToolPage({
                 type="submit"
                 disabled={isSubmitting}
               >
-                {isSubmitting ? "Processing..." : title}
+                {isSubmitting ? t("tool.processing", "Processing...") : title}
               </button>
 
               {isSubmitting ? <ProcessingSpinner /> : null}
@@ -306,7 +304,7 @@ export default function ToolPage({
         {help ? (
           <section className="open-section mt-8 grid gap-5 pt-8 lg:grid-cols-3">
             <div className="card p-4 sm:p-6 space-y-3">
-              <h2 className="section-title text-2xl">About this tool</h2>
+              <h2 className="section-title text-2xl">{t("tool.aboutTool", "About this tool")}</h2>
 
               <p
                 className="text-sm leading-relaxed"
@@ -317,7 +315,7 @@ export default function ToolPage({
             </div>
 
             <div className="card p-4 sm:p-6 space-y-3">
-              <h2 className="section-title text-2xl">Steps</h2>
+              <h2 className="section-title text-2xl">{t("tool.steps", "Steps")}</h2>
 
               <ol className="space-y-2 list-decimal pl-5">
                 {help.steps.map((step) => (
@@ -333,7 +331,7 @@ export default function ToolPage({
             </div>
 
             <div className="card p-4 sm:p-6 space-y-3">
-              <h2 className="section-title text-2xl">Tips</h2>
+              <h2 className="section-title text-2xl">{t("tool.tips", "Tips")}</h2>
 
               <ul className="space-y-2 list-disc pl-5">
                 {help.tips.map((tip) => (
@@ -349,7 +347,7 @@ export default function ToolPage({
             </div>
 
             <div className="card p-4 sm:p-6 space-y-4 lg:col-span-3">
-              <h2 className="section-title text-2xl">Common questions</h2>
+              <h2 className="section-title text-2xl">{t("tool.commonQuestions", "Common questions")}</h2>
 
               <div className="space-y-3">
                 {faqItems.map((item) => (

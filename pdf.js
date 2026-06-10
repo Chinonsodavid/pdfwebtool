@@ -598,7 +598,7 @@ async function renderPdfPages(pdfBytes, pageNumbers, format = 'png', filePath = 
     return popplerPages;
   }
 
-  const pdfjsLib = await import('pdfjs-dist/legacy/build/pdf.mjs');
+  const pdfjsLib = await import('pdfjs-dist/legacy/build/pdf.js');
   const { createCanvas } = require('@napi-rs/canvas');
   const sharp = require('sharp');
   const pdfDocument = await pdfjsLib.getDocument({
@@ -670,7 +670,7 @@ async function extractTextFromPdf(pdfBytes, pageNumbers, filePath = null) {
     return popplerText;
   }
 
-  const pdfjsLib = await import('pdfjs-dist/legacy/build/pdf.mjs');
+  const pdfjsLib = await import('pdfjs-dist/legacy/build/pdf.js');
   const pdfDocument = await pdfjsLib.getDocument({ data: new Uint8Array(pdfBytes) }).promise;
   const sections = [];
 

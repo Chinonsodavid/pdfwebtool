@@ -1,9 +1,11 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { useLanguage } from '../hooks/useLanguage'
 import { toolGroups, tools } from '../utils/toolCatalog'
 
 export default function Dashboard() {
   const [activeGroup, setActiveGroup] = useState('all')
+  const { t } = useLanguage()
   const activeTools = activeGroup === 'all'
     ? tools
     : tools.filter(tool => tool.category === activeGroup)
@@ -13,14 +15,14 @@ export default function Dashboard() {
     <div className="animate-fade-in">
       <header className="mx-auto max-w-5xl py-8 text-center sm:py-12">
         <h1 className="hero-display-title text-4xl leading-tight sm:text-6xl" style={{ color: 'var(--text)' }}>
-          All PDF Tools
+          {t('dashboard.title', 'All PDF Tools')}
         </h1>
         <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed sm:text-lg" style={{ color: 'var(--text-muted)' }}>
-          Convert, compress, edit, organize, secure, OCR, and extract content from PDF files.
+          {t('dashboard.description', 'Convert, compress, edit, organize, secure, OCR, and extract content from PDF files.')}
         </p>
 
         <div className="mt-6 flex flex-wrap justify-center gap-2">
-          {[{ id: 'all', label: 'All Tools' }, ...toolGroups].map(group => (
+          {[{ id: 'all', label: t('dashboard.allToolsFilter', 'All Tools') }, ...toolGroups].map(group => (
             <button
               key={group.id}
               type="button"
@@ -48,7 +50,7 @@ export default function Dashboard() {
 
         {!visibleTools.length ? (
           <div className="py-12 text-center text-sm" style={{ color: 'var(--text-muted)' }}>
-            No tools match that search yet.
+            {t('dashboard.noTools', 'No tools match that search yet.')}
           </div>
         ) : null}
       </section>
