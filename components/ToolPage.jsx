@@ -9,12 +9,14 @@ import { siteInfo } from "../data/siteContent";
 
 function TextField({ field, value, onChange, t }) {
   const currentValue =
-    value !== undefined ? value : field.defaultValue ?? (field.type === "checkbox" ? false : "");
+    value !== undefined
+      ? value
+      : (field.defaultValue ?? (field.type === "checkbox" ? false : ""));
 
   if (field.type === "select") {
     return (
       <select
-        className="tool-input"
+        className="select-field"
         value={currentValue}
         onChange={(event) => onChange(field.name, event.target.value)}
       >
@@ -29,9 +31,10 @@ function TextField({ field, value, onChange, t }) {
 
   if (field.type === "checkbox") {
     return (
-      <label className="inline-flex items-center gap-2">
+      <label className="inline-flex items-center gap-2 cursor-pointer py-1">
         <input
           type="checkbox"
+          className="rounded border-gray-300 text-[var(--accent)] focus:ring-[var(--accent)] h-4 w-4"
           checked={Boolean(currentValue)}
           onChange={(event) => onChange(field.name, event.target.checked)}
         />
@@ -45,17 +48,19 @@ function TextField({ field, value, onChange, t }) {
   if (field.type === "file") {
     return (
       <input
-        className="tool-input"
+        className="input-field"
         type="file"
         accept={field.accept}
-        onChange={(event) => onChange(field.name, event.target.files?.[0] || null)}
+        onChange={(event) =>
+          onChange(field.name, event.target.files?.[0] || null)
+        }
       />
     );
   }
 
   return (
     <input
-      className="tool-input"
+      className="input-field"
       type={field.type || "text"}
       value={currentValue}
       min={field.min}
@@ -118,7 +123,10 @@ export default function ToolPage({
     if (!files.length) {
       setError(
         multiple
-          ? t("tool.chooseOneFile", "Choose at least one file before continuing.")
+          ? t(
+              "tool.chooseOneFile",
+              "Choose at least one file before continuing.",
+            )
           : t("tool.chooseFile", "Choose a file before continuing."),
       );
       return;
@@ -161,7 +169,8 @@ export default function ToolPage({
       setResult({
         title: t("tool.complete", "{title} complete", { title }),
         description:
-          successMessage?.(data) || t("tool.readyDownload", "Your processed file is ready to download."),
+          successMessage?.(data) ||
+          t("tool.readyDownload", "Your processed file is ready to download."),
         downloadUrl: withApiBase(data.url),
       });
 
@@ -171,7 +180,7 @@ export default function ToolPage({
       });
     } catch (submitError) {
       setError(
-          submitError.response?.data?.error ||
+        submitError.response?.data?.error ||
           submitError.message ||
           t("tool.requestFailed", "Request failed."),
       );
@@ -203,13 +212,6 @@ export default function ToolPage({
           >
             {displayDescription}
           </p>
-
-          <p
-            className="mx-auto max-w-2xl text-xs sm:text-sm"
-            style={{ color: "var(--text-muted)" }}
-          >
-            {t("tool.filesSecure", "Files are processed over HTTPS and temporary uploads and results are scheduled for cleanup after {fileRetention}.", { fileRetention: siteInfo.fileRetention })}
-          </p>
         </div>
 
         <form className="tool-panel" onSubmit={handleSubmit}>
@@ -220,58 +222,61 @@ export default function ToolPage({
             multiple={multiple}
             selectLabel={uploadLabels.selectLabel}
             dropLabel={uploadLabels.dropLabel}
-          />
-
-          {files.length && fields.length ? (
-            <section className="tool-section">
-              <div className="tool-section-heading">
-                <div>
-                  <h2 className="section-title">{t("tool.setOptions", "Set options")}</h2>
+          >
+            {files.length && fields.length ? (
+              <section className="tool-options-section mt-4 pt-4 border-t" style={{ borderColor: "var(--border)" }}>
+                <div className="tool-options-heading mb-4 text-left">
+                  <h2 className="section-title text-base font-bold">
+                    {t("tool.setOptions", "Set options")}
+                  </h2>
 
                   <p
-                    className="text-sm mt-1"
+                    className="text-xs mt-1"
                     style={{ color: "var(--text-muted)" }}
                   >
-                    {t("tool.defaultsHelp", "Defaults work for most files. Adjust only what you need.")}
+                    {t(
+                      "tool.defaultsHelp",
+                      "Defaults work for most files. Adjust only what you need.",
+                    )}
                   </p>
                 </div>
-              </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {fields.map((field) => (
-                  <label
-                    key={field.name}
-                    className={
-                      field.fullWidth ? "sm:col-span-2 space-y-2" : "space-y-2"
-                    }
-                  >
-                    <span
-                      className="text-sm font-medium"
-                      style={{ color: "var(--text)" }}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {fields.map((field) => (
+                    <label
+                      key={field.name}
+                      className={
+                        field.fullWidth ? "sm:col-span-2 space-y-1.5" : "space-y-1.5"
+                      }
                     >
-                      {field.label}
-                    </span>
-
-                    <TextField
-                      field={field}
-                      value={values[field.name]}
-                      onChange={updateValue}
-                      t={t}
-                    />
-
-                    {field.helpText ? (
                       <span
-                        className="text-xs block"
-                        style={{ color: "var(--text-muted)" }}
+                        className="text-xs font-semibold"
+                        style={{ color: "var(--text)" }}
                       >
-                        {field.helpText}
+                        {field.label}
                       </span>
-                    ) : null}
-                  </label>
-                ))}
-              </div>
-            </section>
-          ) : null}
+
+                      <TextField
+                        field={field}
+                        value={values[field.name]}
+                        onChange={updateValue}
+                        t={t}
+                      />
+
+                      {field.helpText ? (
+                        <span
+                          className="text-[11px] block"
+                          style={{ color: "var(--text-muted)" }}
+                        >
+                          {field.helpText}
+                        </span>
+                      ) : null}
+                    </label>
+                  ))}
+                </div>
+              </section>
+            ) : null}
+          </FileDropzone>
 
           {files.length ? (
             <div className="tool-submit-row justify-center">
@@ -304,7 +309,9 @@ export default function ToolPage({
         {help ? (
           <section className="open-section mt-8 grid gap-5 pt-8 lg:grid-cols-3">
             <div className="card p-4 sm:p-6 space-y-3">
-              <h2 className="section-title text-2xl">{t("tool.aboutTool", "About this tool")}</h2>
+              <h2 className="section-title text-2xl">
+                {t("tool.aboutTool", "About this tool")}
+              </h2>
 
               <p
                 className="text-sm leading-relaxed"
@@ -315,7 +322,9 @@ export default function ToolPage({
             </div>
 
             <div className="card p-4 sm:p-6 space-y-3">
-              <h2 className="section-title text-2xl">{t("tool.steps", "Steps")}</h2>
+              <h2 className="section-title text-2xl">
+                {t("tool.steps", "Steps")}
+              </h2>
 
               <ol className="space-y-2 list-decimal pl-5">
                 {help.steps.map((step) => (
@@ -331,7 +340,9 @@ export default function ToolPage({
             </div>
 
             <div className="card p-4 sm:p-6 space-y-3">
-              <h2 className="section-title text-2xl">{t("tool.tips", "Tips")}</h2>
+              <h2 className="section-title text-2xl">
+                {t("tool.tips", "Tips")}
+              </h2>
 
               <ul className="space-y-2 list-disc pl-5">
                 {help.tips.map((tip) => (
@@ -347,7 +358,9 @@ export default function ToolPage({
             </div>
 
             <div className="card p-4 sm:p-6 space-y-4 lg:col-span-3">
-              <h2 className="section-title text-2xl">{t("tool.commonQuestions", "Common questions")}</h2>
+              <h2 className="section-title text-2xl">
+                {t("tool.commonQuestions", "Common questions")}
+              </h2>
 
               <div className="space-y-3">
                 {faqItems.map((item) => (

@@ -747,10 +747,22 @@
     }
   }
 
+  .file-thumb-card.dragging {
+    opacity: 0.45;
+    transform: scale(0.96);
+    border-color: var(--accent);
+    box-shadow: 0 4px 12px color-mix(in srgb, var(--accent) 15%, transparent);
+    z-index: 10;
+  }
+
   .tool-section {
     @apply space-y-4 rounded-md border p-3 sm:p-4;
     border-color: var(--border);
     background: color-mix(in srgb, var(--bg-card) 82%, var(--bg-subtle));
+  }
+
+  .tool-options-section {
+    @apply space-y-4;
   }
 
   .tool-section-heading {

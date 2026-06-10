@@ -43,8 +43,7 @@ const translations = {
       selectPdf: "Select PDF file",
       dragFiles: "or drag and drop files here",
       dragFile: "or drag and drop file here",
-      filesSecure:
-        "Files are processed over HTTPS and temporary uploads and results are scheduled for cleanup after {fileRetention}.",
+
       setOptions: "Set options",
       defaultsHelp: "Defaults work for most files. Adjust only what you need.",
       chooseOneFile: "Choose at least one file before continuing.",
@@ -161,7 +160,8 @@ const translations = {
       free: "Gratis",
     },
     landing: {
-      heroTitle: "Herramientas PDF online gratis para editar y convertir documentos rapido",
+      heroTitle:
+        "Herramientas PDF online gratis para editar y convertir documentos rapido",
       heroSubtitle:
         "La estacion de trabajo PDF completa para escuelas, oficinas y freelancers. Une, divide, comprime o convierte con OCR seguro y firma electronica en un solo espacio de trabajo.",
       popular: "Popular",
@@ -183,7 +183,8 @@ const translations = {
       filesSecure:
         "Los archivos se procesan por HTTPS y las subidas y resultados temporales se eliminan despues de {fileRetention}.",
       setOptions: "Configurar opciones",
-      defaultsHelp: "La configuracion predeterminada funciona para la mayoria de archivos. Cambia solo lo necesario.",
+      defaultsHelp:
+        "La configuracion predeterminada funciona para la mayoria de archivos. Cambia solo lo necesario.",
       chooseOneFile: "Elige al menos un archivo antes de continuar.",
       chooseFile: "Elige un archivo antes de continuar.",
       processing: "Procesando...",
@@ -299,7 +300,8 @@ const translations = {
       free: "Gratuit",
     },
     landing: {
-      heroTitle: "Outils PDF en ligne gratuits pour editer et convertir rapidement",
+      heroTitle:
+        "Outils PDF en ligne gratuits pour editer et convertir rapidement",
       heroSubtitle:
         "L'espace de travail PDF complet pour les ecoles, bureaux et freelances. Fusionnez, divisez, compressez ou convertissez avec OCR securise et signature electronique.",
       popular: "Populaire",

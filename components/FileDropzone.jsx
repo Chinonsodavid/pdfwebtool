@@ -1,4 +1,4 @@
-import { useEffect, useId, useState } from 'react'
+import { useEffect, useId, useRef, useState } from 'react'
 import {
   FileText,
   Image as ImageIcon,
@@ -24,12 +24,78 @@ export default function FileDropzone({
   multiple,
   selectLabel,
   dropLabel,
+  children,
 }) {
   const inputId = useId()
   const fileList = Array.from(files || [])
   const [previewUrls, setPreviewUrls] = useState([])
   const [isDragging, setIsDragging] = useState(false)
   const [draggedIndex, setDraggedIndex] = useState(null)
+
+  const gridRef = useRef(null)
+  const reorderRef = useRef(reorderFiles)
+
+  useEffect(() => {
+    reorderRef.current = reorderFiles
+  }, [files, onChange])
+
+  useEffect(() => {
+    const grid = gridRef.current
+    if (!grid) return
+
+    let activeDragIndex = null
+
+    function handleTouchStart(e) {
+      const card = e.target.closest('.file-thumb-card')
+      if (!card) return
+      
+      const index = parseInt(card.getAttribute('data-index'), 10)
+      if (isNaN(index)) return
+      
+      activeDragIndex = index
+      setDraggedIndex(index)
+    }
+
+    function handleTouchMove(e) {
+      if (activeDragIndex === null) return
+
+      // Prevent default scrolling to prevent screen jittering
+      if (e.cancelable) {
+        e.preventDefault()
+      }
+
+      const touch = e.touches[0]
+      const element = document.elementFromPoint(touch.clientX, touch.clientY)
+      if (!element) return
+
+      const targetCard = element.closest('.file-thumb-card')
+      if (targetCard) {
+        const targetIndex = parseInt(targetCard.getAttribute('data-index'), 10)
+        if (!isNaN(targetIndex) && targetIndex !== activeDragIndex) {
+          reorderRef.current(activeDragIndex, targetIndex)
+          activeDragIndex = targetIndex
+          setDraggedIndex(targetIndex)
+        }
+      }
+    }
+
+    function handleTouchEnd() {
+      activeDragIndex = null
+      setDraggedIndex(null)
+    }
+
+    grid.addEventListener('touchstart', handleTouchStart, { passive: true })
+    grid.addEventListener('touchmove', handleTouchMove, { passive: false })
+    grid.addEventListener('touchend', handleTouchEnd, { passive: true })
+    grid.addEventListener('touchcancel', handleTouchEnd, { passive: true })
+
+    return () => {
+      grid.removeEventListener('touchstart', handleTouchStart)
+      grid.removeEventListener('touchmove', handleTouchMove)
+      grid.removeEventListener('touchend', handleTouchEnd)
+      grid.removeEventListener('touchcancel', handleTouchEnd)
+    }
+  }, [])
 
   useEffect(() => {
     const previews = fileList.map((file, index) => ({
@@ -150,11 +216,12 @@ export default function FileDropzone({
       </div>
 
       {/* ── Thumbnail grid ── */}
-      <div className="file-thumb-grid">
+      <div className="file-thumb-grid" ref={gridRef}>
         {previewUrls.map(preview => (
           <div
             key={preview.key}
-            className="file-thumb-card"
+            data-index={preview.index}
+            className={`file-thumb-card ${draggedIndex === preview.index ? 'dragging' : ''}`}
             draggable
             onDragStart={() => setDraggedIndex(preview.index)}
             onDragOver={event => event.preventDefault()}
@@ -164,6 +231,7 @@ export default function FileDropzone({
               reorderFiles(draggedIndex, preview.index)
               setDraggedIndex(null)
             }}
+            onDragEnd={() => setDraggedIndex(null)}
           >
             {/* Remove button */}
             <button
@@ -210,6 +278,9 @@ export default function FileDropzone({
           </div>
         ))}
       </div>
+
+      {/* ── Children area (options) ── */}
+      {children && <div className="dropzone-options-area">{children}</div>}
     </div>
   )
 }
