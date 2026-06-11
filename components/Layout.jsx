@@ -31,8 +31,8 @@ function BrandWordmark({ size = "base" }) {
     <span className="brand-wordmark inline-flex items-center gap-2">
       <img
         src="/logo.png"
-        alt="Constant PDF logo"
-        className={`${isLarge ? "h-6 w-6" : "h-5 w-5"} object-contain`}
+        alt="ConstantPDF logo"
+        className={`${isLarge ? "h-[28px] w-[28px]" : "h-[23px] w-[23px]"} object-contain`}
       />
       Constant<span className="brand-wordmark-pdf">PDF</span>
     </span>

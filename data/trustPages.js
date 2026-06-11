@@ -2,14 +2,14 @@ import { siteInfo } from './siteContent'
 
 export const trustPages = {
   about: {
-    title: 'About Constant PDF',
+    title: 'About ConstantPDF',
     eyebrow: 'About',
-    intro: 'Constant PDF is a browser-based document toolkit for everyday PDF, image, spreadsheet, and presentation workflows.',
+    intro: 'ConstantPDF is a browser-based document toolkit for everyday PDF, image, spreadsheet, and presentation workflows.',
     sections: [
       {
-        heading: 'What Constant PDF does',
+        heading: 'What ConstantPDF does',
         body: [
-          'Constant PDF helps users merge, split, compress, convert, protect, unlock, sign, crop, label, OCR, and organize documents from one clean interface.',
+          'ConstantPDF helps users merge, split, compress, convert, protect, unlock, sign, crop, label, OCR, and organize documents from one clean interface.',
           'The site is designed for practical document tasks people need before sending files to clients, schools, teams, banks, portals, or public upload forms.',
         ],
       },
@@ -17,7 +17,7 @@ export const trustPages = {
         heading: 'How files are handled',
         body: [
           `Uploaded files are processed by the backend service and temporary files are scheduled for cleanup after ${siteInfo.fileRetention}.`,
-          'Constant PDF is not a permanent file hosting service. Users should download their result and keep their own secure copy.',
+          'ConstantPDF is not a permanent file hosting service. Users should download their result and keep their own secure copy.',
         ],
       },
       {
@@ -32,7 +32,7 @@ export const trustPages = {
   contact: {
     title: 'Contact',
     eyebrow: 'Support',
-    intro: 'Questions, bug reports, and business enquiries can be sent to the Constant PDF support contact.',
+    intro: 'Questions, bug reports, and business enquiries can be sent to the ConstantPDF support contact.',
     sections: [
       {
         heading: 'Email',
@@ -44,7 +44,7 @@ export const trustPages = {
       {
         heading: 'Response expectations',
         body: [
-          'Constant PDF aims to respond to genuine support and business enquiries as quickly as possible.',
+          'ConstantPDF aims to respond to genuine support and business enquiries as quickly as possible.',
           'Complex document conversion issues may require sample files, but users should remove personal or confidential information before sharing samples.',
         ],
       },
@@ -53,20 +53,20 @@ export const trustPages = {
   privacy: {
     title: 'Privacy Policy',
     eyebrow: 'Privacy',
-    intro: 'This policy explains the kinds of information Constant PDF may process when users access the website and use document tools.',
+    intro: 'This policy explains the kinds of information ConstantPDF may process when users access the website and use document tools.',
     sections: [
       {
         heading: 'Information processed',
         body: [
-          'Constant PDF may process uploaded files, generated output files, IP address, browser information, device information, basic request logs, and error logs needed to operate and secure the service.',
-          'Uploaded files are used to complete the selected document task. Constant PDF does not sell uploaded documents.',
+          'ConstantPDF may process uploaded files, generated output files, IP address, browser information, device information, basic request logs, and error logs needed to operate and secure the service.',
+          'Uploaded files are used to complete the selected document task. ConstantPDF does not sell uploaded documents.',
         ],
       },
       {
         heading: 'Temporary file storage',
         body: [
           `Uploaded and generated files are stored temporarily and are scheduled for cleanup after ${siteInfo.fileRetention}.`,
-          'Users should download their processed files promptly. Constant PDF is not designed for long-term file storage.',
+          'Users should download their processed files promptly. ConstantPDF is not designed for long-term file storage.',
         ],
       },
       {
@@ -94,7 +94,7 @@ export const trustPages = {
   terms: {
     title: 'Terms of Service',
     eyebrow: 'Terms',
-    intro: 'By using Constant PDF, users agree to use the tools responsibly and only for documents they have the right to process.',
+    intro: 'By using ConstantPDF, users agree to use the tools responsibly and only for documents they have the right to process.',
     sections: [
       {
         heading: 'Acceptable use',
@@ -107,7 +107,7 @@ export const trustPages = {
         heading: 'Document ownership',
         body: [
           'Users are responsible for the files they upload and the results they create.',
-          'Constant PDF does not claim ownership of user documents, but needs to process uploaded files temporarily to provide the selected tool.',
+          'ConstantPDF does not claim ownership of user documents, but needs to process uploaded files temporarily to provide the selected tool.',
         ],
       },
       {
@@ -120,7 +120,7 @@ export const trustPages = {
       {
         heading: 'Availability',
         body: [
-          'Constant PDF may be unavailable during maintenance, hosting interruptions, or heavy processing load.',
+          'ConstantPDF may be unavailable during maintenance, hosting interruptions, or heavy processing load.',
           'The service may limit file size, request volume, or processing time to protect reliability.',
         ],
       },
@@ -129,7 +129,7 @@ export const trustPages = {
   cookies: {
     title: 'Cookie Policy',
     eyebrow: 'Cookies',
-    intro: 'This page explains how cookies and similar technologies may be used on Constant PDF.',
+    intro: 'This page explains how cookies and similar technologies may be used on ConstantPDF.',
     sections: [
       {
         heading: 'Essential cookies',
@@ -156,7 +156,7 @@ export const trustPages = {
   disclaimer: {
     title: 'Disclaimer',
     eyebrow: 'Important notice',
-    intro: 'Constant PDF provides document tools for convenience. It is not a legal, financial, accounting, medical, or professional advice service.',
+    intro: 'ConstantPDF provides document tools for convenience. It is not a legal, financial, accounting, medical, or professional advice service.',
     sections: [
       {
         heading: 'Review your files',
@@ -177,13 +177,13 @@ export const trustPages = {
   copyright: {
     title: 'Copyright and DMCA Policy',
     eyebrow: 'Copyright',
-    intro: 'Constant PDF respects intellectual property rights and expects users to do the same.',
+    intro: 'ConstantPDF respects intellectual property rights and expects users to do the same.',
     sections: [
       {
         heading: 'User responsibility',
         body: [
           'Users should only upload, convert, unlock, or modify files they own or have permission to process.',
-          'Constant PDF should not be used to distribute copyrighted material without permission.',
+          'ConstantPDF should not be used to distribute copyrighted material without permission.',
         ],
       },
       {
@@ -198,7 +198,7 @@ export const trustPages = {
   'file-handling': {
     title: 'File Handling and Deletion',
     eyebrow: 'File safety',
-    intro: 'Constant PDF is built for temporary document processing, not permanent file storage.',
+    intro: 'ConstantPDF is built for temporary document processing, not permanent file storage.',
     sections: [
       {
         heading: 'Temporary processing',

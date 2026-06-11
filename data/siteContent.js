@@ -1,5 +1,5 @@
 export const siteInfo = {
-  name: 'Constant PDF',
+  name: 'ConstantPDF',
   url: 'https://pdforge-xi.vercel.app',
   backendUrl: 'https://pdfwebtool-ls3x.onrender.com',
   contactEmail: 'support@constantpdf.com',

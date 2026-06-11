@@ -255,8 +255,8 @@ export default function AuthLayout({
                   <span className="brand-wordmark text-2xl sm:text-4xl inline-flex items-center gap-3">
                     <img
                       src="/logo.png"
-                      alt="Constant PDF logo"
-                      className="h-10 w-10 object-contain"
+                      alt="ConstantPDF logo"
+                      className="h-[46px] w-[46px] object-contain"
                     />
                     Constant<span className="brand-wordmark-pdf">PDF</span>
                   </span>
