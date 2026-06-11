@@ -95,8 +95,11 @@ export default function Login() {
       mode="login"
       goBackTo="/"
       title={t("auth.loginTitle", "Access Your Workspace")}
-      rightTitle={t("auth.loginRightTitle", "Log in to your workspace")}
-      rightDescription={t("auth.loginRightDescription", "Enter your email and password to access your ConstantPDF account. You are one step closer to boosting your document productivity.")}
+      rightTitle={t("auth.loginRightTitle", "Access your workspace")}
+      rightDescription={t(
+        "auth.loginRightDescription",
+        "Enter your email and password to access your ConstantPDF account. You are one step closer to boosting your document productivity.",
+      )}
       footer={
         <>
           <p className="text-center text-[15px] text-[var(--text)]">

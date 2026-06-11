@@ -60,8 +60,8 @@ const translations = {
     },
     auth: {
       goBackToLogin: "Go back to login",
-      loginTitle: "Login to your account",
-      loginRightTitle: "Log in to your workspace",
+      loginTitle: "Access your workspace",
+      loginRightTitle: "Access your workspace",
       loginRightDescription:
         "Enter your email and password to access your ConstantPDF account. You are one step closer to boosting your document productivity.",
       noAccount: "Don't have an account?",
@@ -71,7 +71,7 @@ const translations = {
       forgotPassword: "Forgot your password?",
       loggingIn: "Logging in...",
       logIn: "Log in",
-      createTitle: "Create new account",
+      createTitle: "Create your account",
       createRightTitle: "PDF tools for productive people",
       createRightDescription:
         "Create your account to keep your PDF workflow organized, fast, and easy to access from one place.",

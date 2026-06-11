@@ -222,7 +222,10 @@ export default function AuthLayout({
   const isDark = theme === "dark";
 
   return (
-    <div className="min-h-screen lg:h-screen lg:overflow-hidden" style={{ background: "var(--bg)" }}>
+    <div
+      className="min-h-screen lg:h-screen lg:overflow-hidden"
+      style={{ background: "var(--bg)" }}
+    >
       <div className="mx-auto grid min-h-screen lg:h-full max-w-[100%] lg:grid-cols-[0.6fr_0.4fr]">
         <section
           className="flex items-center justify-center px-6 py-6 sm:px-10 lg:px-14 overflow-y-auto h-full"
@@ -249,7 +252,7 @@ export default function AuthLayout({
 
               <div className="mb-5 text-center">
                 <Link to="/" className="inline-flex items-center gap-2">
-                  <span className="brand-wordmark text-4xl inline-flex items-center gap-3">
+                  <span className="brand-wordmark text-2xl sm:text-4xl inline-flex items-center gap-3">
                     <img
                       src="/logo.png"
                       alt="Constant PDF logo"
@@ -291,7 +294,8 @@ export default function AuthLayout({
           <AuthIllustration />
           <div className="mx-auto mt-6 max-w-[420px]">
             <h2 className="text-2xl font-display font-extrabold leading-tight text-[var(--text)]">
-              {rightTitle || t("auth.rightPanelTitle", "Everything you need for PDFs")}
+              {rightTitle ||
+                t("auth.rightPanelTitle", "Everything you need for PDFs")}
             </h2>
 
             <div className="mt-6 space-y-3">
@@ -323,10 +327,7 @@ export default function AuthLayout({
               ))}
             </div>
 
-            <p
-              className="mt-6 text-sm"
-              style={{ color: "var(--text-muted)" }}
-            >
+            <p className="mt-6 text-sm" style={{ color: "var(--text-muted)" }}>
               {rightDescription || "No installation required."}
             </p>
           </div>

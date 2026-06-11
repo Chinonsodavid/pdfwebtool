@@ -282,7 +282,11 @@ export default function Layout({ children }) {
                 background: "var(--bg-card)",
               }}
             >
-              <Globe size={14} className="shrink-0" style={{ color: "var(--text-muted)" }} />
+              <Globe
+                size={14}
+                className="shrink-0"
+                style={{ color: "var(--text-muted)" }}
+              />
               <select
                 value={language}
                 onChange={(e) => setLanguage(e.target.value)}
@@ -296,7 +300,10 @@ export default function Layout({ children }) {
                   <option
                     key={option.value}
                     value={option.value}
-                    style={{ background: "var(--bg-card)", color: "var(--text)" }}
+                    style={{
+                      background: "var(--bg-card)",
+                      color: "var(--text)",
+                    }}
                   >
                     {option.label}
                   </option>
@@ -847,7 +854,8 @@ export default function Layout({ children }) {
           className="border-t mt-16"
           style={{
             borderColor: "var(--border)",
-            background: "linear-gradient(to bottom, transparent, rgba(249, 83, 14, 0.02))",
+            background:
+              "linear-gradient(to bottom, transparent, rgba(249, 83, 14, 0.02))",
           }}
         >
           <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 py-12 space-y-10">
@@ -861,27 +869,10 @@ export default function Layout({ children }) {
                   className="text-sm leading-relaxed max-w-sm"
                   style={{ color: "var(--text-muted)" }}
                 >
-                  Simple, secure, and fast document workstations. Built for schools, offices, and freelancers to manage their PDF workflow without compromise.
+                  Simple, secure, and fast document workstations. Built for
+                  schools, offices, and freelancers to manage their PDF workflow
+                  without compromise.
                 </p>
-                <div
-                  className="flex items-start gap-3 rounded-2xl border p-4 max-w-md"
-                  style={{
-                    borderColor: "var(--border)",
-                    background: "var(--bg-card)",
-                  }}
-                >
-                  <ShieldCheck
-                    size={20}
-                    className="shrink-0 mt-0.5"
-                    style={{ color: "var(--accent)" }}
-                  />
-                  <span
-                    className="text-xs leading-relaxed"
-                    style={{ color: "var(--text-muted)" }}
-                  >
-                    Files are processed securely on the backend for the selected task and temporary files are scheduled for automatic cleanup after {siteInfo.fileRetention}.
-                  </span>
-                </div>
               </div>
 
               {/* Product Column */}
@@ -995,7 +986,8 @@ export default function Layout({ children }) {
                 className="text-xs text-center sm:text-left"
                 style={{ color: "var(--text-muted)" }}
               >
-                © {new Date().getFullYear()} {siteInfo.name}. Built for secure and productive document management.
+                © {new Date().getFullYear()} {siteInfo.name}. Built for secure
+                and productive document management.
               </p>
               <div className="flex items-center gap-4 text-xs">
                 <span style={{ color: "var(--text-muted)" }}>
