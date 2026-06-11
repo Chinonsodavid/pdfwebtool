@@ -35,7 +35,7 @@ export default function PricingSection() {
   const [billing, setBilling] = useState("monthly");
 
   return (
-    <section className="lp-pricing bg-shapes">
+    <section id="pricing" className="lp-pricing bg-shapes">
       <div className="lp-pricing-inner">
         <div style={{ textAlign: "center", marginBottom: "2.5rem" }}>
           <h1

@@ -94,7 +94,7 @@ export default function Login() {
     <AuthLayout
       mode="login"
       goBackTo="/"
-      title={t("auth.loginTitle", "Login to your account")}
+      title={t("auth.loginTitle", "Access Your Workspace")}
       rightTitle={t("auth.loginRightTitle", "Log in to your workspace")}
       rightDescription={t("auth.loginRightDescription", "Enter your email and password to access your ConstantPDF account. You are one step closer to boosting your document productivity.")}
       footer={

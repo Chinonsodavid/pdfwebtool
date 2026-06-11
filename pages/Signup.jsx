@@ -174,7 +174,7 @@ export default function Signup() {
     <AuthLayout
       mode="signup"
       goBackTo="/"
-      title={t("auth.createTitle", "Create new account")}
+      title={t("auth.createTitle", "Create Your Account")}
       rightTitle={t("auth.createRightTitle", "PDF tools for productive people")}
       rightDescription={t("auth.createRightDescription", "Create your account to keep your PDF workflow organized, fast, and easy to access from one place.")}
       footer={

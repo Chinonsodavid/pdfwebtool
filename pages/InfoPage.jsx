@@ -17,7 +17,7 @@ export default function InfoPage({ pageKey }) {
   }
 
   return (
-    <article className="max-w-4xl space-y-8 animate-fade-in">
+    <article id={pageKey} className="max-w-4xl space-y-8 animate-fade-in">
       <header className="space-y-4">
         <p className="text-sm font-display font-semibold" style={{ color: 'var(--accent)' }}>
           {page.eyebrow}

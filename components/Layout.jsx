@@ -901,35 +901,35 @@ export default function Layout({ children }) {
                     <span>All Tools</span>
                   </Link>
                   <Link
-                    to="/pricing"
+                    to="/pricing#pricing"
                     className="group inline-flex items-center gap-1 text-sm transition-all duration-200 hover:text-[var(--accent)] hover:translate-x-1"
                     style={{ color: "var(--text-muted)" }}
                   >
                     <span>Pricing</span>
                   </Link>
                   <Link
-                    to="/about"
+                    to="/about#about"
                     className="group inline-flex items-center gap-1 text-sm transition-all duration-200 hover:text-[var(--accent)] hover:translate-x-1"
                     style={{ color: "var(--text-muted)" }}
                   >
                     <span>About</span>
                   </Link>
                   <Link
-                    to="/contact"
+                    to="/contact#contact"
                     className="group inline-flex items-center gap-1 text-sm transition-all duration-200 hover:text-[var(--accent)] hover:translate-x-1"
                     style={{ color: "var(--text-muted)" }}
                   >
                     <span>Contact</span>
                   </Link>
                   <Link
-                    to="/faq"
+                    to="/faq#faq"
                     className="group inline-flex items-center gap-1 text-sm transition-all duration-200 hover:text-[var(--accent)] hover:translate-x-1"
                     style={{ color: "var(--text-muted)" }}
                   >
                     <span>FAQ</span>
                   </Link>
                   <Link
-                    to="/file-handling"
+                    to="/file-handling#file-handling"
                     className="group inline-flex items-center gap-1 text-sm transition-all duration-200 hover:text-[var(--accent)] hover:translate-x-1"
                     style={{ color: "var(--text-muted)" }}
                   >
@@ -948,35 +948,35 @@ export default function Layout({ children }) {
                 </h2>
                 <nav className="flex flex-col gap-3">
                   <Link
-                    to="/privacy"
+                    to="/privacy#privacy"
                     className="group inline-flex items-center gap-1 text-sm transition-all duration-200 hover:text-[var(--accent)] hover:translate-x-1"
                     style={{ color: "var(--text-muted)" }}
                   >
                     <span>Privacy Policy</span>
                   </Link>
                   <Link
-                    to="/terms"
+                    to="/terms#terms"
                     className="group inline-flex items-center gap-1 text-sm transition-all duration-200 hover:text-[var(--accent)] hover:translate-x-1"
                     style={{ color: "var(--text-muted)" }}
                   >
                     <span>Terms of Service</span>
                   </Link>
                   <Link
-                    to="/cookies"
+                    to="/cookies#cookies"
                     className="group inline-flex items-center gap-1 text-sm transition-all duration-200 hover:text-[var(--accent)] hover:translate-x-1"
                     style={{ color: "var(--text-muted)" }}
                   >
                     <span>Cookie Policy</span>
                   </Link>
                   <Link
-                    to="/disclaimer"
+                    to="/disclaimer#disclaimer"
                     className="group inline-flex items-center gap-1 text-sm transition-all duration-200 hover:text-[var(--accent)] hover:translate-x-1"
                     style={{ color: "var(--text-muted)" }}
                   >
                     <span>Disclaimer</span>
                   </Link>
                   <Link
-                    to="/copyright"
+                    to="/copyright#copyright"
                     className="group inline-flex items-center gap-1 text-sm transition-all duration-200 hover:text-[var(--accent)] hover:translate-x-1"
                     style={{ color: "var(--text-muted)" }}
                   >

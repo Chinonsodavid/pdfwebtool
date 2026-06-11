@@ -104,7 +104,7 @@ function FAQItem({ q, a }) {
 
 export default function FaqSection() {
   return (
-    <section className="lp-faq bg-shapes">
+    <section id="faq" className="lp-faq bg-shapes">
       <div className="lp-faq-inner">
         <div className="lp-faq-header">
           <div>

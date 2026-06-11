@@ -1,9 +1,9 @@
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, useLocation } from 'react-router-dom'
 import { ThemeProvider } from './hooks/useTheme'
 import { LanguageProvider } from './hooks/useLanguage'
 import Layout from './components/Layout'
 import PageLoader from './components/PageLoader'
-import { lazy, Suspense } from 'react'
+import { lazy, Suspense, useEffect } from 'react'
 
 const LandingPage = lazy(() => import('./pages/LandingPage'))
 const Dashboard = lazy(() => import('./pages/Dashboard'))
@@ -46,10 +46,37 @@ const Login = lazy(() => import('./pages/Login'))
 const Signup = lazy(() => import('./pages/Signup'))
 const ForgotPassword = lazy(() => import('./pages/ForgotPassword'))
 
+function ScrollToHash() {
+  const location = useLocation();
+
+  useEffect(() => {
+    const hash = location.hash;
+    if (hash) {
+      const id = hash.slice(1);
+      let attempts = 0;
+      const scrollToElement = () => {
+        const element = document.getElementById(id);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } else if (attempts < 15) {
+          attempts++;
+          setTimeout(scrollToElement, 80);
+        }
+      };
+      scrollToElement();
+    } else {
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    }
+  }, [location.pathname, location.hash]);
+
+  return null;
+}
+
 export default function App() {
   return (
     <ThemeProvider>
       <LanguageProvider>
+        <ScrollToHash />
         <Suspense fallback={<PageLoader />}>
           <Routes>
             <Route path="/login" element={<Login />} />

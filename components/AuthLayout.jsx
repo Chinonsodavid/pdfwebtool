@@ -115,7 +115,7 @@ export function AuthSocialButtons() {
 
 function AuthIllustration() {
   return (
-    <div className="relative mx-auto h-[295px] w-full max-w-[430px]">
+    <div className="relative mx-auto h-[200px] w-full max-w-[340px] scale-75 origin-center">
       <div
         className="absolute left-0 top-5 h-44 w-20 rounded-[1.4rem] border p-3"
         style={{
@@ -222,20 +222,20 @@ export default function AuthLayout({
   const isDark = theme === "dark";
 
   return (
-    <div className="min-h-screen" style={{ background: "var(--bg)" }}>
-      <div className="mx-auto grid min-h-screen max-w-[100%] lg:grid-cols-[0.6fr_0.4fr]">
+    <div className="h-screen overflow-hidden" style={{ background: "var(--bg)" }}>
+      <div className="mx-auto grid h-full max-w-[100%] lg:grid-cols-[0.6fr_0.4fr]">
         <section
-          className="flex items-center justify-center px-6 py-12 sm:px-10 lg:px-14"
+          className="flex items-center justify-center px-6 py-6 sm:px-10 lg:px-14 overflow-y-auto h-full"
           style={{
             background: isDark
               ? "linear-gradient(180deg, #141414 0%, #191919 100%)"
               : "#ffffff",
           }}
         >
-          <div className="w-full max-w-[560px]">
+          <div className="w-full max-w-[560px] -mt-10 lg:-mt-16">
             <div className="mx-auto max-w-[480px]">
               {goBackTo ? (
-                <div className="mb-6">
+                <div className="mb-4">
                   <Link
                     to={goBackTo}
                     className="inline-flex items-center gap-1 text-xs font-semibold tracking-wide transition hover:opacity-70"
@@ -247,7 +247,7 @@ export default function AuthLayout({
                 </div>
               ) : null}
 
-              <div className="mb-8 text-center">
+              <div className="mb-5 text-center">
                 <Link to="/" className="inline-flex items-center gap-2">
                   <span className="brand-wordmark text-4xl inline-flex items-center gap-3">
                     <img
@@ -260,13 +260,13 @@ export default function AuthLayout({
                 </Link>
               </div>
 
-              <div className="space-y-6">
+              <div className="space-y-5">
                 <div className="text-center">
-                  <h1 className="text-[2.5rem] font-display font-extrabold tracking-tight text-[var(--text)]">
+                  <h1 className="text-3xl font-display font-extrabold tracking-tight text-[var(--text)]">
                     {title}
                   </h1>
                   {description ? (
-                    <p className="mt-3 text-[15px] leading-relaxed text-[var(--text-muted)]">
+                    <p className="mt-2 text-[15px] leading-relaxed text-[var(--text-muted)]">
                       {description}
                     </p>
                   ) : null}
@@ -281,7 +281,7 @@ export default function AuthLayout({
         </section>
 
         <aside
-          className="hidden lg:flex flex-col justify-center px-16 py-14"
+          className="hidden lg:flex flex-col justify-center px-16 py-10 overflow-y-auto h-full"
           style={{
             background: isDark
               ? "linear-gradient(180deg, #212121 0%, #1c1c1c 100%)"
@@ -289,12 +289,12 @@ export default function AuthLayout({
           }}
         >
           <AuthIllustration />
-          <div className="mx-auto mt-12 max-w-[420px]">
-            <h2 className="text-[2rem] font-display font-extrabold leading-tight text-[var(--text)]">
+          <div className="mx-auto mt-6 max-w-[420px]">
+            <h2 className="text-2xl font-display font-extrabold leading-tight text-[var(--text)]">
               {rightTitle || t("auth.rightPanelTitle", "Everything you need for PDFs")}
             </h2>
 
-            <div className="mt-8 space-y-4">
+            <div className="mt-6 space-y-3">
               {t("auth.rightPanelTools", [
                 "Merge PDF",
                 "Split PDF",
@@ -305,11 +305,11 @@ export default function AuthLayout({
               ]).map((item) => (
                 <div
                   key={item}
-                  className="flex items-center gap-3 text-[17px]"
+                  className="flex items-center gap-3 text-[16px]"
                   style={{ color: "var(--text)" }}
                 >
                   <div
-                    className="flex h-6 w-6 items-center justify-center rounded-full text-sm font-bold"
+                    className="flex h-5 w-5 items-center justify-center rounded-full text-xs font-bold"
                     style={{
                       background: "rgba(249,83,14,.12)",
                       color: "var(--accent)",
@@ -324,22 +324,11 @@ export default function AuthLayout({
             </div>
 
             <p
-              className="mt-8 text-base"
+              className="mt-6 text-sm"
               style={{ color: "var(--text-muted)" }}
             >
               {rightDescription || "No installation required."}
             </p>
-
-            <Link
-              to="/tools"
-              className="mt-8 inline-flex items-center gap-2 rounded-xl px-5 py-3 font-semibold transition"
-              style={{
-                background: "var(--accent)",
-                color: "#fff",
-              }}
-            >
-              {t("common.allTools", "All tools")}
-            </Link>
           </div>
         </aside>
       </div>
