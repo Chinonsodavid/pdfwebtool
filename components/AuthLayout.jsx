@@ -115,7 +115,7 @@ export function AuthSocialButtons() {
 
 function AuthIllustration() {
   return (
-    <div className="relative mx-auto h-[200px] w-full max-w-[340px] scale-75 origin-center">
+    <div className="relative mx-auto h-[260px] w-full max-w-[380px] scale-[0.85] origin-center mb-6">
       <div
         className="absolute left-0 top-5 h-44 w-20 rounded-[1.4rem] border p-3"
         style={{
@@ -222,8 +222,8 @@ export default function AuthLayout({
   const isDark = theme === "dark";
 
   return (
-    <div className="h-screen overflow-hidden" style={{ background: "var(--bg)" }}>
-      <div className="mx-auto grid h-full max-w-[100%] lg:grid-cols-[0.6fr_0.4fr]">
+    <div className="min-h-screen lg:h-screen lg:overflow-hidden" style={{ background: "var(--bg)" }}>
+      <div className="mx-auto grid min-h-screen lg:h-full max-w-[100%] lg:grid-cols-[0.6fr_0.4fr]">
         <section
           className="flex items-center justify-center px-6 py-6 sm:px-10 lg:px-14 overflow-y-auto h-full"
           style={{
