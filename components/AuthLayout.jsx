@@ -258,7 +258,10 @@ export default function AuthLayout({
                       alt="ConstantPDF logo"
                       className="h-[46px] w-[46px] object-contain"
                     />
-                    Constant<span className="brand-wordmark-pdf">PDF</span>
+                    <p>
+                      {" "}
+                      CONSTANT<span className="brand-wordmark-pdf">PDF</span>
+                    </p>
                   </span>
                 </Link>
               </div>

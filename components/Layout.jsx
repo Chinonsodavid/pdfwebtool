@@ -34,7 +34,10 @@ function BrandWordmark({ size = "base" }) {
         alt="ConstantPDF logo"
         className={`${isLarge ? "h-[28px] w-[28px]" : "h-[23px] w-[23px]"} object-contain`}
       />
-      Constant<span className="brand-wordmark-pdf">PDF</span>
+      <p>
+        {" "}
+        Constant<span className="brand-wordmark-pdf">PDF</span>
+      </p>
     </span>
   );
 }
