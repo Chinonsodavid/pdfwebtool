@@ -172,7 +172,7 @@ export default function Layout({ children }) {
           borderColor: "var(--border)",
         }}
       >
-        <div className="sm:hidden grid grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-3 px-4 py-3">
+        <div className="lg:hidden grid grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-3 px-4 py-3">
           <Link to="/" className="flex min-w-0 items-center gap-2">
             <BrandWordmark />
           </Link>
@@ -202,25 +202,27 @@ export default function Layout({ children }) {
           </div>
         </div>
 
-        <div className="hidden max-w-screen-2xl mx-auto px-3 py-2.5 sm:flex items-center justify-between gap-4">
+        <div className="hidden max-w-screen-2xl mx-auto px-3 py-2.5 lg:flex items-center justify-between gap-4">
           <Link to="/" className="flex items-center gap-3">
             <BrandWordmark size="large" />
           </Link>
 
-          <nav className="hidden sm:flex items-center gap-1">
-            {primaryNavTools.map((tool) => (
-              <NavLink
-                key={tool.id}
-                to={tool.path}
-                className="relative px-3 py-2 text-sm font-medium transition-colors nav-link"
-                style={({ isActive }) => ({
-                  color: isActive ? "var(--accent)" : "var(--text-muted)",
-                  "--nav-line-opacity": isActive ? 1 : 0,
-                })}
-              >
-                {tool.label}
-              </NavLink>
-            ))}
+          <nav className="hidden lg:flex items-center gap-1">
+            <div className="hidden xl:flex items-center gap-1">
+              {primaryNavTools.map((tool) => (
+                <NavLink
+                  key={tool.id}
+                  to={tool.path}
+                  className="relative px-3 py-2 text-sm font-medium transition-colors nav-link"
+                  style={({ isActive }) => ({
+                    color: isActive ? "var(--accent)" : "var(--text-muted)",
+                    "--nav-line-opacity": isActive ? 1 : 0,
+                  })}
+                >
+                  {tool.label}
+                </NavLink>
+              ))}
+            </div>
 
             <div className="relative">
               <div
@@ -274,7 +276,7 @@ export default function Layout({ children }) {
             </NavLink>
           </nav>
 
-          <div className="hidden sm:flex items-center gap-3">
+          <div className="hidden lg:flex items-center gap-3">
             <div
               className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border text-xs transition-all duration-200"
               style={{
@@ -453,7 +455,7 @@ export default function Layout({ children }) {
         {/* ─── REDESIGNED MOBILE MENU DRAWER ─── */}
         {menuOpen ? (
           <nav
-            className="fixed inset-0 z-50 sm:hidden overflow-y-auto"
+            className="fixed inset-0 z-50 lg:hidden overflow-y-auto"
             style={{
               height: "100dvh",
               background: "var(--bg)",
