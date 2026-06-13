@@ -113,100 +113,6 @@ export function AuthSocialButtons() {
   );
 }
 
-function AuthIllustration() {
-  return (
-    <div className="relative mx-auto h-[260px] w-full max-w-[380px] scale-[0.85] origin-center mb-6">
-      <div
-        className="absolute left-0 top-5 h-44 w-20 rounded-[1.4rem] border p-3"
-        style={{
-          background: "rgba(255,255,255,0.58)",
-          borderColor: "rgba(255,255,255,0.52)",
-        }}
-      >
-        <div className="space-y-3">
-          <div className="h-3 w-3 rounded-full bg-orange-200" />
-          <div className="h-1.5 w-9 rounded-full bg-orange-300" />
-          <div className="h-1.5 w-11 rounded-full bg-white/80" />
-          <div className="h-1.5 w-10 rounded-full bg-white/80" />
-          <div className="h-1.5 w-12 rounded-full bg-orange-100" />
-          <div className="h-1.5 w-8 rounded-full bg-orange-100" />
-          <div className="h-1.5 w-10 rounded-full bg-white/80" />
-        </div>
-      </div>
-
-      <div
-        className="absolute left-16 top-14 h-48 w-48 rounded-[1.8rem] border p-4"
-        style={{
-          background: "rgba(255,255,255,0.54)",
-          borderColor: "rgba(255,255,255,0.48)",
-        }}
-      >
-        <div className="mb-4 flex gap-2">
-          <div className="h-5 flex-1 rounded-lg bg-white/85" />
-          <div className="h-5 w-12 rounded-lg bg-white/75" />
-        </div>
-        <div className="space-y-3">
-          <div className="h-8 rounded-xl bg-white/88" />
-          <div className="h-8 rounded-xl bg-white/88" />
-          <div className="h-8 rounded-xl bg-white/88" />
-          <div className="grid grid-cols-3 gap-2">
-            <div className="h-8 rounded-lg bg-orange-100" />
-            <div className="h-8 rounded-lg bg-orange-100" />
-            <div className="h-8 rounded-lg bg-orange-100" />
-          </div>
-        </div>
-      </div>
-
-      <div
-        className="absolute right-1 top-10 h-52 w-36 rounded-[1.9rem] border p-4"
-        style={{
-          background: "rgba(255,255,255,0.54)",
-          borderColor: "rgba(255,255,255,0.48)",
-        }}
-      >
-        <div className="mb-4 h-2.5 w-20 rounded-full bg-orange-300" />
-        <div className="grid gap-3">
-          <div className="grid grid-cols-2 gap-2">
-            <div className="h-10 rounded-xl bg-white/80" />
-            <div className="h-10 rounded-xl bg-white/80" />
-          </div>
-          <div className="h-10 rounded-xl bg-white/80" />
-          <div className="h-10 rounded-xl bg-white/80" />
-          <div className="grid grid-cols-2 gap-3 pt-1">
-            <div className="h-6 rounded-md bg-green-300" />
-            <div className="h-6 rounded-md bg-orange-300" />
-            <div className="h-6 rounded-md bg-violet-300" />
-            <div className="h-6 rounded-md bg-sky-300" />
-          </div>
-        </div>
-      </div>
-
-      <div
-        className="absolute bottom-4 left-[42%] flex h-20 w-16 rotate-[-12deg] items-center justify-center rounded-[1.2rem] border"
-        style={{
-          background: "rgba(255,255,255,0.86)",
-          borderColor: "rgba(255,255,255,0.74)",
-        }}
-      >
-        <div className="text-center">
-          <div
-            className="text-[10px] font-black uppercase tracking-[0.22em]"
-            style={{ color: "var(--accent)" }}
-          >
-            PDF
-          </div>
-          <div className="mt-2 h-1 w-8 rounded-full bg-orange-200" />
-          <div className="mt-2 h-1 w-6 rounded-full bg-orange-100" />
-          <div className="mt-2 h-1 w-8 rounded-full bg-orange-100" />
-        </div>
-      </div>
-
-      <div className="absolute bottom-11 left-[11%] h-4 w-4 rotate-45 rounded-sm bg-orange-400" />
-      <div className="absolute bottom-6 left-[16%] h-3 w-3 rotate-12 rounded-sm bg-orange-300" />
-    </div>
-  );
-}
-
 export default function AuthLayout({
   title,
   description,
@@ -268,7 +174,7 @@ export default function AuthLayout({
 
               <div className="space-y-5">
                 <div className="text-center">
-                  <h1 className="text-3xl font-display font-extrabold tracking-tight text-[var(--text)]">
+                  <h1 className="text-2xl sm:text-3xl font-display font-medium tracking-tight text-[var(--text-muted)]">
                     {title}
                   </h1>
                   {description ? (
@@ -294,8 +200,14 @@ export default function AuthLayout({
               : "var(--bg-subtle)",
           }}
         >
-          <AuthIllustration />
-          <div className="mx-auto mt-6 max-w-[420px]">
+          <div className="flex justify-center mb-4">
+            <img
+              src="/auth-illust.png"
+              alt="PDF to JPG/PNG Conversion"
+              className="w-full max-w-[280px] h-auto object-contain mx-auto animate-fade-in"
+            />
+          </div>
+          <div className="mx-auto mt-4 max-w-[420px]">
             <h2 className="text-2xl font-display font-extrabold leading-tight text-[var(--text)]">
               {rightTitle ||
                 t("auth.rightPanelTitle", "Everything you need for PDFs")}

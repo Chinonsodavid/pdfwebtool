@@ -98,7 +98,7 @@ export default function Login() {
       rightTitle={t("auth.loginRightTitle", "Access your workspace")}
       rightDescription={t(
         "auth.loginRightDescription",
-        "Enter your email and password to access your ConstantPDF account. You are one step closer to boosting your document productivity.",
+        "Sign in to save your work, organize your documents, and access your personal workspace.",
       )}
       footer={
         <>

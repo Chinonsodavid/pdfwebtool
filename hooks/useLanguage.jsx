@@ -63,7 +63,7 @@ const translations = {
       loginTitle: "Access your workspace",
       loginRightTitle: "Access your workspace",
       loginRightDescription:
-        "Enter your email and password to access your ConstantPDF account. You are one step closer to boosting your document productivity.",
+        "Sign in to save your work, organize your documents, and access your personal workspace.",
       noAccount: "Don't have an account?",
       createAccount: "Create an account",
       enterEmail: "Enter your email",
