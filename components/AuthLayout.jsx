@@ -174,7 +174,7 @@ export default function AuthLayout({
 
               <div className="space-y-5">
                 <div className="text-center">
-                  <h1 className="text-2xl sm:text-3xl font-display font-medium tracking-tight text-[var(--text-muted)]">
+                  <h1 className="text-2xl sm:text-2xl font-display font-medium tracking-tight text-[var(--text-muted)]">
                     {title}
                   </h1>
                   {description ? (
